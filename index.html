@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Slot v6.2 🎰 UI Ultimate</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slot v6.3 Stable 🎰</title>
 
 <style>
-/* =========================
-   🌌 背景（动态赌场氛围）
-========================= */
 body{
     margin:0;
     height:100vh;
@@ -16,212 +13,100 @@ body{
     justify-content:center;
     align-items:center;
     font-family:Arial;
-
-    background: radial-gradient(circle at 20% 20%, #0ff2, transparent 40%),
-                radial-gradient(circle at 80% 70%, #00f2, transparent 40%),
-                radial-gradient(circle at center, #05070d, #000);
-    overflow:hidden;
+    background: linear-gradient(135deg,#0b1220,#05070d);
+    color:#fff;
 }
 
-/* 光流层 */
-body::before{
-    content:"";
-    position:absolute;
-    width:200%;
-    height:200%;
-    background: conic-gradient(from 0deg, #00ffe1, transparent, #0077ff, transparent);
-    animation: rotate 12s linear infinite;
-    opacity:0.08;
-}
-
-@keyframes rotate{
-    from{transform:rotate(0);}
-    to{transform:rotate(360deg);}
-}
-
-/* =========================
-   🧊 主容器（赌场机身）
-========================= */
+/* 主容器（纯稳样式） */
 .box{
-    width:380px;
-    padding:22px;
-    border-radius:26px;
-
-    background: rgba(255,255,255,0.06);
-    border:1px solid rgba(0,255,255,0.2);
-
-    backdrop-filter: blur(20px);
-
-    box-shadow:
-        0 0 40px rgba(0,255,255,0.12),
-        inset 0 0 30px rgba(0,0,0,0.5);
-
-    position:relative;
-    z-index:2;
+    width:360px;
+    padding:20px;
+    border-radius:18px;
+    background:#101826;
+    border:1px solid #1f3b4d;
+    box-shadow:0 0 25px rgba(0,255,255,0.08);
+    text-align:center;
 }
 
-/* 标题 */
 h1{
     margin:0 0 10px;
     color:#00ffe1;
-    text-align:center;
-    letter-spacing:2px;
 }
 
-/* =========================
-   💰 HUD
-========================= */
+/* HUD */
 .hud{
     display:flex;
     justify-content:space-between;
     font-size:13px;
+    margin-bottom:10px;
     opacity:0.9;
+}
+
+/* 机位按钮（稳定版无复杂动画） */
+.machines{
+    display:flex;
+    gap:6px;
     margin-bottom:10px;
 }
 
-/* =========================
-   🎮 机位卡片
-========================= */
-.machines{
-    display:flex;
-    justify-content:space-between;
-    margin:10px 0 15px;
-}
-
-.card{
+.machines button{
     flex:1;
-    margin:0 4px;
-    padding:8px;
-
-    font-size:11px;
-    text-align:center;
-
-    border-radius:12px;
+    padding:6px;
+    font-size:12px;
+    border:none;
+    background:#1b2a3a;
+    color:#9ff;
+    border-radius:8px;
     cursor:pointer;
-
-    background: rgba(0,0,0,0.35);
-    border:1px solid rgba(0,255,255,0.15);
-
-    transition:0.2s;
 }
 
-.card.active{
+.machines button.active{
     background:#00ffe1;
     color:#001018;
-    transform:scale(1.05);
-    box-shadow:0 0 15px #00ffe1;
 }
 
-/* =========================
-   🎰 老虎机舞台
-========================= */
+/* 老虎机区域 */
 .stage{
-    position:relative;
-    padding:16px;
-    border-radius:18px;
-
-    background: rgba(0,0,0,0.45);
-    border:1px solid rgba(0,255,255,0.25);
-
-    box-shadow:
-        inset 0 0 25px rgba(0,255,255,0.08),
-        0 0 25px rgba(0,0,0,0.4);
+    background:#0c141f;
+    border:1px solid #1f3b4d;
+    border-radius:12px;
+    padding:12px;
+    margin-bottom:10px;
 }
 
-/* 聚光灯 */
-.stage::before{
-    content:"";
-    position:absolute;
-    top:-40px;
-    left:50%;
-    transform:translateX(-50%);
-    width:200px;
-    height:80px;
-    background: radial-gradient(circle, rgba(0,255,255,0.25), transparent 70%);
-    filter:blur(10px);
-}
-
-/* =========================
-   🎰 转轮
-========================= */
 .reels{
     display:flex;
     justify-content:space-between;
 }
 
 .reel{
-    width:95px;
-    height:95px;
-    border-radius:14px;
-
+    width:90px;
+    height:90px;
+    background:#0a0f18;
+    border:1px solid #1f3b4d;
+    border-radius:10px;
     display:flex;
     justify-content:center;
     align-items:center;
-
-    font-size:44px;
-
-    background: linear-gradient(145deg,#111,#1a1a1a);
-
-    border:1px solid rgba(0,255,255,0.15);
-
-    box-shadow:
-        inset 0 0 15px rgba(0,0,0,0.7),
-        0 0 10px rgba(0,255,255,0.08);
+    font-size:40px;
 }
 
-/* =========================
-   🎮 按钮
-========================= */
-button{
+/* 按钮 */
+button.spin{
     width:100%;
-    margin-top:14px;
-    padding:12px;
-
+    padding:10px;
     border:none;
-    border-radius:14px;
-
+    border-radius:10px;
+    background:#00ffe1;
+    color:#001018;
     font-weight:bold;
     cursor:pointer;
-
-    background: linear-gradient(90deg,#00ffe1,#0077ff);
-    color:#001018;
-
-    box-shadow:0 0 20px rgba(0,255,255,0.3);
-
-    transition:0.2s;
 }
 
-button:active{
-    transform:scale(0.97);
-}
-
-/* =========================
-   ✨ 中奖效果
-========================= */
-.win{
-    animation: glow 0.25s infinite alternate;
-}
-
-@keyframes glow{
-    from{box-shadow:0 0 10px #00ffe1;}
-    to{box-shadow:0 0 30px #00ffe1;}
-}
-
-.flash{
-    animation: flash 0.4s;
-}
-
-@keyframes flash{
-    0%{filter:brightness(1);}
-    50%{filter:brightness(2);}
-    100%{filter:brightness(1);}
-}
-
-/* ========================= */
 #msg{
-    text-align:center;
     margin-top:10px;
     font-size:13px;
+    opacity:0.9;
 }
 </style>
 </head>
@@ -229,17 +114,17 @@ button:active{
 <body>
 
 <div class="box">
-    <h1>🎰 SLOT v6.2</h1>
+    <h1>🎰 SLOT v6.3</h1>
 
     <div class="hud">
         <div>💰 <span id="bal">100</span></div>
-        <div>🎲 Bet: <span id="bet">10</span></div>
+        <div>🎲 <span id="bet">10</span></div>
     </div>
 
     <div class="machines">
-        <div class="card active" onclick="setM('classic',event)">Classic</div>
-        <div class="card" onclick="setM('jackpot',event)">Jackpot</div>
-        <div class="card" onclick="setM('ultra',event)">Ultra</div>
+        <button data-m="classic" class="active">Classic</button>
+        <button data-m="jackpot">Jackpot</button>
+        <button data-m="ultra">Ultra</button>
     </div>
 
     <div class="stage">
@@ -250,19 +135,21 @@ button:active{
         </div>
     </div>
 
-    <button onclick="spin()">SPIN</button>
-    <div id="msg">选择机位开始</div>
+    <button class="spin">SPIN</button>
+    <div id="msg">Ready</div>
 </div>
 
 <script>
-
 // =====================
-// 数据
+// 状态
 // =====================
 let bal = 100;
 let spinning = false;
 let current = "classic";
 
+// =====================
+// 机位配置
+// =====================
 const M = {
  classic:{bet:10,p:[["🍒",40],["🍋",30],["🍊",20],["⭐",10]]},
  jackpot:{bet:20,p:[["🍒",30],["⭐",40],["💎",30]]},
@@ -270,93 +157,129 @@ const M = {
 };
 
 // =====================
-function rand(list){
- let t = list.reduce((a,b)=>a+b[1],0);
- let r = Math.random()*t;
+// DOM
+// =====================
+const balEl = document.getElementById("bal");
+const betEl = document.getElementById("bet");
+const msgEl = document.getElementById("msg");
+const reels = [
+ document.getElementById("r1"),
+ document.getElementById("r2"),
+ document.getElementById("r3")
+];
+
+// =====================
+// 权重随机
+// =====================
+function pick(list){
+ let total = 0;
+ for(let i=0;i<list.length;i++) total += list[i][1];
+
+ let r = Math.random() * total;
+
  for(let i=0;i<list.length;i++){
-  r-=list[i][1];
-  if(r<=0)return list[i][0];
+  r -= list[i][1];
+  if(r<=0) return list[i][0];
  }
 }
 
 // =====================
-function setM(m,e){
- current=m;
- document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
- e.target.classList.add("active");
- document.getElementById("bet").innerText=M[m].bet;
-}
-
+// RAF 滚轮（稳定核心）
 // =====================
-function roll(el,final){
- return new Promise(res=>{
-  let i=0;
-  let t=setInterval(()=>{
-   el.innerText=["🍒","🍋","🍊","🍉","⭐","💎","🔥"][Math.floor(Math.random()*7)];
-   i++;
-   if(i>18){
-    clearInterval(t);
-    el.innerText=final;
-    res();
-   }
-  },60);
+function roll(el, final){
+ return new Promise(resolve=>{
+  let frames = 0;
+  let speed = 0;
+
+  function step(){
+    frames++;
+
+    if(frames < 20){
+      el.textContent = randomSymbol();
+      requestAnimationFrame(step);
+    } else {
+      speed++;
+      if(speed < 10){
+        el.textContent = randomSymbol();
+        requestAnimationFrame(step);
+      } else {
+        el.textContent = final;
+        resolve();
+      }
+    }
+  }
+
+  step();
  });
 }
 
 // =====================
+function randomSymbol(){
+ const arr = ["🍒","🍋","🍊","🍉","⭐","💎","🔥"];
+ return arr[Math.floor(Math.random()*arr.length)];
+}
+
+// =====================
+// 机位切换（稳定版事件绑定）
+// =====================
+document.querySelectorAll(".machines button").forEach(btn=>{
+ btn.addEventListener("click",()=>{
+  document.querySelectorAll(".machines button").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+
+  current = btn.dataset.m;
+  betEl.textContent = M[current].bet;
+  msgEl.textContent = "Switched: " + current;
+ });
+});
+
+// =====================
+// spin
+// =====================
 async function spin(){
  if(spinning) return;
- let m=M[current];
 
- if(bal<m.bet){
-  document.getElementById("msg").innerText="余额不足";
+ const m = M[current];
+
+ if(bal < m.bet){
+  msgEl.textContent = "Not enough balance";
   return;
  }
 
- spinning=true;
- bal-=m.bet;
- document.getElementById("bal").innerText=bal;
+ spinning = true;
+ bal -= m.bet;
+ balEl.textContent = bal;
 
- let a=rand(m.p);
- let b=rand(m.p);
- let c=rand(m.p);
+ msgEl.textContent = "Spinning...";
 
- let r1=document.getElementById("r1");
- let r2=document.getElementById("r2");
- let r3=document.getElementById("r3");
-
- document.getElementById("msg").innerText="spinning...";
+ const a = pick(m.p);
+ const b = pick(m.p);
+ const c = pick(m.p);
 
  await Promise.all([
-  roll(r1,a),
-  roll(r2,b),
-  roll(r3,c)
+  roll(reels[0], a),
+  roll(reels[1], b),
+  roll(reels[2], c)
  ]);
 
- let win = (a===b && b===c);
+ const win = (a===b && b===c);
 
  if(win){
-  let reward = m.bet*6;
-  bal+=reward;
-  document.getElementById("bal").innerText=bal;
-
-  document.getElementById("msg").innerText="🎉 WIN +"+reward;
-
-  document.body.classList.add("flash");
-  setTimeout(()=>document.body.classList.remove("flash"),400);
-
-  [r1,r2,r3].forEach(r=>r.classList.add("win"));
-
-  setTimeout(()=>{
-    [r1,r2,r3].forEach(r=>r.classList.remove("win"));
-  },1000);
-
- }else{
-  document.getElementById("msg").innerText="再试一次";
+  const reward = m.bet * 5;
+  bal += reward;
+  balEl.textContent = bal;
+  msgEl.textContent = "WIN +" + reward;
+ } else {
+  msgEl.textContent = "Try again";
  }
 
- spinning=false;
+ spinning = false;
 }
+
+// =====================
+// 绑定按钮（无 inline event）
+// =====================
+document.querySelector(".spin").addEventListener("click",spin);
 
 </script>
 
