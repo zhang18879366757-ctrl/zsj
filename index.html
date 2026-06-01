@@ -3,264 +3,461 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>理性之境 - 手机版数学博弈模拟器</title>
+    <title>豪华博弈模拟器 - 老虎机 2.0</title>
     <style>
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif; background: #0f172a; color: #e2e8f0; padding: 12px; margin: 0; }
-        
-        .container { max-width: 100%; margin: 0 auto; background: #1e293b; padding: 16px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        h1 { text-align: center; color: #f8fafc; margin: 5px 0; font-size: 22px; }
-        .subtitle { text-align: center; color: #94a3b8; font-size: 12px; margin-bottom: 20px; line-height: 1.4; }
-        
-        /* 手机端状态看板：改为更密集的平铺或网格 */
-        .stats-grid { display: block; margin-bottom: 15px; }
-        .stat-card { background: #111827; border: 1px solid #334155; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 8px; }
-        .stat-card h3 { margin: 0 0 2px 0; font-size: 11px; color: #94a3b8; text-transform: uppercase; }
-        .stat-card p { margin: 0; font-size: 18px; font-weight: bold; color: #f8fafc; }
-        
-        /* 手机端横向滚动菜单（选项卡） */
-        .tabs { display: block; overflow-x: auto; white-space: nowrap; margin-bottom: 15px; border-bottom: 2px solid #334155; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
-        .tab-btn { display: inline-block; background: #334155; color: #94a3b8; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; margin-right: 5px; }
-        .tab-btn.active { background: #3b82f6; color: white; }
-        
-        .game-panel { display: none; }
-        .game-panel.active { display: block; }
-        .panel { background: #111827; border: 1px solid #334155; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
-        .panel h2 { margin-top: 0; font-size: 16px; color: #38bdf8; }
-        .description { font-size: 12px; color: #94a3b8; margin-bottom: 12px; line-height: 1.5; }
-        
-        /* 手机端专属大操作按钮 */
-        .btn-group { display: block; }
-        button.action-btn { display: block; width: 100%; margin-bottom: 8px; padding: 14px; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; background: #3b82f6; color: white; text-align: center; }
-        button.danger-btn { background: #ef4444; }
-        button.secondary-btn { background: #475569; color: #cbd5e1; }
-        
-        /* 三门问题手机端大门尺寸优化 */
-        .doors-container { display: block; text-align: center; margin: 15px 0; }
-        .door { display: inline-block; width: 26%; height: 95px; background: #b45309; border: 2px solid #d97706; border-radius: 6px; margin: 0 3%; vertical-align: middle; line-height: 90px; text-align: center; font-size: 20px; font-weight: bold; color: white; }
-        .door.selected { border-color: #3b82f6; box-shadow: 0 0 10px #3b82f6; }
-        .door.opened { background: #1e293b; border-color: #475569; color: #64748b; }
-
-        /* 老虎机手机端尺寸优化 */
-        .slot-machine { background: #111827; border: 3px solid #fbbf24; border-radius: 10px; padding: 15px; text-align: center; margin-bottom: 15px; }
-        .reel { display: inline-block; width: 28%; height: 75px; background: #fff; border-radius: 6px; border: 2px solid #475569; margin: 0 2%; line-height: 70px; text-align: center; font-size: 36px; vertical-align: middle; user-select: none; }
-        
-        @keyframes blur-spin {
-            0% { filter: blur(0px); transform: translateY(-2px); }
-            50% { filter: blur(2px); transform: translateY(2px); }
-            100% { filter: blur(0px); transform: translateY(0px); }
+        :root {
+            --primary-color: #ff3b30;
+            --gold-color: #ffcc00;
+            --bg-dark: #121214;
+            --card-bg: #1c1c1e;
         }
-        .spinning { animation: blur-spin 0.1s infinite; }
 
-        /* 手机端紧凑日志框 */
-        .log-box { background: #020617; color: #38bdf8; padding: 10px; border-radius: 6px; height: 130px; overflow-y: auto; font-family: monospace; font-size: 11px; line-height: 1.5; border: 1px solid #334155; }
-        .text-green { color: #4ade80 !important; }
-        .text-red { color: #f87171 !important; }
-        .text-yellow { color: #fbbf24 !important; }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* 顶部状态栏 */
+        .header {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .balance-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .balance-container span {
+            color: var(--gold-color);
+        }
+
+        /* 老虎机主车体 */
+        .machine-container {
+            width: 90%;
+            max-width: 400px;
+            background: linear-gradient(145deg, #2c0c0c, #1a0505);
+            border: 6px solid #8b0000;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 20px rgba(255, 59, 48, 0.2);
+            box-sizing: border-box;
+            position: relative;
+            margin-top: 10px;
+        }
+
+        /* 跑马灯特效 */
+        .marquee {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--gold-color);
+            text-shadow: 0 0 10px var(--gold-color);
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+            animation: blink 1s infinite alternate;
+        }
+
+        @keyframes blink {
+            0% { opacity: 0.8; text-shadow: 0 0 5px var(--gold-color); }
+            100% { opacity: 1; text-shadow: 0 0 20px #ff9500; }
+        }
+
+        /* 滚轮视窗 */
+        .slots-window {
+            display: flex;
+            justify-content: space-between;
+            background: #000000;
+            border-radius: 12px;
+            padding: 15px;
+            border: 3px solid var(--gold-color);
+            overflow: hidden;
+            height: 120px;
+        }
+
+        .reel {
+            width: 28%;
+            height: 100%;
+            background: #ffffff;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reel-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: top 0s ease-in-out;
+        }
+
+        .slot-icon {
+            height: 120px;
+            font-size: 3.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        /* 控制区域 */
+        .controls {
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .bet-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .bet-btn {
+            background: #2c2c2e;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .bet-btn.active {
+            background: var(--gold-color);
+            color: #000;
+            border-color: var(--gold-color);
+        }
+
+        .spin-btn {
+            background: linear-gradient(180deg, #ff453a, #ff3b30);
+            border: none;
+            color: white;
+            padding: 18px;
+            border-radius: 16px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            box-shadow: 0 5px 0 #b3241c;
+            cursor: pointer;
+            transition: all 0.1s;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+
+        .spin-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #b3241c;
+        }
+
+        .spin-btn:disabled {
+            background: #48484a;
+            box-shadow: 0 5px 0 #2c2c2e;
+            color: #8e8e93;
+            cursor: not-allowed;
+        }
+
+        /* 结果显示与数据面板 */
+        .msg-display {
+            text-align: center;
+            height: 30px;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #30d158;
+        }
+
+        .stats-panel {
+            width: 90%;
+            max-width: 400px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 15px;
+            margin-top: 20px;
+            box-sizing: border-box;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            text-align: center;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .stat-box div:first-child {
+            font-size: 0.8rem;
+            color: #8e8e93;
+            margin-bottom: 5px;
+        }
+
+        .stat-box div:last-child {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>🎲 理性之境 (手机版)</h1>
-    <div class="subtitle">用数学概率大数定律，打破赌徒的暴富幻觉</div>
-
-    <div class="stats-grid">
-        <div class="stat-card" style="border-left: 4px solid #3b82f6;">
-            <h3>虚拟账户资产</h3>
-            <p id="balance">1000 元</p>
-        </div>
-        <div class="stat-card">
-            <h3>总决策次数</h3>
-            <p id="total-rounds">0 次</p>
-        </div>
+    <div class="header">
+        <h2>🎰 幸运转轮 2.0</h2>
+        <div class="balance-container">资产: $<span id="balance">1000</span></div>
     </div>
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('dice')">🎲 猜大小倍投</button>
-        <button class="tab-btn" onclick="switchTab('slots')">🎰 3个7转盘</button>
-        <button class="tab-btn" onclick="switchTab('monty')">🐐 三门问题</button>
-        <button class="tab-btn" onclick="switchTab('petersburg')">📉 圣彼得堡</button>
-    </div>
+    <div class="machine-container">
+        <div class="marquee">★ JACKPOT ★</div>
+        
+        <div class="slots-window">
+            <!-- 轮盘 1 -->
+            <div class="reel" id="reel1">
+                <div class="reel-container" id="container1"></div>
+            </div>
+            <!-- 轮盘 2 -->
+            <div class="reel" id="reel2">
+                <div class="reel-container" id="container2"></div>
+            </div>
+            <!-- 轮盘 3 -->
+            <div class="reel" id="reel3">
+                <div class="reel-container" id="container3"></div>
+            </div>
+        </div>
 
-    <div id="game-dice" class="game-panel active">
-        <div class="panel">
-            <h2>经典猜大小 (庄家优势)</h2>
-            <div class="description">大(11-17点), 小(4-10点)。若开出围骰(三子相同)庄家通杀。玩家胜率仅 **48.61%**。</div>
-            <div style="margin-bottom: 12px; font-size: 13px;">
-                <label>基础下注：</label>
-                <input type="number" id="dice-base" value="10" style="background:#0f172a; color:white; border:1px solid #334155; padding:5px; border-radius:4px; width:60px;"> 元
+        <div class="msg-display" id="msgDisplay">准备好大赢一场了吗？</div>
+
+        <div class="controls">
+            <div class="bet-selector">
+                <span style="color:#8e8e93;">下注额:</span>
+                <button class="bet-btn active" onclick="setBet(10)">10</button>
+                <button class="bet-btn" onclick="setBet(50)">50</button>
+                <button class="bet-btn" onclick="setBet(100)">100</button>
             </div>
-            <div class="btn-group">
-                <button class="action-btn" onclick="playDice(true)">押 大</button>
-                <button class="action-btn" onclick="playDice(false)">押 小</button>
-                <button class="action-btn danger-btn" onclick="autoMartingale()">自动倍投挂机测试</button>
-            </div>
+            <button class="spin-btn" id="spinBtn" onclick="startSpin()">拉 动摇 杆 !</button>
         </div>
     </div>
 
-    <div id="game-slots" class="game-panel">
-        <div class="panel">
-            <h2>3个7财富幻觉连线</h2>
-            <div class="description">成本:10元/次。3个7大奖:1000元。任意三同:100元。展示独立复合概率与“差点赢”心理学阴谋。</div>
-            <div class="slot-machine">
-                <div id="reel1" class="reel">🍒</div>
-                <div id="reel2" class="reel">🍋</div>
-                <div id="reel3" class="reel">🔔</div>
+    <!-- 数据分析统计面板 -->
+    <div class="stats-panel">
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div>启动次数</div>
+                <div id="statPlays">0</div>
             </div>
-            <div class="btn-group">
-                <button id="spin-button" class="action-btn" onclick="startSpin()">拉动摇杆 (10元)</button>
-                <button id="auto-btn" class="action-btn secondary-btn" onclick="autoSpinMode()">自动挂机狂转 100 次</button>
+            <div class="stat-box">
+                <div>中奖次数</div>
+                <div id="statWins">0</div>
             </div>
-        </div>
-    </div>
-
-    <div id="game-monty" class="game-panel">
-        <div class="panel">
-            <h2>蒙提霍尔三门问题</h2>
-            <div class="description">选一扇门。随后主持人会打开一扇有羊的门，问你**换不换门？**大数据证明换门胜率（66.6%）是不换（33.3%）的两倍！</div>
-            <div class="doors-container">
-                <div id="door1" class="door" onclick="selectDoor(1)">1</div>
-                <div id="door2" class="door" onclick="selectDoor(2)">2</div>
-                <div id="door3" class="door" onclick="selectDoor(3)">3</div>
-            </div>
-            <div class="btn-group" id="monty-controls" style="display: none;">
-                <button class="action-btn text-yellow" style="background: #eab308;" onclick="montyFinal(true)">决定：换门！</button>
-                <button class="action-btn secondary-btn" onclick="montyFinal(false)">决定：坚守不换！</button>
-            </div>
-            <div class="btn-group">
-                <button class="action-btn danger-btn" onclick="autoMonty(1000)">一键对撞 1000 次数据对比</button>
+            <div class="stat-box">
+                <div>综合胜率</div>
+                <div id="statRate">0%</div>
             </div>
         </div>
     </div>
 
-    <div id="game-petersburg" class="game-panel">
-        <div class="panel">
-            <h2>圣彼得堡悖论破产机</h2>
-            <div class="description">门票50元。硬币正面奖金翻倍并继续，反面终止拿钱。期望值无限大，但现实玩必亏。</div>
-            <div class="btn-group">
-                <button class="action-btn" onclick="playPetersburg()">花 50 元玩一次</button>
-                <button class="action-btn danger-btn" onclick="autoPetersburg()">连续狂玩 500 次</button>
-            </div>
-        </div>
-    </div>
+    <script>
+        // 游戏核心数据配置
+        const pool = ['7', '🍒', '🍋', '🍉', '💎', '🍇'];
+        let balance = 1000;
+        let currentBet = 10;
+        let isSpinning = false;
 
-    <h2 style="font-size: 14px; margin: 10px 0 5px 0;">📊 手机实时演算日记</h2>
-    <div id="log" class="log-box"><div>系统已就绪，请在上方切换实验。</div></div>
-    
-    <button class="action-btn secondary-btn" style="margin-top: 10px; padding: 10px;" onclick="resetAll()">重置全盘资产</button>
-</div>
+        // 统计指标
+        let totalPlays = 0;
+        let totalWins = 0;
 
-<script>
-    let balance = 1000; let totalRounds = 0; let currentTab = 'dice'; let diceCurrentBet = 10;
-    let montyStage = 0; let prizeDoor = 0; let userChoice = 0; let hostOpened = 0;
-    const symbols = ['7', '🍒', '🍋', '🔔', '💎', '🍇', '🍊', '🍉']; let isSpinning = false; let autoTimer = null;
-
-    function switchTab(tabId) {
-        currentTab = tabId;
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.game-panel').forEach(p => p.classList.remove('active'));
-        event.target.classList.add('active');
-        document.getElementById(`game-${tabId}`).classList.add('active');
-        if(autoTimer) { clearInterval(autoTimer); autoTimer = null; document.getElementById('auto-btn').innerText = "自动挂机狂转 100 次"; }
-        initMonty();
-    }
-
-    function log(msg, colorClass = '') {
-        const logBox = document.getElementById('log'); const div = document.createElement('div');
-        if(colorClass) div.className = colorClass; div.innerHTML = `[事件] ${msg}`;
-        logBox.appendChild(div); logBox.scrollTop = logBox.scrollHeight;
-    }
-
-    function updateUI() {
-        document.getElementById('balance').innerText = balance + " 元";
-        document.getElementById('total-rounds').innerText = totalRounds + " 次";
-    }
-
-    // --- 骰子逻辑 ---
-    function playDice(isBig) {
-        let base = parseInt(document.getElementById('dice-base').value) || 10;
-        if(balance <= 0) { alert('已破产！请重置。'); return false; }
-        if(balance < diceCurrentBet) { log(`资金链断裂！需下注 ${diceCurrentBet}元，仅剩 ${balance}元。`, 'text-red'); diceCurrentBet = base; return false; }
-        totalRounds++; let d1 = Math.floor(Math.random()*6)+1; let d2 = Math.floor(Math.random()*6)+1; let d3 = Math.floor(Math.random()*6)+1; let sum = d1 + d2 + d3;
-        let result = (d1===d2 && d2===d3) ? '围骰' : (sum >= 11 ? '大' : '小');
-        let win = (result !== '围骰' && ((isBig && result==='大') || (!isBig && result==='小')));
-        if(win) { balance += diceCurrentBet; log(`开出: ${sum}点 [${result}]。赚 ${diceCurrentBet} 元！`, 'text-green'); diceCurrentBet = base; } 
-        else { balance -= diceCurrentBet; log(`开出: ${sum}点 [${result}通杀]。输 ${diceCurrentBet} 元。`, 'text-red'); diceCurrentBet *= 2; }
-        updateUI(); return win;
-    }
-
-    function autoMartingale() {
-        let base = parseInt(document.getElementById('dice-base').value) || 10; diceCurrentBet = base; log('⚡ 启动自动倍投...', 'text-yellow');
-        let count = 0; let timer = setInterval(() => {
-            let active = playDice(true); count++;
-            if(balance <= 0 || diceCurrentBet > balance || count >= 50) { clearInterval(timer); if(balance<=0) log('🛑 赌徒破产理论生效：本金归零。', 'text-red'); }
-        }, 150);
-    }
-
-    // --- 老虎机逻辑 ---
-    function startSpin() {
-        if (isSpinning || balance < 10) return;
-        balance -= 10; totalRounds++; isSpinning = true; document.getElementById('spin-button').disabled = true; updateUI();
-        const r1 = document.getElementById('reel1'); const r2 = document.getElementById('reel2'); const r3 = document.getElementById('reel3');
-        r1.classList.add('spinning'); r2.classList.add('spinning'); r3.classList.add('spinning');
-        let res1, res2, res3;
-        setTimeout(() => { res1 = symbols[Math.floor(Math.random()*8)]; r1.classList.remove('spinning'); r1.innerText = res1; }, 300);
-        setTimeout(() => { res2 = symbols[Math.floor(Math.random()*8)]; r2.classList.remove('spinning'); r2.innerText = res2; }, 600);
-        setTimeout(() => { 
-            res3 = symbols[Math.floor(Math.random()*8)]; r3.classList.remove('spinning'); r3.innerText = res3;
-            if (res1 === '7' && res2 === '7' && res3 === '7') { balance += 1000; log(`🎉【大奖】7-7-7连线！暴赚1000元！`, 'text-green'); }
-            else if (res1 === res2 && res2 === res3) { balance += 100; log(`✨【三连】[${res1}]连线，赢100元。`, 'text-green'); }
-            else if (res1 === '7' && res2 === '7' && res3 !== '7') { log(`❌【差点赢】前两个是7！极强多巴胺幻觉暗示。`, 'text-near'); }
-            else { log(`未中: [${res1}|${res2}|${res3}]`, 'text-cost'); }
-            isSpinning = false; document.getElementById('spin-button').disabled = false; updateUI();
-        }, 900);
-    }
-
-    function autoSpinMode() {
-        if (autoTimer) { clearInterval(autoTimer); autoTimer = null; document.getElementById('auto-btn').innerText = "自动挂机狂转 100 次"; } 
-        else {
-            document.getElementById('auto-btn').innerText = "停止挂机"; let count = 0;
-            autoTimer = setInterval(() => { if (!isSpinning) { startSpin(); count++; if (count >= 100 || balance < 10) { clearInterval(autoTimer); autoTimer = null; document.getElementById('auto-btn').innerText = "自动挂机狂转 100 次"; } } }, 1000);
+        // 初始化原生音频上下文（免去加载外部音频）
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTone(freq, type, duration) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
         }
-    }
 
-    // --- 三门问题 ---
-    function initMonty() {
-        montyStage = 0; prizeDoor = Math.floor(Math.random()*3)+1; document.getElementById('monty-controls').style.display = 'none';
-        for(let i=1;i<=3;i++) { let d = document.getElementById(`door${i}`); if(d) { d.className = 'door'; d.innerText = i; } }
-    }
-    function selectDoor(doorNum) {
-        if(montyStage !== 0) return; userChoice = doorNum; montyStage = 1; document.getElementById(`door${doorNum}`).classList.add('selected');
-        let available = [1,2,3].filter(d => d !== userChoice && d !== prizeDoor);
-        hostOpened = available[Math.floor(Math.random()*available.length)];
-        setTimeout(() => { document.getElementById(`door${hostOpened}`).classList.add('opened'); document.getElementById(`door${hostOpened}`).innerText = '🐐'; log(`初步选${userChoice}号门。主持人排除一扇羊门 ${hostOpened}号。换门吗？`, 'text-yellow'); document.getElementById('monty-controls').style.display = 'flex'; }, 300);
-    }
-    function montyFinal(shouldSwitch) {
-        totalRounds++; let finalChoice = shouldSwitch ? [1,2,3].find(d => d !== userChoice && d !== hostOpened) : userChoice;
-        let win = (finalChoice === prizeDoor);
-        for(let i=1;i<=3;i++) document.getElementById(`door${i}`).innerText = (i === prizeDoor) ? '🏎️' : '🐐';
-        if(win) { balance += 50; log(`中了跑车！你选择${shouldSwitch?'换门':'不换'} -> 资产+50元`, 'text-green'); } 
-        else { balance -= 30; log(`里面是山羊！你选择${shouldSwitch?'换门':'不换'} -> 资产-30元`, 'text-red'); }
-        updateUI(); document.getElementById('monty-controls').style.display = 'none'; montyStage = -1; setTimeout(initMonty, 2000);
-    }
-    function autoMonty(times) {
-        let sw = 0; for(let i=0; i<times; i++) { if (Math.floor(Math.random()*3)+1 !== Math.floor(Math.random()*3)+1) sw++; }
-        totalRounds += times; log(`🤖 1000次大回测结论：<br>👉【换门】胜率 约${(sw/times*100).toFixed(1)}%<br>👉【不换门】胜率 约${((times-sw)/times*100).toFixed(1)}%`, 'text-yellow'); updateUI();
-    }
+        // 构建轮盘DOM元素
+        function initReels() {
+            for (let i = 1; i <= 3; i++) {
+                const container = document.getElementById(`container${i}`);
+                container.innerHTML = '';
+                // 预先生成多组图标形成无缝滚动流
+                for (let j = 0; j < 30; j++) {
+                    const div = document.createElement('div');
+                    div.className = 'slot-icon';
+                    div.innerText = pool[j % pool.length];
+                    container.appendChild(div);
+                }
+            }
+        }
 
-    // --- 圣彼得堡 ---
-    function playPetersburg() {
-        if(balance < 50) return; balance -= 50; totalRounds++; let win = 2; while(Math.random() < 0.5) { win *= 2; if(win > 10000) break; }
-        balance += win; log(`抛硬币结束，获得奖金 ${win}元（扣门票净损益：${win-50}元）`, win>50?'text-green':'text-red'); updateUI();
-    }
-    function autoPetersburg() {
-        log('进行 500 次历史回溯中...'); let tc = 25000; let tr = 0;
-        for(let i=0; i<500; i++) { let w = 2; while(Math.random() < 0.5) { w *= 2; if(w > 5000) break; } tr += w; }
-        balance = balance - 2500 + tr; totalRounds += 500; log(`500次账单：成本2500元，得奖金 ${tr}元，损益: ${tr-2500}元`, 'text-yellow'); updateUI();
-    }
+        function setBet(amount) {
+            if (isSpinning) return;
+            currentBet = amount;
+            document.querySelectorAll('.bet-btn').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.innerText) === amount);
+            });
+            playTone(440, 'sine', 0.05);
+        }
 
-    function resetAll() { balance = 1000; totalRounds = 0; diceCurrentBet = 10; document.getElementById('log').innerHTML = '<div>=== 数据已安全重置 ===</div>'; initMonty(); updateUI(); }
-</script>
+        // 核心滚动逻辑
+        async function startSpin() {
+            if (isSpinning || balance < currentBet) {
+                if (balance < currentBet) alert("资金余额不足，请充值或调低赌注！");
+                return;
+            }
+
+            // 扣除本金
+            isSpinning = true;
+            balance -= currentBet;
+            totalPlays++;
+            document.getElementById('balance').innerText = balance;
+            document.getElementById('spinBtn').disabled = true;
+            document.getElementById('msgDisplay').innerText = "滚动中...";
+            document.getElementById('msgDisplay').style.color = "#ff9500";
+
+            // 预先计算结果
+            const finalResults = [
+                pool[Math.floor(Math.random() * pool.length)],
+                pool[Math.floor(Math.random() * pool.length)],
+                pool[Math.floor(Math.random() * pool.length)]
+            ];
+
+            // 启动三个滚轮的异歩滚动动画
+            const p1 = spinReel(1, finalResults[0], 1.5);
+            const p2 = spinReel(2, finalResults[1], 2.0);
+            const p3 = spinReel(3, finalResults[2], 2.5);
+
+            await Promise.all([p1, p2, p3]);
+
+            // 结算奖励
+            settleGame(finalResults);
+        }
+
+        function spinReel(reelNum, targetIcon, duration) {
+            return new Promise(resolve => {
+                const container = document.getElementById(`container${reelNum}`);
+                
+                // 定位目标图标在循环流中的匹配项
+                const matchIndex = pool.indexOf(targetIcon);
+                // 确保它滚到较为靠后的位置以展示高速效果
+                const targetIndex = matchIndex + pool.length * 3; 
+                const targetTop = -(targetIndex * 120);
+
+                container.style.transition = `top ${duration}s cubic-bezier(0.25, 0.1, 0.25, 1)`;
+                container.style.top = `${targetTop}px`;
+
+                // 滚动中发出的音效
+                let interval = setInterval(() => {
+                    if (!isSpinning) clearInterval(interval);
+                    else playTone(300 + (reelNum * 100), 'triangle', 0.02);
+                }, 100);
+
+                setTimeout(() => {
+                    clearInterval(interval);
+                    playTone(600 + (reelNum * 100), 'sine', 0.1);
+                    resolve();
+                }, duration * 1000);
+            });
+        }
+
+        function settleGame(results) {
+            isSpinning = false;
+            document.getElementById('spinBtn').disabled = false;
+
+            const [r1, r2, r3] = results;
+            let winMultiplier = 0;
+            let message = "";
+
+            if (r1 === r2 && r2 === r3) {
+                // 三连全中 (Jackpot)
+                totalWins++;
+                if (r1 === '7') {
+                    winMultiplier = 50; // 777 爆大奖
+                    message = "🔥 究极暴富！777 特等奖！";
+                } else if (r1 === '💎') {
+                    winMultiplier = 30;
+                    message = "💎 闪耀华丽！钻石大奖！";
+                } else {
+                    winMultiplier = 15;
+                    message = `🎉 恭喜！触发三连 ${r1}！`;
+                }
+            } else if (r1 === r2 || r2 === r3 || r1 === r3) {
+                // 两连中
+                totalWins++;
+                winMultiplier = 2;
+                message = "✨ 运气不错，双星连珠！";
+            } else {
+                // 未中奖
+                message = " 差一点就中了，再接再厉！";
+            }
+
+            // 更新金额与界面
+            if (winMultiplier > 0) {
+                const winAmount = currentBet * winMultiplier;
+                balance += winAmount;
+                document.getElementById('msgDisplay').innerText = `${message} +$${winAmount}`;
+                document.getElementById('msgDisplay').style.color = "#30d158";
+                // 连续播放中奖喜报音效
+                playTone(523.25, 'square', 0.1);
+                setTimeout(() => playTone(659.25, 'square', 0.1), 100);
+                setTimeout(() => playTone(783.99, 'square', 0.3), 200);
+            } else {
+                document.getElementById('msgDisplay').innerText = message;
+                document.getElementById('msgDisplay').style.color = "#ff3b30";
+                playTone(150, 'sawtooth', 0.2);
+            }
+
+            // 更新仪表盘
+            document.getElementById('balance').innerText = balance;
+            document.getElementById('statPlays').innerText = totalPlays;
+            document.getElementById('statWins').innerText = totalWins;
+            document.getElementById('statRate').innerText = `${Math.round((totalWins / totalPlays) * 100)}%`;
+
+            // 重置滚轮以便下一次无缝旋转
+            for (let i = 1; i <= 3; i++) {
+                const container = document.getElementById(`container${i}`);
+                const currentMatch = pool.indexOf(results[i-1]);
+                container.style.transition = 'none';
+                container.style.top = `-${currentMatch * 120}px`;
+            }
+        }
+
+        // 页面装载自动初始化
+        window.onload = initReels;
+    </script>
 </body>
 </html>
