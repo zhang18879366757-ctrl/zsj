@@ -3,106 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>豪华博弈模拟器 - 老虎机 2.0</title>
+    <title>至尊博弈数据研究室 - Slot 3.0</title>
     <style>
         :root {
-            --primary-color: #ff3b30;
-            --gold-color: #ffcc00;
-            --bg-dark: #121214;
-            --card-bg: #1c1c1e;
+            --primary: #ff3b30;
+            --gold: #ffcc00;
+            --neon-blue: #00ddff;
+            --neon-purple: #bf5af2;
+            --bg: #0b0b0e;
+            --surface: #16161a;
+            --surface-bright: #24242b;
         }
 
         body {
             margin: 0;
             padding: 0;
-            background-color: var(--bg-dark);
-            color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: #f5f5f7;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            padding-bottom: 30px;
             -webkit-user-select: none;
             user-select: none;
         }
 
-        /* 顶部状态栏 */
-        .header {
+        /* 顶部豪华状态栏 */
+        .dashboard-header {
             width: 100%;
-            max-width: 500px;
-            padding: 20px;
+            max-width: 440px;
+            padding: 20px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-sizing: border-box;
         }
 
-        .balance-container {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            font-weight: bold;
-            font-size: 1.1rem;
+        .brand-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
         }
 
-        .balance-container span {
-            color: var(--gold-color);
+        .balance-pill {
+            background: linear-gradient(145deg, #1c1c1e, #2c2c2e);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 204, 0, 0.4);
+            font-weight: 900;
+            font-size: 1.2rem;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.1);
         }
 
-        /* 老虎机主车体 */
-        .machine-container {
-            width: 90%;
-            max-width: 400px;
-            background: linear-gradient(145deg, #2c0c0c, #1a0505);
-            border: 6px solid #8b0000;
-            border-radius: 24px;
-            padding: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 20px rgba(255, 59, 48, 0.2);
+        .balance-pill span {
+            color: var(--gold);
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+        }
+
+        /* 老虎机主柜体 */
+        .arcade-cabinet {
+            width: 92%;
+            max-width: 410px;
+            background: linear-gradient(180deg, #2c0e0e 0%, #120303 100%);
+            border: 5px solid #991b1b;
+            border-radius: 28px;
+            padding: 22px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8), 
+                        0 0 30px rgba(255, 59, 48, 0.15),
+                        inset 0 0 20px rgba(0,0,0,0.6);
             box-sizing: border-box;
             position: relative;
-            margin-top: 10px;
+            border-bottom: 12px solid #7f1d1d; /* 模拟立体底盘 */
         }
 
-        /* 跑马灯特效 */
-        .marquee {
+        /* 炫彩走马灯广告牌 */
+        .marquee-banner {
+            background: #000;
+            border-radius: 12px;
+            padding: 10px;
             text-align: center;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 900;
-            color: var(--gold-color);
-            text-shadow: 0 0 10px var(--gold-color);
-            margin-bottom: 15px;
-            letter-spacing: 2px;
-            animation: blink 1s infinite alternate;
+            color: var(--gold);
+            border: 2px solid var(--neon-purple);
+            text-shadow: 0 0 12px var(--gold);
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 10px rgba(191, 90, 242, 0.5);
+            animation: panel-glow 1.5s infinite alternate;
         }
 
-        @keyframes blink {
-            0% { opacity: 0.8; text-shadow: 0 0 5px var(--gold-color); }
-            100% { opacity: 1; text-shadow: 0 0 20px #ff9500; }
+        @keyframes panel-glow {
+            0% { border-color: var(--neon-purple); box-shadow: 0 0 5px var(--neon-purple); }
+            100% { border-color: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue); }
         }
 
-        /* 滚轮视窗 */
-        .slots-window {
+        /* 豪华三联物理视窗 */
+        .viewport-matrix {
             display: flex;
             justify-content: space-between;
-            background: #000000;
-            border-radius: 12px;
-            padding: 15px;
-            border: 3px solid var(--gold-color);
-            overflow: hidden;
-            height: 120px;
+            background: linear-gradient(180deg, #111, #000);
+            border-radius: 16px;
+            padding: 16px;
+            border: 3px solid var(--gold);
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.2), inset 0 0 20px #000;
+            height: 130px;
+            position: relative;
         }
 
-        .reel {
-            width: 28%;
+        /* 模拟中心瞄准红线 */
+        .viewport-matrix::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 69, 58, 0.4);
+            box-shadow: 0 0 8px #ff453a;
+            pointer-events: none;
+        }
+
+        .reel-housing {
+            width: 30%;
             height: 100%;
             background: #ffffff;
-            border-radius: 8px;
+            border-radius: 10px;
             position: relative;
             overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
         }
 
-        .reel-container {
+        .reel-strip {
             position: absolute;
             top: 0;
             left: 0;
@@ -110,354 +146,453 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: top 0s ease-in-out;
         }
 
-        .slot-icon {
-            height: 120px;
-            font-size: 3.5rem;
+        .icon-cell {
+            height: 130px;
+            font-size: 3.8rem;
             display: flex;
             justify-content: center;
             align-items: center;
             box-sizing: border-box;
+            text-shadow: 1px 2px 3px rgba(0,0,0,0.2);
         }
 
-        /* 控制区域 */
-        .controls {
-            margin-top: 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .bet-selector {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .bet-btn {
-            background: #2c2c2e;
-            border: 1px solid rgba(255,255,255,0.2);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .bet-btn.active {
-            background: var(--gold-color);
-            color: #000;
-            border-color: var(--gold-color);
-        }
-
-        .spin-btn {
-            background: linear-gradient(180deg, #ff453a, #ff3b30);
-            border: none;
-            color: white;
-            padding: 18px;
-            border-radius: 16px;
-            font-size: 1.4rem;
-            font-weight: bold;
-            box-shadow: 0 5px 0 #b3241c;
-            cursor: pointer;
-            transition: all 0.1s;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
-        }
-
-        .spin-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 1px 0 #b3241c;
-        }
-
-        .spin-btn:disabled {
-            background: #48484a;
-            box-shadow: 0 5px 0 #2c2c2e;
-            color: #8e8e93;
-            cursor: not-allowed;
-        }
-
-        /* 结果显示与数据面板 */
-        .msg-display {
+        /* 状态播报大屏 */
+        .led-screen {
+            background: #050507;
+            border: 1px solid #222;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 18px;
             text-align: center;
-            height: 30px;
-            margin-top: 15px;
+            font-family: monospace;
             font-size: 1.1rem;
             font-weight: bold;
             color: #30d158;
+            text-shadow: 0 0 6px rgba(48, 209, 88, 0.6);
+            min-height: 24px;
         }
 
-        .stats-panel {
-            width: 90%;
-            max-width: 400px;
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 15px;
-            margin-top: 20px;
-            box-sizing: border-box;
+        /* 控制面板区 */
+        .control-deck {
+            margin-top: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+        .wager-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 12px;
+            border-radius: 14px;
+        }
+
+        .wager-chips {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chip-btn {
+            background: var(--surface-bright);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .chip-btn.active {
+            background: linear-gradient(135deg, var(--neon-blue), #007aff);
+            color: #fff;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 12px rgba(0, 221, 255, 0.4);
+        }
+
+        .launch-master-btn {
+            background: linear-gradient(180deg, #ff453a 0%, #ff3b30 100%);
+            border: none;
+            color: white;
+            padding: 20px;
+            border-radius: 18px;
+            font-size: 1.5rem;
+            font-weight: 900;
+            box-shadow: 0 6px 0 #991b1b, 0 8px 20px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: all 0.05s;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: 2px;
+        }
+
+        .launch-master-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #991b1b, 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .launch-master-btn:disabled {
+            background: #3a3a3c;
+            box-shadow: 0 6px 0 #2c2c2e;
+            color: #777;
+            cursor: not-allowed;
+            text-shadow: none;
+        }
+
+        /* 隐藏的超级暗门后台界面 */
+        .admin-backdoor-panel {
+            display: none;
+            background: linear-gradient(135deg, #111, #220000);
+            border: 2px dashed #ff453a;
+            border-radius: 14px;
+            padding: 12px;
+            margin-top: 15px;
             text-align: center;
         }
 
-        .stat-box {
-            background: rgba(255,255,255,0.05);
-            padding: 10px;
-            border-radius: 10px;
+        .backdoor-title {
+            font-size: 0.85rem;
+            color: #ff453a;
+            font-weight: bold;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
         }
 
-        .stat-box div:first-child {
+        /* 尊享高级数据量化看板 */
+        .analytics-dashboard {
+            width: 92%;
+            max-width: 410px;
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 18px;
+            margin-top: 20px;
+            box-sizing: border-box;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .analytics-title {
+            font-size: 0.9rem;
+            color: #8e8e93;
+            margin-bottom: 12px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .grid-matrix {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .metric-card {
+            background: rgba(255,255,255,0.03);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+
+        .metric-card.secret-trigger {
+            cursor: pointer;
+        }
+
+        .metric-label {
             font-size: 0.8rem;
             color: #8e8e93;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
-        .stat-box div:last-child {
-            font-size: 1.1rem;
-            font-weight: bold;
+        .metric-value {
+            font-size: 1.2rem;
+            font-weight: 800;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h2>🎰 幸运转轮 2.0</h2>
-        <div class="balance-container">资产: $<span id="balance">1000</span></div>
+    <div class="dashboard-header">
+        <div class="brand-title">QUANT LABS</div>
+        <div class="balance-pill">资产: $<span id="domBalance">1000</span></div>
     </div>
 
-    <div class="machine-container">
-        <div class="marquee">★ JACKPOT ★</div>
+    <div class="arcade-cabinet">
+        <div class="marquee-banner">⚡️ MEGA WIN STATIONS ⚡️</div>
         
-        <div class="slots-window">
-            <!-- 轮盘 1 -->
-            <div class="reel" id="reel1">
-                <div class="reel-container" id="container1"></div>
+        <div class="viewport-matrix">
+            <div class="reel-housing">
+                <div class="reel-strip" id="strip1"></div>
             </div>
-            <!-- 轮盘 2 -->
-            <div class="reel" id="reel2">
-                <div class="reel-container" id="container2"></div>
+            <div class="reel-housing">
+                <div class="reel-strip" id="strip2"></div>
             </div>
-            <!-- 轮盘 3 -->
-            <div class="reel" id="reel3">
-                <div class="reel-container" id="container3"></div>
+            <div class="reel-housing">
+                <div class="reel-strip" id="strip3"></div>
             </div>
         </div>
 
-        <div class="msg-display" id="msgDisplay">准备好大赢一场了吗？</div>
+        <div class="led-screen" id="domLed">🎯 准备就绪，请注入筹码</div>
 
-        <div class="controls">
-            <div class="bet-selector">
-                <span style="color:#8e8e93;">下注额:</span>
-                <button class="bet-btn active" onclick="setBet(10)">10</button>
-                <button class="bet-btn" onclick="setBet(50)">50</button>
-                <button class="bet-btn" onclick="setBet(100)">100</button>
+        <div class="control-deck">
+            <div class="wager-row">
+                <span style="color:#8e8e93; font-weight: bold; font-size: 0.9rem;">MUTATION 下注</span>
+                <div class="wager-chips">
+                    <button class="chip-btn active" onclick="changeWager(10)">10</button>
+                    <button class="chip-btn" onclick="changeWager(50)">50</button>
+                    <button class="chip-btn" onclick="changeWager(100)">100</button>
+                </div>
             </div>
-            <button class="spin-btn" id="spinBtn" onclick="startSpin()">拉 动摇 杆 !</button>
+            <button class="launch-master-btn" id="domLaunchBtn" onclick="triggerMatrixCycle()">拉动摇杆 SPIN</button>
+        </div>
+
+        <div class="admin-backdoor-panel" id="domBackdoor">
+            <div class="backdoor-title">⚠️ 核心高级作弊后台已挂载</div>
+            <button class="chip-btn" id="cheatBtn" style="border-color:#ff453a; color:#ff453a; width: 100%;" onclick="toggleCheatMode()">
+                暗门状态：已关闭杀率控制 (正常概率)
+            </button>
         </div>
     </div>
 
-    <!-- 数据分析统计面板 -->
-    <div class="stats-panel">
-        <div class="stats-grid">
-            <div class="stat-box">
-                <div>启动次数</div>
-                <div id="statPlays">0</div>
+    <div class="analytics-dashboard">
+        <div class="analytics-title">📊 实时复合概率流监控</div>
+        <div class="grid-matrix">
+            <div class="metric-card">
+                <div class="metric-label">累计转动周期</div>
+                <div class="metric-value" id="mPlays">0</div>
             </div>
-            <div class="stat-box">
-                <div>中奖次数</div>
-                <div id="statWins">0</div>
+            <div class="metric-card secret-trigger" onclick="handleSecretClick()">
+                <div class="metric-label">★ 综合计算胜率 ★</div>
+                <div class="metric-value" style="color:var(--gold);" id="mRate">0%</div>
             </div>
-            <div class="stat-box">
-                <div>综合胜率</div>
-                <div id="statRate">0%</div>
+            <div class="metric-card">
+                <div class="metric-label">统计总投入</div>
+                <div class="metric-value" style="color:#ff453a;" id="mCost">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">统计总返还</div>
+                <div class="metric-value" style="color:#30d158;" id="mReturn">0</div>
             </div>
         </div>
     </div>
 
     <script>
-        // 游戏核心数据配置
-        const pool = ['7', '🍒', '🍋', '🍉', '💎', '🍇'];
-        let balance = 1000;
-        let currentBet = 10;
-        let isSpinning = false;
+        const itemPool = ['7', '💎', '🍒', '🍋', '🔔', '🍇', '🍉'];
+        let wallet = 1000;
+        let wager = 10;
+        let running = false;
 
-        // 统计指标
-        let totalPlays = 0;
-        let totalWins = 0;
+        // 核心量化统计参数
+        let statSpent = 0;
+        let statReturned = 0;
+        let statRounds = 0;
+        let statWins = 0;
 
-        // 初始化原生音频上下文（免去加载外部音频）
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playTone(freq, type, duration) {
+        // 暗门控制变量
+        let secretCounter = 0;
+        let cheatActive = false;
+
+        // 独家无损原声音频流处理器
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        function emitSound(frequency, waveform, lifespan) {
             try {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = type;
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
+                const osc = audioContext.createOscillator();
+                const vca = audioContext.createGain();
+                osc.type = waveform;
+                osc.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                vca.gain.setValueAtTime(0.12, audioContext.currentTime);
+                vca.gain.exponentialRampToValueAtTime(0.005, audioContext.currentTime + lifespan);
+                osc.connect(vca);
+                vca.connect(audioContext.destination);
                 osc.start();
-                osc.stop(audioCtx.currentTime + duration);
-            } catch(e) {}
+                osc.stop(audioContext.currentTime + lifespan);
+            } catch(err) {}
         }
 
-        // 构建轮盘DOM元素
-        function initReels() {
-            for (let i = 1; i <= 3; i++) {
-                const container = document.getElementById(`container${i}`);
-                container.innerHTML = '';
-                // 预先生成多组图标形成无缝滚动流
-                for (let j = 0; j < 30; j++) {
-                    const div = document.createElement('div');
-                    div.className = 'slot-icon';
-                    div.innerText = pool[j % pool.length];
-                    container.appendChild(div);
+        // 初始化滚条长序列
+        function generateStrips() {
+            for (let idx = 1; idx <= 3; idx++) {
+                const targetStrip = document.getElementById(`strip${idx}`);
+                targetStrip.innerHTML = '';
+                for (let k = 0; k < 35; k++) {
+                    const block = document.createElement('div');
+                    block.className = 'icon-cell';
+                    block.innerText = itemPool[k % itemPool.length];
+                    targetStrip.appendChild(block);
                 }
             }
         }
 
-        function setBet(amount) {
-            if (isSpinning) return;
-            currentBet = amount;
-            document.querySelectorAll('.bet-btn').forEach(btn => {
-                btn.classList.toggle('active', parseInt(btn.innerText) === amount);
+        function changeWager(val) {
+            if (running) return;
+            wager = val;
+            document.querySelectorAll('.chip-btn').forEach(b => {
+                b.classList.toggle('active', parseInt(b.innerText) === val);
             });
-            playTone(440, 'sine', 0.05);
+            emitSound(480, 'sine', 0.04);
         }
 
-        // 核心滚动逻辑
-        async function startSpin() {
-            if (isSpinning || balance < currentBet) {
-                if (balance < currentBet) alert("资金余额不足，请充值或调低赌注！");
+        // 连点 5 次中奖率触发暗门密码锁
+        function handleSecretClick() {
+            secretCounter++;
+            emitSound(800, 'sine', 0.03);
+            if (secretCounter >= 5) {
+                secretCounter = 0;
+                let pass = prompt("请输入开发者授权密钥解锁高级后台：");
+                if (pass === "777") {
+                    document.getElementById('domBackdoor').style.display = 'block';
+                    document.getElementById('domLed').innerText = "⚠️ 后台高阶暗门挂载成功！";
+                    emitSound(880, 'square', 0.15);
+                }
+            }
+        }
+
+        function toggleCheatMode() {
+            cheatActive = !cheatActive;
+            const cBtn = document.getElementById('cheatBtn');
+            if (cheatActive) {
+                cBtn.innerText = "暗门状态：【已开启 777 必定爆奖作弊】";
+                cBtn.style.background = "#ff453a";
+                cBtn.style.color = "#fff";
+                emitSound(1200, 'square', 0.2);
+            } else {
+                cBtn.innerText = "暗门状态：已关闭杀率控制 (正常概率)";
+                cBtn.style.background = "var(--surface-bright)";
+                cBtn.style.color = "#ff453a";
+                emitSound(400, 'sawtooth', 0.2);
+            }
+        }
+
+        // 启动滚轴矩阵核心流程
+        async function triggerMatrixCycle() {
+            if (running || wallet < wager) {
+                if (wallet < wager) alert("量子账户余额亏空，请重置或降低规格！");
                 return;
             }
 
-            // 扣除本金
-            isSpinning = true;
-            balance -= currentBet;
-            totalPlays++;
-            document.getElementById('balance').innerText = balance;
-            document.getElementById('spinBtn').disabled = true;
-            document.getElementById('msgDisplay').innerText = "滚动中...";
-            document.getElementById('msgDisplay').style.color = "#ff9500";
+            running = true;
+            wallet -= wager;
+            statSpent += wager;
+            statRounds++;
 
-            // 预先计算结果
-            const finalResults = [
-                pool[Math.floor(Math.random() * pool.length)],
-                pool[Math.floor(Math.random() * pool.length)],
-                pool[Math.floor(Math.random() * pool.length)]
-            ];
+            document.getElementById('domBalance').innerText = wallet;
+            document.getElementById('domLaunchBtn').disabled = true;
+            document.getElementById('domLed').innerText = "🔮 矩阵高速重组中...";
+            document.getElementById('domLed').style.color = "var(--neon-blue)";
 
-            // 启动三个滚轮的异歩滚动动画
-            const p1 = spinReel(1, finalResults[0], 1.5);
-            const p2 = spinReel(2, finalResults[1], 2.0);
-            const p3 = spinReel(3, finalResults[2], 2.5);
+            // 测算生成本轮结果
+            let results = [];
+            if (cheatActive) {
+                // 暗门启动：强行锁死 777 特等奖
+                results = ['7', '7', '7'];
+                // 顺便把开关恢复，防止别人看出端倪
+                toggleCheatMode(); 
+            } else {
+                // 正常随机数生成
+                results = [
+                    itemPool[Math.floor(Math.random() * itemPool.length)],
+                    itemPool[Math.floor(Math.random() * itemPool.length)],
+                    itemPool[Math.floor(Math.random() * itemPool.length)]
+                ];
+            }
 
-            await Promise.all([p1, p2, p3]);
+            // 滚动异歩阻尼处理
+            const task1 = executeStripRoll(1, results[0], 1.4);
+            const task2 = executeStripRoll(2, results[1], 1.9);
+            const task3 = executeStripRoll(3, results[2], 2.4);
 
-            // 结算奖励
-            settleGame(finalResults);
+            await Promise.all([task1, task2, task3]);
+            evalResults(results);
         }
 
-        function spinReel(reelNum, targetIcon, duration) {
-            return new Promise(resolve => {
-                const container = document.getElementById(`container${reelNum}`);
-                
-                // 定位目标图标在循环流中的匹配项
-                const matchIndex = pool.indexOf(targetIcon);
-                // 确保它滚到较为靠后的位置以展示高速效果
-                const targetIndex = matchIndex + pool.length * 3; 
-                const targetTop = -(targetIndex * 120);
+        function executeStripRoll(stripNum, exactIcon, duration) {
+            return new Promise(done => {
+                const el = document.getElementById(`strip${stripNum}`);
+                const baseIdx = itemPool.indexOf(exactIcon);
+                const targetIdx = baseIdx + (itemPool.length * 3);
+                const calcTop = -(targetIdx * 130);
 
-                container.style.transition = `top ${duration}s cubic-bezier(0.25, 0.1, 0.25, 1)`;
-                container.style.top = `${targetTop}px`;
+                el.style.transition = `top ${duration}s cubic-bezier(0.1, 0.85, 0.25, 1)`;
+                el.style.top = `${calcTop}px`;
 
-                // 滚动中发出的音效
-                let interval = setInterval(() => {
-                    if (!isSpinning) clearInterval(interval);
-                    else playTone(300 + (reelNum * 100), 'triangle', 0.02);
-                }, 100);
+                let buzzer = setInterval(() => {
+                    if (!running) clearInterval(buzzer);
+                    else emitSound(260 + (stripNum * 80), 'triangle', 0.02);
+                }, 90);
 
                 setTimeout(() => {
-                    clearInterval(interval);
-                    playTone(600 + (reelNum * 100), 'sine', 0.1);
-                    resolve();
+                    clearInterval(buzzer);
+                    emitSound(500 + (stripNum * 120), 'sine', 0.08);
+                    done();
                 }, duration * 1000);
             });
         }
 
-        function settleGame(results) {
-            isSpinning = false;
-            document.getElementById('spinBtn').disabled = false;
+        function evalResults(arr) {
+            running = false;
+            document.getElementById('domLaunchBtn').disabled = false;
 
-            const [r1, r2, r3] = results;
-            let winMultiplier = 0;
-            let message = "";
+            const [v1, v2, v3] = arr;
+            let multiplier = 0;
+            let statusText = "";
 
-            if (r1 === r2 && r2 === r3) {
-                // 三连全中 (Jackpot)
-                totalWins++;
-                if (r1 === '7') {
-                    winMultiplier = 50; // 777 爆大奖
-                    message = "🔥 究极暴富！777 特等奖！";
-                } else if (r1 === '💎') {
-                    winMultiplier = 30;
-                    message = "💎 闪耀华丽！钻石大奖！";
+            if (v1 === v2 && v2 === v3) {
+                statWins++;
+                if (v1 === '7') {
+                    multiplier = 80; // 777 特等奖翻 80 倍
+                    statusText = "🌋 终极奇迹！777 特等天选头奖！";
+                } else if (v1 === '💎') {
+                    multiplier = 40;
+                    statusText = "💎 璀璨夺目！至尊超巨星钻石奖！";
                 } else {
-                    winMultiplier = 15;
-                    message = `🎉 恭喜！触发三连 ${r1}！`;
+                    multiplier = 20;
+                    statusText = `🎉 大满贯！全面消除产生复合连线 [${v1}]！`;
                 }
-            } else if (r1 === r2 || r2 === r3 || r1 === r3) {
-                // 两连中
-                totalWins++;
-                winMultiplier = 2;
-                message = "✨ 运气不错，双星连珠！";
+            } else if (v1 === v2 || v2 === v3 || v1 === v3) {
+                statWins++;
+                multiplier = 2.5; // 两连小赢
+                statusText = "✨ 局部共振！触发双重连锁反应。";
             } else {
-                // 未中奖
-                message = " 差一点就中了，再接再厉！";
+                statusText = "⚡️ 校验失败，算法偏差，大数定律生效。";
             }
 
-            // 更新金额与界面
-            if (winMultiplier > 0) {
-                const winAmount = currentBet * winMultiplier;
-                balance += winAmount;
-                document.getElementById('msgDisplay').innerText = `${message} +$${winAmount}`;
-                document.getElementById('msgDisplay').style.color = "#30d158";
-                // 连续播放中奖喜报音效
-                playTone(523.25, 'square', 0.1);
-                setTimeout(() => playTone(659.25, 'square', 0.1), 100);
-                setTimeout(() => playTone(783.99, 'square', 0.3), 200);
+            if (multiplier > 0) {
+                const rewards = wager * multiplier;
+                wallet += rewards;
+                statReturned += rewards;
+                document.getElementById('domLed').innerText = `${statusText} +$${rewards}`;
+                document.getElementById('domLed').style.color = "#30d158";
+
+                // 赢钱奏乐
+                emitSound(523, 'square', 0.08);
+                setTimeout(() => emitSound(659, 'square', 0.08), 80);
+                setTimeout(() => emitSound(783, 'square', 0.08), 160);
+                setTimeout(() => emitSound(1046, 'square', 0.25), 240);
             } else {
-                document.getElementById('msgDisplay').innerText = message;
-                document.getElementById('msgDisplay').style.color = "#ff3b30";
-                playTone(150, 'sawtooth', 0.2);
+                document.getElementById('domLed').innerText = statusText;
+                document.getElementById('domLed').style.color = "var(--primary)";
+                emitSound(170, 'sawtooth', 0.25);
             }
 
-            // 更新仪表盘
-            document.getElementById('balance').innerText = balance;
-            document.getElementById('statPlays').innerText = totalPlays;
-            document.getElementById('statWins').innerText = totalWins;
-            document.getElementById('statRate').innerText = `${Math.round((totalWins / totalPlays) * 100)}%`;
+            // 更新整体量化看板面板
+            document.getElementById('domBalance').innerText = wallet;
+            document.getElementById('mPlays').innerText = statRounds;
+            document.getElementById('mCost').innerText = statSpent;
+            document.getElementById('mReturn').innerText = statReturned;
+            document.getElementById('mRate').innerText = `${Math.round((statWins / statRounds) * 100)}%`;
 
-            // 重置滚轮以便下一次无缝旋转
-            for (let i = 1; i <= 3; i++) {
-                const container = document.getElementById(`container${i}`);
-                const currentMatch = pool.indexOf(results[i-1]);
-                container.style.transition = 'none';
-                container.style.top = `-${currentMatch * 120}px`;
+            // 瞬时归位算法，确保长滑轨无间断循环
+            for (let m = 1; m <= 3; m++) {
+                const strip = document.getElementById(`strip${m}`);
+                const matchPos = itemPool.indexOf(arr[m-1]);
+                strip.style.transition = 'none';
+                strip.style.top = `-${matchPos * 130}px`;
             }
         }
 
-        // 页面装载自动初始化
-        window.onload = initReels;
+        window.onload = generateStrips;
     </script>
 </body>
 </html>
