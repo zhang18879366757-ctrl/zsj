@@ -1,167 +1,364 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <title>Neon Slot Pro 🎰</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
-    <style>
-        :root { --neon: #00ffe1; --bg: #090a0f; }
-        
-        body {
-            margin: 0; 
-            font-family: 'Orbitron', sans-serif;
-            background: radial-gradient(circle at center, #1b2735, #000);
-            color: #fff; 
-            /* 适配 iPhone 灵动岛和底部安全区域 */
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-            min-height: 100dvh; /* 动态视口高度，解决 iOS 工具栏遮挡问题 */
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Slot v6.2 🎰 UI Ultimate</title>
 
-        .box {
-            width: 90%; 
-            max-width: 380px; 
-            padding: 20px; 
-            background: rgba(255,255,255,0.03);
-            border-radius: 30px; 
-            border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(20px); 
-            text-align: center; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-        }
+<style>
+/* =========================
+   🌌 背景（动态赌场氛围）
+========================= */
+body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:Arial;
 
-        h1 { color: var(--neon); margin: 0 0 20px; font-size: 24px; text-shadow: 0 0 10px var(--neon); }
+    background: radial-gradient(circle at 20% 20%, #0ff2, transparent 40%),
+                radial-gradient(circle at 80% 70%, #00f2, transparent 40%),
+                radial-gradient(circle at center, #05070d, #000);
+    overflow:hidden;
+}
 
-        .info { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px; color: #aaa; }
+/* 光流层 */
+body::before{
+    content:"";
+    position:absolute;
+    width:200%;
+    height:200%;
+    background: conic-gradient(from 0deg, #00ffe1, transparent, #0077ff, transparent);
+    animation: rotate 12s linear infinite;
+    opacity:0.08;
+}
 
-        .machines { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
-        .machines button {
-            background: #111; color: #fff; border: 1px solid #333; padding: 10px 5px;
-            border-radius: 10px; cursor: pointer; transition: 0.3s; font-size: 12px;
-        }
-        .machines button.active { border-color: var(--neon); color: var(--neon); background: rgba(0,255,225,0.1); }
+@keyframes rotate{
+    from{transform:rotate(0);}
+    to{transform:rotate(360deg);}
+}
 
-        .reels { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 25px; }
-        .reel {
-            flex: 1; height: 90px; background: #050505; border: 2px solid #222;
-            border-radius: 18px; display: flex; justify-content: center; align-items: center;
-            font-size: 35px; transition: transform 0.1s;
-        }
-        .spinning { filter: blur(4px); opacity: 0.7; }
+/* =========================
+   🧊 主容器（赌场机身）
+========================= */
+.box{
+    width:380px;
+    padding:22px;
+    border-radius:26px;
 
-        .spin {
-            width: 100%; padding: 18px; border: none; border-radius: 15px; font-weight: bold;
-            font-size: 20px; cursor: pointer; background: linear-gradient(90deg, #00ffe1, #0077ff);
-            color: #000; transition: 0.3s; -webkit-tap-highlight-color: transparent;
-        }
-        .spin:active { transform: scale(0.96); }
-        .spin:disabled { opacity: 0.4; filter: grayscale(1); }
+    background: rgba(255,255,255,0.06);
+    border:1px solid rgba(0,255,255,0.2);
 
-        #msg { margin-top: 20px; min-height: 20px; font-size: 14px; color: var(--neon); }
-        .win { animation: pulse 0.6s infinite; border-color: #fff !important; }
-        @keyframes pulse { 0%, 100% { box-shadow: 0 0 20px #fff; } 50% { box-shadow: 0 0 5px #fff; } }
-    </style>
+    backdrop-filter: blur(20px);
+
+    box-shadow:
+        0 0 40px rgba(0,255,255,0.12),
+        inset 0 0 30px rgba(0,0,0,0.5);
+
+    position:relative;
+    z-index:2;
+}
+
+/* 标题 */
+h1{
+    margin:0 0 10px;
+    color:#00ffe1;
+    text-align:center;
+    letter-spacing:2px;
+}
+
+/* =========================
+   💰 HUD
+========================= */
+.hud{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    opacity:0.9;
+    margin-bottom:10px;
+}
+
+/* =========================
+   🎮 机位卡片
+========================= */
+.machines{
+    display:flex;
+    justify-content:space-between;
+    margin:10px 0 15px;
+}
+
+.card{
+    flex:1;
+    margin:0 4px;
+    padding:8px;
+
+    font-size:11px;
+    text-align:center;
+
+    border-radius:12px;
+    cursor:pointer;
+
+    background: rgba(0,0,0,0.35);
+    border:1px solid rgba(0,255,255,0.15);
+
+    transition:0.2s;
+}
+
+.card.active{
+    background:#00ffe1;
+    color:#001018;
+    transform:scale(1.05);
+    box-shadow:0 0 15px #00ffe1;
+}
+
+/* =========================
+   🎰 老虎机舞台
+========================= */
+.stage{
+    position:relative;
+    padding:16px;
+    border-radius:18px;
+
+    background: rgba(0,0,0,0.45);
+    border:1px solid rgba(0,255,255,0.25);
+
+    box-shadow:
+        inset 0 0 25px rgba(0,255,255,0.08),
+        0 0 25px rgba(0,0,0,0.4);
+}
+
+/* 聚光灯 */
+.stage::before{
+    content:"";
+    position:absolute;
+    top:-40px;
+    left:50%;
+    transform:translateX(-50%);
+    width:200px;
+    height:80px;
+    background: radial-gradient(circle, rgba(0,255,255,0.25), transparent 70%);
+    filter:blur(10px);
+}
+
+/* =========================
+   🎰 转轮
+========================= */
+.reels{
+    display:flex;
+    justify-content:space-between;
+}
+
+.reel{
+    width:95px;
+    height:95px;
+    border-radius:14px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:44px;
+
+    background: linear-gradient(145deg,#111,#1a1a1a);
+
+    border:1px solid rgba(0,255,255,0.15);
+
+    box-shadow:
+        inset 0 0 15px rgba(0,0,0,0.7),
+        0 0 10px rgba(0,255,255,0.08);
+}
+
+/* =========================
+   🎮 按钮
+========================= */
+button{
+    width:100%;
+    margin-top:14px;
+    padding:12px;
+
+    border:none;
+    border-radius:14px;
+
+    font-weight:bold;
+    cursor:pointer;
+
+    background: linear-gradient(90deg,#00ffe1,#0077ff);
+    color:#001018;
+
+    box-shadow:0 0 20px rgba(0,255,255,0.3);
+
+    transition:0.2s;
+}
+
+button:active{
+    transform:scale(0.97);
+}
+
+/* =========================
+   ✨ 中奖效果
+========================= */
+.win{
+    animation: glow 0.25s infinite alternate;
+}
+
+@keyframes glow{
+    from{box-shadow:0 0 10px #00ffe1;}
+    to{box-shadow:0 0 30px #00ffe1;}
+}
+
+.flash{
+    animation: flash 0.4s;
+}
+
+@keyframes flash{
+    0%{filter:brightness(1);}
+    50%{filter:brightness(2);}
+    100%{filter:brightness(1);}
+}
+
+/* ========================= */
+#msg{
+    text-align:center;
+    margin-top:10px;
+    font-size:13px;
+}
+</style>
 </head>
+
 <body>
 
 <div class="box">
-    <h1>SLOT PRO</h1>
-    <div class="info">
-        <div>💰 <span id="balance">100</span></div>
-        <div>🎲 <span id="bet">10</span></div>
+    <h1>🎰 SLOT v6.2</h1>
+
+    <div class="hud">
+        <div>💰 <span id="bal">100</span></div>
+        <div>🎲 Bet: <span id="bet">10</span></div>
     </div>
+
     <div class="machines">
-        <button onclick="setMachine('classic', this)" class="active">Classic</button>
-        <button onclick="setMachine('jackpot', this)">Jackpot</button>
-        <button onclick="setMachine('ultra', this)">Ultra</button>
+        <div class="card active" onclick="setM('classic',event)">Classic</div>
+        <div class="card" onclick="setM('jackpot',event)">Jackpot</div>
+        <div class="card" onclick="setM('ultra',event)">Ultra</div>
     </div>
-    <div class="reels">
-        <div class="reel" id="r1">🍒</div>
-        <div class="reel" id="r2">🍋</div>
-        <div class="reel" id="r3">🍊</div>
+
+    <div class="stage">
+        <div class="reels">
+            <div class="reel" id="r1">🍒</div>
+            <div class="reel" id="r2">🍋</div>
+            <div class="reel" id="r3">🍊</div>
+        </div>
     </div>
-    <button class="spin" id="spinBtn" onclick="spin()">SPIN</button>
-    <div id="msg">准备好赢大奖了吗？</div>
+
+    <button onclick="spin()">SPIN</button>
+    <div id="msg">选择机位开始</div>
 </div>
 
 <script>
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    function beep(f, t) {
-        try {
-            const o = ctx.createOscillator(), g = ctx.createGain();
-            o.frequency.value = f; o.connect(g); g.connect(ctx.destination);
-            o.start(); g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + t);
-            o.stop(ctx.currentTime + t);
-        } catch(e) {}
-    }
 
-    const machines = {
-        classic: { bet: 10, payout: 3, table: [{s:"🍒",w:35},{s:"🍋",w:30},{s:"🍊",w:25},{s:"🍉",w:8},{s:"⭐",w:2}] },
-        jackpot: { bet: 20, payout: 6, table: [{s:"🍒",w:30},{s:"🍋",w:25},{s:"⭐",w:10},{s:"💎",w:5}] },
-        ultra: { bet: 50, payout: 15, table: [{s:"⭐",w:50},{s:"💎",w:35},{s:"🔥",w:15}] }
-    };
+// =====================
+// 数据
+// =====================
+let bal = 100;
+let spinning = false;
+let current = "classic";
 
-    let current = "classic", balance = 100, spinning = false;
+const M = {
+ classic:{bet:10,p:[["🍒",40],["🍋",30],["🍊",20],["⭐",10]]},
+ jackpot:{bet:20,p:[["🍒",30],["⭐",40],["💎",30]]},
+ ultra:{bet:50,p:[["⭐",50],["💎",30],["🔥",20]]}
+};
 
-    function setMachine(name, el) {
-        current = name;
-        document.querySelectorAll(".machines button").forEach(b => b.classList.remove("active"));
-        el.classList.add("active");
-        document.getElementById("bet").innerText = machines[name].bet;
-        document.getElementById("msg").innerText = "已切换: " + name.toUpperCase();
-    }
+// =====================
+function rand(list){
+ let t = list.reduce((a,b)=>a+b[1],0);
+ let r = Math.random()*t;
+ for(let i=0;i<list.length;i++){
+  r-=list[i][1];
+  if(r<=0)return list[i][0];
+ }
+}
 
-    function weighted(table) {
-        let total = table.reduce((a, b) => a + b.w, 0), r = Math.random() * total;
-        for (let item of table) { r -= item.w; if (r <= 0) return item.s; }
-        return table[0].s;
-    }
+// =====================
+function setM(m,e){
+ current=m;
+ document.querySelectorAll(".card").forEach(c=>c.classList.remove("active"));
+ e.target.classList.add("active");
+ document.getElementById("bet").innerText=M[m].bet;
+}
 
-    async function roll(reel, final) {
-        reel.classList.add("spinning");
-        const icons = ["🍒","🍋","🍊","🍉","⭐","💎","🔥"];
-        for(let i=0; i<15; i++) {
-            reel.innerText = icons[Math.floor(Math.random()*icons.length)];
-            await new Promise(r => setTimeout(r, 60));
-        }
-        reel.classList.remove("spinning");
-        reel.innerText = final;
-    }
+// =====================
+function roll(el,final){
+ return new Promise(res=>{
+  let i=0;
+  let t=setInterval(()=>{
+   el.innerText=["🍒","🍋","🍊","🍉","⭐","💎","🔥"][Math.floor(Math.random()*7)];
+   i++;
+   if(i>18){
+    clearInterval(t);
+    el.innerText=final;
+    res();
+   }
+  },60);
+ });
+}
 
-    async function spin() {
-        if(spinning || balance < machines[current].bet) {
-            if(balance < machines[current].bet) document.getElementById("msg").innerText = "余额不足!";
-            return;
-        }
-        spinning = true;
-        document.getElementById("spinBtn").disabled = true;
-        balance -= machines[current].bet;
-        document.getElementById("balance").innerText = balance;
-        
-        beep(200, 0.1);
-        const r1=document.getElementById("r1"), r2=document.getElementById("r2"), r3=document.getElementById("r3");
-        const results = [weighted(machines[current].table), weighted(machines[current].table), weighted(machines[current].table)];
-        
-        await Promise.all([roll(r1, results[0]), roll(r2, results[1]), roll(r3, results[2])]);
+// =====================
+async function spin(){
+ if(spinning) return;
+ let m=M[current];
 
-        if(results[0] === results[1] && results[1] === results[2]) {
-            let win = machines[current].bet * machines[current].payout;
-            balance += win;
-            document.getElementById("balance").innerText = balance;
-            document.getElementById("msg").innerText = "🎉 BIG WIN: " + win;
-            [r1,r2,r3].forEach(r => r.classList.add("win"));
-            setTimeout(() => [r1,r2,r3].forEach(r => r.classList.remove("win")), 1000);
-            beep(800, 0.3);
-        } else {
-            document.getElementById("msg").innerText = "再接再厉!";
-        }
-        spinning = false;
-        document.getElementById("spinBtn").disabled = false;
-    }
+ if(bal<m.bet){
+  document.getElementById("msg").innerText="余额不足";
+  return;
+ }
+
+ spinning=true;
+ bal-=m.bet;
+ document.getElementById("bal").innerText=bal;
+
+ let a=rand(m.p);
+ let b=rand(m.p);
+ let c=rand(m.p);
+
+ let r1=document.getElementById("r1");
+ let r2=document.getElementById("r2");
+ let r3=document.getElementById("r3");
+
+ document.getElementById("msg").innerText="spinning...";
+
+ await Promise.all([
+  roll(r1,a),
+  roll(r2,b),
+  roll(r3,c)
+ ]);
+
+ let win = (a===b && b===c);
+
+ if(win){
+  let reward = m.bet*6;
+  bal+=reward;
+  document.getElementById("bal").innerText=bal;
+
+  document.getElementById("msg").innerText="🎉 WIN +"+reward;
+
+  document.body.classList.add("flash");
+  setTimeout(()=>document.body.classList.remove("flash"),400);
+
+  [r1,r2,r3].forEach(r=>r.classList.add("win"));
+
+  setTimeout(()=>{
+    [r1,r2,r3].forEach(r=>r.classList.remove("win"));
+  },1000);
+
+ }else{
+  document.getElementById("msg").innerText="再试一次";
+ }
+
+ spinning=false;
+}
+
 </script>
+
 </body>
 </html>
