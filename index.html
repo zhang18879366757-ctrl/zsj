@@ -3,64 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QUANT LABS - Combo Matrix 7.0</title>
+    <title>QUANT LABS - 6x6 Cyber Matrix</title>
     <style>
-        :root { --bg: #0b0b0e; --gold: #ffcc00; --primary: #ff3b30; }
-        body { margin: 0; background: var(--bg); color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 15px; box-sizing: border-box; overflow: hidden; }
+        :root { 
+            --gold: #ffd700; 
+            --neon-blue: #00f3ff; 
+            --neon-purple: #b500ff;
+            --neon-green: #39ff14;
+        }
         
-        .dashboard { width: 100%; max-width: 400px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; }
-        .score-pill { background: #222; padding: 10px 15px; border-radius: 20px; color: var(--gold); border: 1px solid #444; }
+        body { 
+            margin: 0; 
+            /* 深空动态渐变背景 */
+            background: radial-gradient(circle at 50% 0%, #2a1b40 0%, #090514 80%); 
+            color: #fff; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; flex-direction: column; align-items: center; 
+            min-height: 100vh; padding: 15px; box-sizing: border-box; overflow: hidden; 
+        }
         
-        .cabinet { width: 100%; max-width: 400px; background: #1a0505; border: 4px solid #500; border-radius: 20px; padding: 15px; box-sizing: border-box; }
+        /* 顶部仪表盘：毛玻璃质感 */
+        .dashboard { 
+            width: 100%; max-width: 420px; display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 15px; font-weight: 900; font-size: 1.1rem; letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+        .score-pill { 
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
+            padding: 8px 18px; border-radius: 30px; color: var(--gold); 
+            border: 1px solid rgba(255, 215, 0, 0.3); box-shadow: 0 0 15px rgba(255, 215, 0, 0.15);
+        }
         
-        /* 5x3 网格布局 */
-        .grid { display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(3, 70px); gap: 6px; background: #000; border: 3px solid var(--gold); border-radius: 12px; padding: 8px; position: relative; }
-        .cell { background: #111; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 2.2rem; transition: transform 0.3s ease, opacity 0.3s ease; }
+        /* 主机柜：高级拟物浮雕 */
+        .cabinet { 
+            width: 100%; max-width: 420px; 
+            background: rgba(20, 10, 30, 0.6); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; 
+            padding: 15px; box-sizing: border-box; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 2px rgba(255,255,255,0.2);
+        }
         
-        /* 消除动画特效 */
-        .pop { transform: scale(0); opacity: 0; }
-        .fall { transform: translateY(-70px); animation: drop 0.4s forwards; }
-        @keyframes drop { to { transform: translateY(0); } }
+        /* 6x6 自适应网格 */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(6, 1fr); 
+            grid-template-rows: repeat(6, 1fr); 
+            gap: 4px; background: rgba(0, 0, 0, 0.5); 
+            border-radius: 16px; padding: 6px; position: relative; 
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
+            border: 2px solid rgba(181, 0, 255, 0.3);
+        }
+        
+        /* 独立单元格：宝石质感 */
+        .cell { 
+            aspect-ratio: 1 / 1; /* 强制正方形 */
+            background: linear-gradient(135deg, #2c1b4d, #1a0f2e); 
+            border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; 
+            display: flex; justify-content: center; align-items: center; 
+            font-size: clamp(1.5rem, 6vw, 2.2rem); /* 随屏幕自动缩放表情大小 */
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.6), inset 1px 1px 2px rgba(255,255,255,0.1);
+            text-shadow: 0 0 10px rgba(255,255,255,0.4);
+        }
+        
+        /* 💥 Q弹物理动画引擎 */
+        .pop { transform: scale(0) rotate(45deg); opacity: 0; }
+        .fall { animation: bounceDrop 0.4s cubic-bezier(0.28, 0.84, 0.42, 1) forwards; }
+        
+        @keyframes bounceDrop { 
+            0% { transform: translateY(-100px) scaleY(1.1); opacity: 0; }
+            70% { transform: translateY(5px) scaleY(0.9); opacity: 1; }
+            100% { transform: translateY(0) scaleY(1); opacity: 1; }
+        }
 
-        .led { background: #000; color: #30d158; padding: 12px; margin: 15px 0; border-radius: 8px; font-weight: bold; text-align: center; border: 1px solid #333; }
-        .spin-btn { width: 100%; padding: 18px; background: var(--primary); border: none; color: #fff; border-radius: 12px; font-size: 1.4rem; font-weight: 900; cursor: pointer; transition: 0.1s; }
-        .spin-btn:active { transform: scale(0.96); }
-        .spin-btn:disabled { background: #555; color: #888; }
+        /* 赛博状态屏 */
+        .led { 
+            background: #030108; color: var(--neon-blue); 
+            padding: 12px; margin: 15px 0; border-radius: 10px; 
+            font-weight: 900; text-align: center; font-family: monospace; font-size: 1.1rem;
+            border: 1px solid rgba(0, 243, 255, 0.3); text-shadow: 0 0 8px var(--neon-blue);
+            transition: all 0.3s ease;
+        }
         
-        .debug-area { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; width: 100%; max-width: 400px; margin-top: 15px; }
-        .debug-btn { background: #222; padding: 12px; text-align: center; border-radius: 8px; font-size: 0.8rem; color: #666; cursor: pointer; }
+        /* 动感操作按钮 */
+        .spin-btn { 
+            width: 100%; padding: 18px; 
+            background: linear-gradient(90deg, #ff0055, #b500ff); 
+            border: none; color: #fff; border-radius: 14px; 
+            font-size: 1.4rem; font-weight: 900; cursor: pointer; 
+            box-shadow: 0 8px 20px rgba(181, 0, 255, 0.4), inset 0 2px 2px rgba(255,255,255,0.3);
+            transition: all 0.1s; letter-spacing: 2px;
+        }
+        .spin-btn:active { transform: translateY(4px); box-shadow: 0 2px 10px rgba(181, 0, 255, 0.4); }
+        .spin-btn:disabled { background: #333; box-shadow: none; color: #666; transform: none; }
+        
+        /* 隐藏的开发级暗门区 */
+        .debug-area { display: flex; justify-content: space-between; gap: 8px; width: 100%; max-width: 420px; margin-top: 20px; }
+        .debug-btn { flex: 1; background: transparent; padding: 10px; text-align: center; border-radius: 8px; font-size: 0.75rem; color: rgba(255,255,255,0.2); border: 1px dashed rgba(255,255,255,0.1); cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div class="dashboard">
-        <div>QUANT LABS 7.0</div>
-        <div class="score-pill">总资产: $<span id="domScore">1000</span></div>
+        <div style="color:var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue);">NEO-SLOT 6.0</div>
+        <div class="score-pill">CREDITS: $<span id="domScore">1000</span></div>
     </div>
 
     <div class="cabinet">
         <div class="grid" id="grid">
             </div>
-        <div class="led" id="led">🎯 矩阵待机中</div>
-        <button class="spin-btn" id="spinBtn" onclick="startGame()">充能 SPIN</button>
+        <div class="led" id="led">🟢 SYSTEM ONLINE</div>
+        <button class="spin-btn" id="spinBtn" onclick="startGame()">INITIATE SPIN</button>
     </div>
 
     <div class="debug-area">
-        <div class="debug-btn" onclick="seq(1)">周期 [1]</div>
-        <div class="debug-btn" onclick="debug-btn" onclick="seq(2)">投入 [2]</div>
-        <div class="debug-btn" onclick="seq(3)">返还 [3]</div>
+        <div class="debug-btn" onclick="seq(1)">[ SYS ]</div>
+        <div class="debug-btn" onclick="seq(2)">[ LOG ]</div>
+        <div class="debug-btn" onclick="seq(3)">[ OVR ]</div>
     </div>
 
     <script>
-        const symbols = ['💎', '🍒', '🍋', '🔔', '🍇']; // 移除7，将7作为暗门专属
-        const COLS = 5;
-        const ROWS = 3;
+        // 高清符号库，移除 7 作为隐藏专属
+        const symbols = ['💎', '🍎', '⭐', '🍀', '🔥', '🔮']; 
+        const COLS = 6; // 核心引擎升级为 6x6
+        const ROWS = 6;
         let board = [];
         let domCells = [];
         let score = 1000;
         let isProcessing = false;
 
-        // 暗门逻辑
+        // 【暗门协议】
         let _seq = [], _jackpot = false;
         function seq(n) {
             _seq.push(n);
@@ -68,15 +140,15 @@
             if (_seq.join(',') === '1,2,3') {
                 _jackpot = true;
                 const led = document.getElementById('led');
-                led.innerText = "⚡️ 战术核显卡已超频 (全屏777)";
-                led.style.color = "#ffcc00";
+                led.innerText = "⚠️ OMEGA OVERRIDE: 777_PROTOCOL ⚠️";
+                led.style.color = "var(--neon-purple)";
+                led.style.borderColor = "var(--neon-purple)";
+                led.style.textShadow = "0 0 15px var(--neon-purple)";
             }
         }
 
-        // 延迟辅助函数
         const delay = ms => new Promise(r => setTimeout(r, ms));
 
-        // 初始化网格
         function initGrid() {
             const gridEl = document.getElementById('grid');
             gridEl.innerHTML = '';
@@ -88,7 +160,6 @@
                 for (let c = 0; c < COLS; c++) {
                     const cell = document.createElement('div');
                     cell.className = 'cell';
-                    // 初始随机填充（确保初始无消除）
                     let sym = symbols[Math.floor(Math.random() * symbols.length)];
                     board[r][c] = sym;
                     cell.innerText = sym;
@@ -102,20 +173,23 @@
             if (isProcessing) return;
             isProcessing = true;
             document.getElementById('spinBtn').disabled = true;
-            score -= 10; // 每次消耗10
+            score -= 20; 
             updateScore();
-            document.getElementById('led').innerText = "🔄 矩阵重组中...";
-            document.getElementById('led').style.color = "#30d158";
+            
+            let led = document.getElementById('led');
+            led.innerText = "🌀 RESTRUCTURING MATRIX...";
+            led.style.color = "var(--neon-blue)";
+            led.style.borderColor = "rgba(0, 243, 255, 0.3)";
 
-            // 1. 生成新盘面
+            // 1. 全盘爆破动画
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS; c++) {
-                    domCells[r][c].classList.add('pop'); // 收缩动画
+                    domCells[r][c].classList.add('pop');
                 }
             }
-            await delay(300);
+            await delay(250);
 
-            // 暗门判定：如果激活，全屏填充 '7'
+            // 2. 数据层覆写 (如果触发暗门，填满36个7)
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS; c++) {
                     let sym = _jackpot ? '7' : symbols[Math.floor(Math.random() * symbols.length)];
@@ -124,18 +198,18 @@
                     domCells[r][c].classList.remove('pop');
                 }
             }
-            _jackpot = false; // 用完即抛
+            _jackpot = false; 
             await delay(300);
 
-            // 2. 启动连击检测引擎
+            // 3. 呼叫算法引擎
             await processMatches(1);
         }
 
-        // 核心递归算法：检测 -> 消除 -> 下落 -> 补充 -> 再次检测
+        // 核心递归算法 (适配 6x6)
         async function processMatches(comboCount) {
             let matchedCoords = new Set();
 
-            // 横向检测
+            // 横向连线检测
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS - 2; c++) {
                     let sym = board[r][c];
@@ -146,7 +220,7 @@
                     }
                 }
             }
-            // 纵向检测
+            // 纵向连线检测
             for (let c = 0; c < COLS; c++) {
                 for (let r = 0; r < ROWS - 2; r++) {
                     let sym = board[r][c];
@@ -158,49 +232,54 @@
                 }
             }
 
-            // 如果没有匹配，本轮结束
+            // 递归出口
             if (matchedCoords.size === 0) {
                 document.getElementById('spinBtn').disabled = false;
                 isProcessing = false;
-                if(comboCount === 1) document.getElementById('led').innerText = "结算完成，未触发消除。";
+                if(comboCount === 1) {
+                    document.getElementById('led').innerText = "✅ SCAN COMPLETE: NO MATCHES";
+                }
                 return;
             }
 
-            // 执行消除
-            document.getElementById('led').innerText = `💥 Combo x${comboCount}! 消除 ${matchedCoords.size} 个单位`;
-            document.getElementById('led').style.color = comboCount > 1 ? "#ffcc00" : "#30d158";
+            // 💥 连击视觉反馈
+            let led = document.getElementById('led');
+            led.innerText = `🔥 COMBO x${comboCount} : +${matchedCoords.size} BLOCKS!`;
+            led.style.color = comboCount > 2 ? "var(--neon-green)" : "var(--gold)";
+            led.style.textShadow = `0 0 10px ${comboCount > 2 ? 'var(--neon-green)' : 'var(--gold)'}`;
             
-            // 计算得分：消除数量 * 连击数 * 5
-            score += matchedCoords.size * comboCount * 5;
+            // 积分算法 (消除越多，连击越高，奖励越恐怖)
+            score += matchedCoords.size * comboCount * 15;
             updateScore();
 
+            // 执行消除炸裂
             matchedCoords.forEach(coord => {
                 let [r, c] = coord.split(',').map(Number);
                 domCells[r][c].classList.add('pop');
                 board[r][c] = null;
             });
-            await delay(400);
+            await delay(350); // 等待爆裂特效
 
-            // 执行重力下落
+            // ⬇️ 物理引力下落系统
             for (let c = 0; c < COLS; c++) {
                 let emptySpaces = 0;
                 for (let r = ROWS - 1; r >= 0; r--) {
                     if (board[r][c] === null) {
                         emptySpaces++;
                     } else if (emptySpaces > 0) {
-                        // 元素下移
+                        // 方块下移
                         board[r + emptySpaces][c] = board[r][c];
                         board[r][c] = null;
                         
                         domCells[r + emptySpaces][c].innerText = board[r + emptySpaces][c];
                         domCells[r + emptySpaces][c].classList.remove('pop');
-                        domCells[r][c].classList.add('pop');
+                        domCells[r][c].classList.add('pop'); // 原位置变为空白
                     }
                 }
             }
             await delay(200);
 
-            // 顶部填充新元素
+            // 🆕 顶部黑洞填补新能量块
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS; c++) {
                     if (board[r][c] === null) {
@@ -212,16 +291,16 @@
                     }
                 }
             }
-            await delay(400);
+            await delay(400); // 坠落动画时间
 
-            // 清理下落动画类
+            // 重置状态
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS; c++) {
                     domCells[r][c].classList.remove('fall');
                 }
             }
 
-            // 递归调用，检测掉落后是否形成新的连击
+            // 🔄 链式反应检测 (递归)
             await processMatches(comboCount + 1);
         }
 
@@ -229,7 +308,6 @@
             document.getElementById('domScore').innerText = score;
         }
 
-        // 启动初始化
         initGrid();
     </script>
 </body>
