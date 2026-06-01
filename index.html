@@ -1,302 +1,167 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Slot v6 🎰 Multi Machine</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Neon Slot Pro 🎰</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root { --neon: #00ffe1; --bg: #090a0f; }
+        
+        body {
+            margin: 0; 
+            font-family: 'Orbitron', sans-serif;
+            background: radial-gradient(circle at center, #1b2735, #000);
+            color: #fff; 
+            /* 适配 iPhone 灵动岛和底部安全区域 */
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            min-height: 100dvh; /* 动态视口高度，解决 iOS 工具栏遮挡问题 */
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            box-sizing: border-box;
+        }
 
-<style>
-body{
-    margin:0;
-    font-family:Arial;
-    background: radial-gradient(circle at top,#1b2735,#090a0f);
-    color:#fff;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-}
+        .box {
+            width: 90%; 
+            max-width: 380px; 
+            padding: 20px; 
+            background: rgba(255,255,255,0.03);
+            border-radius: 30px; 
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px); 
+            text-align: center; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        }
 
-.box{
-    width:380px;
-    padding:20px;
-    background:rgba(255,255,255,0.06);
-    border-radius:20px;
-    backdrop-filter:blur(10px);
-    text-align:center;
-    box-shadow:0 0 25px rgba(0,255,255,0.15);
-}
+        h1 { color: var(--neon); margin: 0 0 20px; font-size: 24px; text-shadow: 0 0 10px var(--neon); }
 
-h1{color:#00ffe1;margin:0 0 10px;}
+        .info { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px; color: #aaa; }
 
-.info{
-    display:flex;
-    justify-content:space-between;
-    font-size:14px;
-    margin-bottom:10px;
-    opacity:.9;
-}
+        .machines { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
+        .machines button {
+            background: #111; color: #fff; border: 1px solid #333; padding: 10px 5px;
+            border-radius: 10px; cursor: pointer; transition: 0.3s; font-size: 12px;
+        }
+        .machines button.active { border-color: var(--neon); color: var(--neon); background: rgba(0,255,225,0.1); }
 
-.machines button{
-    margin:3px;
-    padding:6px 10px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    font-size:12px;
-}
+        .reels { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 25px; }
+        .reel {
+            flex: 1; height: 90px; background: #050505; border: 2px solid #222;
+            border-radius: 18px; display: flex; justify-content: center; align-items: center;
+            font-size: 35px; transition: transform 0.1s;
+        }
+        .spinning { filter: blur(4px); opacity: 0.7; }
 
-.machines button.active{
-    background:#00ffe1;
-    color:#000;
-}
+        .spin {
+            width: 100%; padding: 18px; border: none; border-radius: 15px; font-weight: bold;
+            font-size: 20px; cursor: pointer; background: linear-gradient(90deg, #00ffe1, #0077ff);
+            color: #000; transition: 0.3s; -webkit-tap-highlight-color: transparent;
+        }
+        .spin:active { transform: scale(0.96); }
+        .spin:disabled { opacity: 0.4; filter: grayscale(1); }
 
-.reels{
-    display:flex;
-    justify-content:space-between;
-    margin:20px 0;
-}
-
-.reel{
-    width:95px;
-    height:95px;
-    background:#111;
-    border-radius:12px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:42px;
-    box-shadow:inset 0 0 10px rgba(0,255,255,0.25);
-}
-
-button.spin{
-    width:100%;
-    padding:12px;
-    border:none;
-    border-radius:12px;
-    font-weight:bold;
-    font-size:16px;
-    cursor:pointer;
-    background:linear-gradient(90deg,#00ffe1,#0077ff);
-}
-
-.win{
-    animation:glow .3s infinite alternate;
-}
-
-@keyframes glow{
-    from{box-shadow:0 0 10px #00ffe1;}
-    to{box-shadow:0 0 25px #00ffe1;}
-}
-
-.shake{animation:shake .2s 3;}
-
-@keyframes shake{
-    0%{transform:translateX(0);}
-    25%{transform:translateX(-3px);}
-    50%{transform:translateX(3px);}
-    100%{transform:translateX(0);}
-}
-
-#msg{margin-top:10px;font-size:14px;}
-</style>
+        #msg { margin-top: 20px; min-height: 20px; font-size: 14px; color: var(--neon); }
+        .win { animation: pulse 0.6s infinite; border-color: #fff !important; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 0 20px #fff; } 50% { box-shadow: 0 0 5px #fff; } }
+    </style>
 </head>
-
 <body>
 
 <div class="box">
-    <h1>🎰 SLOT v6</h1>
-
+    <h1>SLOT PRO</h1>
     <div class="info">
         <div>💰 <span id="balance">100</span></div>
-        <div>🎲 Bet: <span id="bet">10</span></div>
+        <div>🎲 <span id="bet">10</span></div>
     </div>
-
     <div class="machines">
-        <button onclick="setMachine('classic')" class="active">Classic</button>
-        <button onclick="setMachine('jackpot')">Jackpot</button>
-        <button onclick="setMachine('ultra')">Ultra</button>
+        <button onclick="setMachine('classic', this)" class="active">Classic</button>
+        <button onclick="setMachine('jackpot', this)">Jackpot</button>
+        <button onclick="setMachine('ultra', this)">Ultra</button>
     </div>
-
     <div class="reels">
         <div class="reel" id="r1">🍒</div>
         <div class="reel" id="r2">🍋</div>
         <div class="reel" id="r3">🍊</div>
     </div>
-
-    <button class="spin" onclick="spin()">SPIN</button>
-
-    <div id="msg">选择机位开始</div>
+    <button class="spin" id="spinBtn" onclick="spin()">SPIN</button>
+    <div id="msg">准备好赢大奖了吗？</div>
 </div>
 
 <script>
-
-// =====================
-// 音效
-// =====================
-const ctx = new (window.AudioContext||window.webkitAudioContext)();
-function beep(f,t){
-    const o=ctx.createOscillator();
-    const g=ctx.createGain();
-    o.frequency.value=f;
-    o.connect(g);
-    g.connect(ctx.destination);
-    o.start();
-    g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+t);
-    o.stop(ctx.currentTime+t);
-}
-
-// =====================
-// 多机位配置
-// =====================
-const machines = {
-    classic:{
-        bet:10,
-        payout:3,
-        table:[
-            {s:"🍒",w:35},
-            {s:"🍋",w:30},
-            {s:"🍊",w:25},
-            {s:"🍉",w:8},
-            {s:"⭐",w:2}
-        ]
-    },
-    jackpot:{
-        bet:20,
-        payout:6,
-        table:[
-            {s:"🍒",w:30},
-            {s:"🍋",w:25},
-            {s:"⭐",w:10},
-            {s:"💎",w:5}
-        ]
-    },
-    ultra:{
-        bet:50,
-        payout:15,
-        table:[
-            {s:"⭐",w:50},
-            {s:"💎",w:35},
-            {s:"🔥",w:15}
-        ]
-    }
-};
-
-let current="classic";
-let balance=100;
-let spinning=false;
-
-function setMachine(name){
-    current=name;
-    document.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
-    event.target.classList.add("active");
-
-    document.getElementById("bet").innerText=machines[name].bet;
-    document.getElementById("msg").innerText="已切换："+name;
-}
-
-// =====================
-// 权重随机
-// =====================
-function weighted(table){
-    let total=table.reduce((a,b)=>a+b.w,0);
-    let r=Math.random()*total;
-    for(let i=0;i<table.length;i++){
-        r-=table[i].w;
-        if(r<=0)return table[i].s;
-    }
-    return table[0].s;
-}
-
-// =====================
-// 滚轮动画
-// =====================
-function roll(reel,final,delay){
-    return new Promise(res=>{
-        let count=0;
-        let speed=40;
-
-        const t=setInterval(()=>{
-            reel.innerText=["🍒","🍋","🍊","🍉","⭐","💎","🔥"][Math.floor(Math.random()*7)];
-            count++;
-
-            if(count>20){
-                clearInterval(t);
-
-                let slow=setInterval(()=>{
-                    reel.innerText=["🍒","🍋","🍊","🍉","⭐","💎","🔥"][Math.floor(Math.random()*7)];
-                    speed+=20;
-
-                    if(speed>200){
-                        clearInterval(slow);
-                        reel.innerText=final;
-                        res();
-                    }
-                },speed);
-            }
-        },speed);
-    });
-}
-
-// =====================
-// 主逻辑
-// =====================
-async function spin(){
-    if(spinning)return;
-    if(balance<machines[current].bet){
-        document.getElementById("msg").innerText="余额不足";
-        return;
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    function beep(f, t) {
+        try {
+            const o = ctx.createOscillator(), g = ctx.createGain();
+            o.frequency.value = f; o.connect(g); g.connect(ctx.destination);
+            o.start(); g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + t);
+            o.stop(ctx.currentTime + t);
+        } catch(e) {}
     }
 
-    spinning=true;
-    balance-=machines[current].bet;
-    document.getElementById("balance").innerText=balance;
+    const machines = {
+        classic: { bet: 10, payout: 3, table: [{s:"🍒",w:35},{s:"🍋",w:30},{s:"🍊",w:25},{s:"🍉",w:8},{s:"⭐",w:2}] },
+        jackpot: { bet: 20, payout: 6, table: [{s:"🍒",w:30},{s:"🍋",w:25},{s:"⭐",w:10},{s:"💎",w:5}] },
+        ultra: { bet: 50, payout: 15, table: [{s:"⭐",w:50},{s:"💎",w:35},{s:"🔥",w:15}] }
+    };
 
-    document.getElementById("msg").innerText="🎲 spinning...";
-    beep(200,0.05);
+    let current = "classic", balance = 100, spinning = false;
 
-    const m=machines[current];
-
-    const a=weighted(m.table);
-    const b=weighted(m.table);
-    const c=weighted(m.table);
-
-    const r1=document.getElementById("r1");
-    const r2=document.getElementById("r2");
-    const r3=document.getElementById("r3");
-
-    await Promise.all([
-        roll(r1,a),
-        roll(r2,b),
-        roll(r3,c)
-    ]);
-
-    let win=(a===b&&b===c);
-
-    if(win){
-        let reward=m.bet*m.payout;
-        balance+=reward;
-        document.getElementById("balance").innerText=balance;
-
-        document.getElementById("msg").innerText="🎉 WIN +"+reward;
-
-        beep(800,0.2);
-        setTimeout(()=>beep(1000,0.2),150);
-
-        [r1,r2,r3].forEach(r=>{
-            r.classList.add("win","shake");
-            setTimeout(()=>r.classList.remove("win","shake"),1200);
-        });
-
-    }else{
-        document.getElementById("msg").innerText="再试一次 💨";
-        beep(120,0.2);
+    function setMachine(name, el) {
+        current = name;
+        document.querySelectorAll(".machines button").forEach(b => b.classList.remove("active"));
+        el.classList.add("active");
+        document.getElementById("bet").innerText = machines[name].bet;
+        document.getElementById("msg").innerText = "已切换: " + name.toUpperCase();
     }
 
-    spinning=false;
-}
+    function weighted(table) {
+        let total = table.reduce((a, b) => a + b.w, 0), r = Math.random() * total;
+        for (let item of table) { r -= item.w; if (r <= 0) return item.s; }
+        return table[0].s;
+    }
 
+    async function roll(reel, final) {
+        reel.classList.add("spinning");
+        const icons = ["🍒","🍋","🍊","🍉","⭐","💎","🔥"];
+        for(let i=0; i<15; i++) {
+            reel.innerText = icons[Math.floor(Math.random()*icons.length)];
+            await new Promise(r => setTimeout(r, 60));
+        }
+        reel.classList.remove("spinning");
+        reel.innerText = final;
+    }
+
+    async function spin() {
+        if(spinning || balance < machines[current].bet) {
+            if(balance < machines[current].bet) document.getElementById("msg").innerText = "余额不足!";
+            return;
+        }
+        spinning = true;
+        document.getElementById("spinBtn").disabled = true;
+        balance -= machines[current].bet;
+        document.getElementById("balance").innerText = balance;
+        
+        beep(200, 0.1);
+        const r1=document.getElementById("r1"), r2=document.getElementById("r2"), r3=document.getElementById("r3");
+        const results = [weighted(machines[current].table), weighted(machines[current].table), weighted(machines[current].table)];
+        
+        await Promise.all([roll(r1, results[0]), roll(r2, results[1]), roll(r3, results[2])]);
+
+        if(results[0] === results[1] && results[1] === results[2]) {
+            let win = machines[current].bet * machines[current].payout;
+            balance += win;
+            document.getElementById("balance").innerText = balance;
+            document.getElementById("msg").innerText = "🎉 BIG WIN: " + win;
+            [r1,r2,r3].forEach(r => r.classList.add("win"));
+            setTimeout(() => [r1,r2,r3].forEach(r => r.classList.remove("win")), 1000);
+            beep(800, 0.3);
+        } else {
+            document.getElementById("msg").innerText = "再接再厉!";
+        }
+        spinning = false;
+        document.getElementById("spinBtn").disabled = false;
+    }
 </script>
-
 </body>
 </html>
