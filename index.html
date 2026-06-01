@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>理性之境 - 手机版数学博弈模拟器</title>
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif; background: #0f172a; color: #e2e8f0; padding: 12px; margin: 0; }
+        
+        .container { max-width: 100%; margin: 0 auto; background: #1e293b; padding: 16px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        h1 { text-align: center; color: #f8fafc; margin: 5px 0; font-size: 22px; }
+        .subtitle { text-align: center; color: #94a3b8; font-size: 12px; margin-bottom: 20px; line-height: 1.4; }
+        
+        /* 手机端状态看板：改为更密集的平铺或网格 */
+        .stats-grid { display: block; margin-bottom: 15px; }
+        .stat-card { background: #111827; border: 1px solid #334155; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 8px; }
+        .stat-card h3 { margin: 0 0 2px 0; font-size: 11px; color: #94a3b8; text-transform: uppercase; }
+        .stat-card p { margin: 0; font-size: 18px; font-weight: bold; color: #f8fafc; }
+        
+        /* 手机端横向滚动菜单（选项卡） */
+        .tabs { display: block; overflow-x: auto; white-space: nowrap; margin-bottom: 15px; border-bottom: 2px solid #334155; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
+        .tab-btn { display: inline-block; background: #334155; color: #94a3b8; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 13px; margin-right: 5px; }
+        .tab-btn.active { background: #3b82f6; color: white; }
+        
+        .game-panel { display: none; }
+        .game-panel.active { display: block; }
+        .panel { background: #111827; border: 1px solid #334155; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .panel h2 { margin-top: 0; font-size: 16px; color: #38bdf8; }
+        .description { font-size: 12px; color: #94a3b8; margin-bottom: 12px; line-height: 1.5; }
+        
+        /* 手机端专属大操作按钮 */
+        .btn-group { display: block; }
+        button.action-btn { display: block; width: 100%; margin-bottom: 8px; padding: 14px; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; background: #3b82f6; color: white; text-align: center; }
+        button.danger-btn { background: #ef4444; }
+        button.secondary-btn { background: #475569; color: #cbd5e1; }
+        
+        /* 三门问题手机端大门尺寸优化 */
+        .doors-container { display: block; text-align: center; margin: 15px 0; }
+        .door { display: inline-block; width: 26%; height: 95px; background: #b45309; border: 2px solid #d97706; border-radius: 6px; margin: 0 3%; vertical-align: middle; line-height: 90px; text-align: center; font-size: 20px; font-weight: bold; color: white; }
+        .door.selected { border-color: #3b82f6; box-shadow: 0 0 10px #3b82f6; }
+        .door.opened { background: #1e293b; border-color: #475569; color: #64748b; }
+
+        /* 老虎机手机端尺寸优化 */
+        .slot-machine { background: #111827; border: 3px solid #fbbf24; border-radius: 10px; padding: 15px; text-align: center; margin-bottom: 15px; }
+        .reel { display: inline-block; width: 28%; height: 75px; background: #fff; border-radius: 6px; border: 2px solid #475569; margin: 0 2%; line-height: 70px; text-align: center; font-size: 36px; vertical-align: middle; user-select: none; }
+        
+        @keyframes blur-spin {
+            0% { filter: blur(0px); transform: translateY(-2px); }
+            50% { filter: blur(2px); transform: translateY(2px); }
+            100% { filter: blur(0px); transform: translateY(0px); }
+        }
+        .spinning { animation: blur-spin 0.1s infinite; }
+
+        /* 手机端紧凑日志框 */
+        .log-box { background: #020617; color: #38bdf8; padding: 10px; border-radius: 6px; height: 130px; overflow-y: auto; font-family: monospace; font-size: 11px; line-height: 1.5; border: 1px solid #334155; }
+        .text-green { color: #4ade80 !important; }
+        .text-red { color: #f87171 !important; }
+        .text-yellow { color: #fbbf24 !important; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎲 理性之境 (手机版)</h1>
+    <div class="subtitle">用数学概率大数定律，打破赌徒的暴富幻觉</div>
+
+    <div class="stats-grid">
+        <div class="stat-card" style="border-left: 4px solid #3b82f6;">
+            <h3>虚拟账户资产</h3>
+            <p id="balance">1000 元</p>
+        </div>
+        <div class="stat-card">
+            <h3>总决策次数</h3>
+            <p id="total-rounds">0 次</p>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('dice')">🎲 猜大小倍投</button>
+        <button class="tab-btn" onclick="switchTab('slots')">🎰 3个7转盘</button>
+        <button class="tab-btn" onclick="switchTab('monty')">🐐 三门问题</button>
+        <button class="tab-btn" onclick="switchTab('petersburg')">📉 圣彼得堡</button>
+    </div>
+
+    <div id="game-dice" class="game-panel active">
+        <div class="panel">
+            <h2>经典猜大小 (庄家优势)</h2>
+            <div class="description">大(11-17点), 小(4-10点)。若开出围骰(三子相同)庄家通杀。玩家胜率仅 **48.61%**。</div>
+            <div style="margin-bottom: 12px; font-size: 13px;">
+                <label>基础下注：</label>
+                <input type="number" id="dice-base" value="10" style="background:#0f172a; color:white; border:1px solid #334155; padding:5px; border-radius:4px; width:60px;"> 元
+            </div>
+            <div class="btn-group">
+                <button class="action-btn" onclick="playDice(true)">押 大</button>
+                <button class="action-btn" onclick="playDice(false)">押 小</button>
+                <button class="action-btn danger-btn" onclick="autoMartingale()">自动倍投挂机测试</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-slots" class="game-panel">
+        <div class="panel">
+            <h2>3个7财富幻觉连线</h2>
+            <div class="description">成本:10元/次。3个7大奖:1000元。任意三同:100元。展示独立复合概率与“差点赢”心理学阴谋。</div>
+            <div class="slot-machine">
+                <div id="reel1" class="reel">🍒</div>
+                <div id="reel2" class="reel">🍋</div>
+                <div id="reel3" class="reel">🔔</div>
+            </div>
+            <div class="btn-group">
+                <button id="spin-button" class="action-btn" onclick="startSpin()">拉动摇杆 (10元)</button>
+                <button id="auto-btn" class="action-btn secondary-btn" onclick="autoSpinMode()">自动挂机狂转 100 次</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-monty" class="game-panel">
+        <div class="panel">
+            <h2>蒙提霍尔三门问题</h2>
+            <div class="description">选一扇门。随后主持人会打开一扇有羊的门，问你**换不换门？**大数据证明换门胜率（66.6%）是不换（33.3%）的两倍！</div>
+            <div class="doors-container">
+                <div id="door1" class="door" onclick="selectDoor(1)">1</div>
+                <div id="door2" class="door" onclick="selectDoor(2)">2</div>
+                <div id="door3" class="door" onclick="selectDoor(3)">3</div>
+            </div>
+            <div class="btn-group" id="monty-controls" style="display: none;">
+                <button class="action-btn text-yellow" style="background: #eab308;" onclick="montyFinal(true)">决定：换门！</button>
+                <button class="action-btn secondary-btn" onclick="montyFinal(false)">决定：坚守不换！</button>
+            </div>
+            <div class="btn-group">
+                <button class="action-btn danger-btn" onclick="autoMonty(1000)">一键对撞 1000 次数据对比</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-petersburg" class="game-panel">
+        <div class="panel">
+            <h2>圣彼得堡悖论破产机</h2>
+            <div class="description">门票50元。硬币正面奖金翻倍并继续，反面终止拿钱。期望值无限大，但现实玩必亏。</div>
+            <div class="btn-group">
+                <button class="action-btn" onclick="playPetersburg()">花 50 元玩一次</button>
+                <button class="action-btn danger-btn" onclick="autoPetersburg()">连续狂玩 500 次</button>
+            </div>
+        </div>
+    </div>
+
+    <h2 style="font-size: 14px; margin: 10px 0 5px 0;">📊 手机实时演算日记</h2>
+    <div id="log" class="log-box"><div>系统已就绪，请在上方切换实验。</div></div>
+    
+    <button class="action-btn secondary-btn" style="margin-top: 10px; padding: 10px;" onclick="resetAll()">重置全盘资产</button>
+</div>
+
+<script>
+    let balance = 1000; let totalRounds = 0; let currentTab = 'dice'; let diceCurrentBet = 10;
+    let montyStage = 0; let prizeDoor = 0; let userChoice = 0; let hostOpened = 0;
+    const symbols = ['7', '🍒', '🍋', '🔔', '💎', '🍇', '🍊', '🍉']; let isSpinning = false; let autoTimer = null;
+
+    function switchTab(tabId) {
+        currentTab = tabId;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.game-panel').forEach(p => p.classList.remove('active'));
+        event.target.classList.add('active');
+        document.getElementById(`game-${tabId}`).classList.add('active');
+        if(autoTimer) { clearInterval(autoTimer); autoTimer = null; document.getElementById('auto-btn').innerText = "自动挂机狂转 100 次"; }
+        initMonty();
+    }
+
+    function log(msg, colorClass = '') {
+        const logBox = document.getElementById('log'); const div = document.createElement('div');
+        if(colorClass) div.className = colorClass; div.innerHTML = `[事件] ${msg}`;
+        logBox.appendChild(div); logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    function updateUI() {
+        document.getElementById('balance').innerText = balance + " 元";
+        document.getElementById('total-rounds').innerText = totalRounds + " 次";
+    }
+
+    // --- 骰子逻辑 ---
+    function playDice(isBig) {
+        let base = parseInt(document.getElementById('dice-base').value) || 10;
+        if(balance <= 0) { alert('已破产！请重置。'); return false; }
+        if(balance < diceCurrentBet) { log(`资金链断裂！需下注 ${diceCurrentBet}元，仅剩 ${balance}元。`, 'text-red'); diceCurrentBet = base; return false; }
+        totalRounds++; let d1 = Math.floor(Math.random()*6)+1; let d2 = Math.floor(Math.random()*6)+1; let d3 = Math.floor(Math.random()*6)+1; let sum = d1 + d2 + d3;
+        let result = (d1===d2 && d2===d3) ? '围骰' : (sum >= 11 ? '大' : '小');
+        let win = (result !== '围骰' && ((isBig && result==='大') || (!isBig && result==='小')));
+        if(win) { balance += diceCurrentBet; log(`开出: ${sum}点 [${result}]。赚 ${diceCurrentBet} 元！`, 'text-green'); diceCurrentBet = base; } 
+        else { balance -= diceCurrentBet; log(`开出: ${sum}点 [${result}通杀]。输 ${diceCurrentBet} 元。`, 'text-red'); diceCurrentBet *= 2; }
+        updateUI(); return win;
+    }
+
+    function autoMartingale() {
+        let base = parseInt(document.getElementById('dice-base').value) || 10; diceCurrentBet = base; log('⚡ 启动自动倍投...', 'text-yellow');
+        let count = 0; let timer = setInterval(() => {
+            let active = playDice(true); count++;
+            if(balance <= 0 || diceCurrentBet > balance || count >= 50) { clearInterval(timer); if(balance<=0) log('🛑 赌徒破产理论生效：本金归零。', 'text-red'); }
+        }, 150);
+    }
+
+    // --- 老虎机逻辑 ---
+    function startSpin() {
+        if (isSpinning || balance < 10) return;
+        balance -= 10; totalRounds++; isSpinning = true; document.getElementById('spin-button').disabled = true; updateUI();
+        const r1 = document.getElementById('reel1'); const r2 = document.getElementById('reel2'); const r3 = document.getElementById('reel3');
+        r1.classList.add('spinning'); r2.classList.add('spinning'); r3.classList.add('spinning');
+        let res1, res2, res3;
+        setTimeout(() => { res1 = symbols[Math.floor(Math.random()*8)]; r1.classList.remove('spinning'); r1.innerText = res1; }, 300);
+        setTimeout(() => { res2 = symbols[Math.floor(Math.random()*8)]; r2.classList.remove('spinning'); r2.innerText = res2; }, 600);
+        setTimeout(() => { 
+            res3 = symbols[Math.floor(Math.random()*8)]; r3.classList.remove('spinning'); r3.innerText = res3;
+            if (res1 === '7' && res2 === '7' && res3 === '7') { balance += 1000; log(`🎉【大奖】7-7-7连线！暴赚1000元！`, 'text-green'); }
+            else if (res1 === res2 && res2 === res3) { balance += 100; log(`✨【三连】[${res1}]连线，赢100元。`, 'text-green'); }
+            else if (res1 === '7' && res2 === '7' && res3 !== '7') { log(`❌【差点赢】前两个是7！极强多巴胺幻觉暗示。`, 'text-near'); }
+            else { log(`未中: [${res1}|${res2}|${res3}]`, 'text-cost'); }
+            isSpinning = false; document.getElementById('spin-button').disabled = false; updateUI();
+        }, 900);
+    }
+
+    function autoSpinMode() {
+        if (autoTimer) { clearInterval(autoTimer); autoTimer = null; document.getElementById('auto-btn').innerText = "自动挂机狂转 100 次"; } 
+        else {
+            document.getElementById('auto-btn').innerText = "停止挂机"; let count = 0;
+            autoTimer = setInterval(() => { if (!isSpinning) { startSpin(); count++; if (count >= 100 || balance < 10) { clearInterval(autoTimer); autoTimer = null; document.getElementById('auto-btn').innerText = "自动挂机狂转 100 次"; } } }, 1000);
+        }
+    }
+
+    // --- 三门问题 ---
+    function initMonty() {
+        montyStage = 0; prizeDoor = Math.floor(Math.random()*3)+1; document.getElementById('monty-controls').style.display = 'none';
+        for(let i=1;i<=3;i++) { let d = document.getElementById(`door${i}`); if(d) { d.className = 'door'; d.innerText = i; } }
+    }
+    function selectDoor(doorNum) {
+        if(montyStage !== 0) return; userChoice = doorNum; montyStage = 1; document.getElementById(`door${doorNum}`).classList.add('selected');
+        let available = [1,2,3].filter(d => d !== userChoice && d !== prizeDoor);
+        hostOpened = available[Math.floor(Math.random()*available.length)];
+        setTimeout(() => { document.getElementById(`door${hostOpened}`).classList.add('opened'); document.getElementById(`door${hostOpened}`).innerText = '🐐'; log(`初步选${userChoice}号门。主持人排除一扇羊门 ${hostOpened}号。换门吗？`, 'text-yellow'); document.getElementById('monty-controls').style.display = 'flex'; }, 300);
+    }
+    function montyFinal(shouldSwitch) {
+        totalRounds++; let finalChoice = shouldSwitch ? [1,2,3].find(d => d !== userChoice && d !== hostOpened) : userChoice;
+        let win = (finalChoice === prizeDoor);
+        for(let i=1;i<=3;i++) document.getElementById(`door${i}`).innerText = (i === prizeDoor) ? '🏎️' : '🐐';
+        if(win) { balance += 50; log(`中了跑车！你选择${shouldSwitch?'换门':'不换'} -> 资产+50元`, 'text-green'); } 
+        else { balance -= 30; log(`里面是山羊！你选择${shouldSwitch?'换门':'不换'} -> 资产-30元`, 'text-red'); }
+        updateUI(); document.getElementById('monty-controls').style.display = 'none'; montyStage = -1; setTimeout(initMonty, 2000);
+    }
+    function autoMonty(times) {
+        let sw = 0; for(let i=0; i<times; i++) { if (Math.floor(Math.random()*3)+1 !== Math.floor(Math.random()*3)+1) sw++; }
+        totalRounds += times; log(`🤖 1000次大回测结论：<br>👉【换门】胜率 约${(sw/times*100).toFixed(1)}%<br>👉【不换门】胜率 约${((times-sw)/times*100).toFixed(1)}%`, 'text-yellow'); updateUI();
+    }
+
+    // --- 圣彼得堡 ---
+    function playPetersburg() {
+        if(balance < 50) return; balance -= 50; totalRounds++; let win = 2; while(Math.random() < 0.5) { win *= 2; if(win > 10000) break; }
+        balance += win; log(`抛硬币结束，获得奖金 ${win}元（扣门票净损益：${win-50}元）`, win>50?'text-green':'text-red'); updateUI();
+    }
+    function autoPetersburg() {
+        log('进行 500 次历史回溯中...'); let tc = 25000; let tr = 0;
+        for(let i=0; i<500; i++) { let w = 2; while(Math.random() < 0.5) { w *= 2; if(w > 5000) break; } tr += w; }
+        balance = balance - 2500 + tr; totalRounds += 500; log(`500次账单：成本2500元，得奖金 ${tr}元，损益: ${tr-2500}元`, 'text-yellow'); updateUI();
+    }
+
+    function resetAll() { balance = 1000; totalRounds = 0; diceCurrentBet = 10; document.getElementById('log').innerHTML = '<div>=== 数据已安全重置 ===</div>'; initMonty(); updateUI(); }
+</script>
+</body>
+</html>
