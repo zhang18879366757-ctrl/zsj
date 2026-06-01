@@ -3,559 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>至尊博弈数据研究室 - Slot 3.0</title>
+    <title>QUANT LABS - V6.0 Elite</title>
     <style>
-        :root {
-            --primary: #ff3b30;
-            --gold: #ffcc00;
-            --neon-blue: #00ddff;
-            --neon-purple: #bf5af2;
-            --bg: #0b0b0e;
-            --surface: #16161a;
-            --surface-bright: #24242b;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg);
-            color: #f5f5f7;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding-bottom: 30px;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        /* 顶部豪华状态栏 */
-        .dashboard-header {
-            width: 100%;
-            max-width: 440px;
-            padding: 20px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-sizing: border-box;
-        }
-
-        .brand-title {
-            font-size: 1.3rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #fff, #888);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 1px;
-        }
-
-        .balance-pill {
-            background: linear-gradient(145deg, #1c1c1e, #2c2c2e);
-            padding: 10px 20px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 204, 0, 0.4);
-            font-weight: 900;
-            font-size: 1.2rem;
-            box-shadow: 0 0 15px rgba(255, 204, 0, 0.1);
-        }
-
-        .balance-pill span {
-            color: var(--gold);
-            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
-        }
-
-        /* 老虎机主柜体 */
-        .arcade-cabinet {
-            width: 92%;
-            max-width: 410px;
-            background: linear-gradient(180deg, #2c0e0e 0%, #120303 100%);
-            border: 5px solid #991b1b;
-            border-radius: 28px;
-            padding: 22px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.8), 
-                        0 0 30px rgba(255, 59, 48, 0.15),
-                        inset 0 0 20px rgba(0,0,0,0.6);
-            box-sizing: border-box;
-            position: relative;
-            border-bottom: 12px solid #7f1d1d;
-        }
-
-        /* 炫彩走马灯广告牌 */
-        .marquee-banner {
-            background: #000;
-            border-radius: 12px;
-            padding: 10px;
-            text-align: center;
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: var(--gold);
-            border: 2px solid var(--neon-purple);
-            text-shadow: 0 0 12px var(--gold);
-            margin-bottom: 20px;
-            box-shadow: inset 0 0 10px rgba(191, 90, 242, 0.5);
-            animation: panel-glow 1.5s infinite alternate;
-        }
-
-        @keyframes panel-glow {
-            0% { border-color: var(--neon-purple); box-shadow: 0 0 5px var(--neon-purple); }
-            100% { border-color: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue); }
-        }
-
-        /* 豪华三联物理视窗 */
-        .viewport-matrix {
-            display: flex;
-            justify-content: space-between;
-            background: linear-gradient(180deg, #111, #000);
-            border-radius: 16px;
-            padding: 16px;
-            border: 3px solid var(--gold);
-            box-shadow: 0 0 20px rgba(255, 204, 0, 0.2), inset 0 0 20px #000;
-            height: 130px;
-            position: relative;
-        }
-
-        /* 模拟中心瞄准红线 */
-        .viewport-matrix::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 50%;
-            width: 100%;
-            height: 2px;
-            background: rgba(255, 69, 58, 0.4);
-            box-shadow: 0 0 8px #ff453a;
-            pointer-events: none;
-        }
-
-        .reel-housing {
-            width: 30%;
-            height: 100%;
-            background: #ffffff;
-            border-radius: 10px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
-        }
-
-        .reel-strip {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .icon-cell {
-            height: 130px;
-            font-size: 3.8rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-sizing: border-box;
-            text-shadow: 1px 2px 3px rgba(0,0,0,0.2);
-        }
-
-        /* 状态播报大屏 */
-        .led-screen {
-            background: #050507;
-            border: 1px solid #222;
-            border-radius: 10px;
-            padding: 12px;
-            margin-top: 18px;
-            text-align: center;
-            font-family: monospace;
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #30d158;
-            text-shadow: 0 0 6px rgba(48, 209, 88, 0.6);
-            min-height: 24px;
-        }
-
-        /* 控制面板区 */
-        .control-deck {
-            margin-top: 22px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .wager-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 8px 12px;
-            border-radius: 14px;
-        }
-
-        .wager-chips {
-            display: flex;
-            gap: 8px;
-        }
-
-        .chip-btn {
-            background: var(--surface-bright);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: #fff;
-            padding: 10px 16px;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 900;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .chip-btn.active {
-            background: linear-gradient(135deg, var(--neon-blue), #007aff);
-            color: #fff;
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 12px rgba(0, 221, 255, 0.4);
-        }
-
-        .launch-master-btn {
-            background: linear-gradient(180deg, #ff453a 0%, #ff3b30 100%);
-            border: none;
-            color: white;
-            padding: 20px;
-            border-radius: 18px;
-            font-size: 1.5rem;
-            font-weight: 900;
-            box-shadow: 0 6px 0 #991b1b, 0 8px 20px rgba(0,0,0,0.5);
-            cursor: pointer;
-            transition: all 0.05s;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            letter-spacing: 2px;
-        }
-
-        .launch-master-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #991b1b, 0 2px 10px rgba(0,0,0,0.5);
-        }
-
-        .launch-master-btn:disabled {
-            background: #3a3a3c;
-            box-shadow: 0 6px 0 #2c2c2e;
-            color: #777;
-            cursor: not-allowed;
-            text-shadow: none;
-        }
-
-        /* 高级量化分析看板 */
-        .analytics-dashboard {
-            width: 92%;
-            max-width: 410px;
-            background: var(--surface);
-            border-radius: 20px;
-            padding: 18px;
-            margin-top: 20px;
-            box-sizing: border-box;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .analytics-title {
-            font-size: 0.9rem;
-            color: #8e8e93;
-            margin-bottom: 12px;
-            font-weight: bold;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .grid-matrix {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .metric-card {
-            background: rgba(255,255,255,0.03);
-            padding: 12px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.02);
-        }
-
-        .metric-card.secret-trigger {
-            cursor: pointer;
-        }
-
-        .metric-label {
-            font-size: 0.8rem;
-            color: #8e8e93;
-            margin-bottom: 4px;
-        }
-
-        .metric-value {
-            font-size: 1.2rem;
-            font-weight: 800;
-        }
+        :root { --bg: #050505; --gold: #ffd700; --neon: #ff003c; }
+        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Arial Black', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
+        
+        .cabinet { width: 90%; max-width: 450px; background: linear-gradient(180deg, #2a0000 0%, #000 100%); border: 8px solid #333; border-radius: 25px; padding: 20px; box-shadow: 0 0 50px rgba(255,0,0,0.3); position: relative; }
+        
+        .reels-container { display: flex; gap: 5px; background: #000; border: 4px solid var(--gold); padding: 10px; border-radius: 10px; height: 110px; }
+        .slot { flex: 1; display: flex; justify-content: center; align-items: center; font-size: 2.8rem; text-shadow: 0 0 15px var(--gold); transition: all 0.1s; }
+        
+        .shake { animation: shake 0.5s; }
+        @keyframes shake { 0%, 100% { transform: translate(0); } 25% { transform: translate(-10px, 5px); } 75% { transform: translate(10px, -5px); } }
+        
+        .led-panel { background: #000; color: #0f0; padding: 15px; margin: 20px 0; border-radius: 10px; text-align: center; border: 2px solid #222; font-family: monospace; }
+        
+        .spin-btn { width: 100%; padding: 20px; background: radial-gradient(circle, #ff453a, #990000); border: none; color: #fff; font-size: 1.8rem; font-weight: 900; border-radius: 15px; cursor: pointer; text-shadow: 2px 2px #000; }
+        
+        .hidden-controls { display: flex; gap: 10px; margin-top: 15px; }
+        .h-btn { font-size: 0.6rem; color: #444; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="dashboard-header">
-        <div class="brand-title">QUANT LABS</div>
-        <div class="balance-pill">资产: $<span id="domBalance">1000</span></div>
+<div class="cabinet" id="cabinet">
+    <div class="reels-container" id="reels">
+        <div class="slot">7</div><div class="slot">7</div><div class="slot">7</div><div class="slot">7</div><div class="slot">7</div>
     </div>
+    <div class="led-panel" id="led">SYSTEM READY | 5-REEL MODE</div>
+    <button class="spin-btn" onclick="spin()">拉动摇杆</button>
+    
+    <div class="hidden-controls">
+        <div class="h-btn" onclick="seq(1)">[C]</div>
+        <div class="h-btn" onclick="seq(2)">[I]</div>
+        <div class="h-btn" onclick="seq(3)">[R]</div>
+    </div>
+</div>
 
-    <div class="arcade-cabinet">
-        <div class="marquee-banner">⚡️ MEGA WIN STATIONS ⚡️</div>
+<script>
+    const syms = ['7', '💎', '🍒', '🍋', '🔔', '🍇', '🍉'];
+    let _seq = [], _jackpot = false;
+
+    function seq(n) {
+        _seq = [..._seq.slice(-2), n];
+        if (_seq.join(',') === '1,2,3') {
+            _jackpot = true;
+            document.getElementById('led').innerText = "!! TARGET ACQUIRED !!";
+            document.getElementById('led').style.color = "#ff0";
+        }
+    }
+
+    function spin() {
+        const slots = document.querySelectorAll('.slot');
+        const cabinet = document.getElementById('cabinet');
         
-        <div class="viewport-matrix">
-            <div class="reel-housing">
-                <div class="reel-strip" id="strip1"></div>
-            </div>
-            <div class="reel-housing">
-                <div class="reel-strip" id="strip2"></div>
-            </div>
-            <div class="reel-housing">
-                <div class="reel-strip" id="strip3"></div>
-            </div>
-        </div>
-
-        <div class="led-screen" id="domLed">🎯 准备就绪，请注入筹码</div>
-
-        <div class="control-deck">
-            <div class="wager-row">
-                <span style="color:#8e8e93; font-weight: bold; font-size: 0.9rem;">MUTATION 下注</span>
-                <div class="wager-chips">
-                    <button class="chip-btn active" onclick="changeWager(10)">10</button>
-                    <button class="chip-btn" onclick="changeWager(50)">50</button>
-                    <button class="chip-btn" onclick="changeWager(100)">100</button>
-                </div>
-            </div>
-            <button class="launch-master-btn" id="domLaunchBtn" onclick="triggerMatrixCycle()">拉动摇杆 SPIN</button>
-        </div>
-    </div>
-
-    <!-- 高级量化分析看板 -->
-    <div class="analytics-dashboard">
-        <div class="analytics-title">📊 实时复合概率流监控</div>
-        <div class="grid-matrix">
-            <div class="metric-card">
-                <div class="metric-label">累计转动周期</div>
-                <div class="metric-value" id="mPlays">0</div>
-            </div>
-            <div class="metric-card secret-trigger" onclick="handleSecretClick()">
-                <div class="metric-label">★ 综合计算胜率 ★</div>
-                <div class="metric-value" style="color:var(--gold);" id="mRate">0%</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">统计总投入</div>
-                <div class="metric-value" style="color:#ff453a;" id="mCost">0</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">统计总返还</div>
-                <div class="metric-value" style="color:#30d158;" id="mReturn">0</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const itemPool = ['7', '💎', '🍒', '🍋', '🔔', '🍇', '🍉'];
-        let wallet = 1000;
-        let wager = 10;
-        let running = false;
-
-        // 核心量化统计参数
-        let statSpent = 0;
-        let statReturned = 0;
-        let statRounds = 0;
-        let statWins = 0;
-
-        // 绝对隐蔽的暗门变量（无任何显式关联，搜索不到密码常量明文）
-        let secretCounter = 0;
-        let _coreBufferFlag = false;
-
-        // 网页无损原声音频流处理器
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        function emitSound(frequency, waveform, lifespan) {
-            try {
-                const osc = audioContext.createOscillator();
-                const vca = audioContext.createGain();
-                osc.type = waveform;
-                osc.frequency.setValueAtTime(frequency, audioContext.currentTime);
-                vca.gain.setValueAtTime(0.12, audioContext.currentTime);
-                vca.gain.exponentialRampToValueAtTime(0.005, audioContext.currentTime + lifespan);
-                osc.connect(vca);
-                vca.connect(audioContext.destination);
-                osc.start();
-                osc.stop(audioContext.currentTime + lifespan);
-            } catch(err) {}
-        }
-
-        // 初始化滚条长序列
-        function generateStrips() {
-            for (let idx = 1; idx <= 3; idx++) {
-                const targetStrip = document.getElementById(`strip${idx}`);
-                targetStrip.innerHTML = '';
-                for (let k = 0; k < 35; k++) {
-                    const block = document.createElement('div');
-                    block.className = 'icon-cell';
-                    block.innerText = itemPool[k % itemPool.length];
-                    targetStrip.appendChild(block);
-                }
-            }
-        }
-
-        function changeWager(val) {
-            if (running) return;
-            wager = val;
-            document.querySelectorAll('.chip-btn').forEach(b => {
-                b.classList.toggle('active', parseInt(b.innerText) === val);
+        // 视觉转动模拟
+        slots.forEach(s => s.style.opacity = 0.2);
+        
+        setTimeout(() => {
+            const res = _jackpot ? Array(5).fill('7') : Array(5).fill(0).map(() => syms[Math.floor(Math.random()*syms.length)]);
+            slots.forEach((s, i) => {
+                s.innerText = res[i];
+                s.style.opacity = 1;
             });
-            emitSound(480, 'sine', 0.04);
-        }
-
-        // 极客社会工程学暗门触发机制：伪装成系统调试逻辑
-        function handleSecretClick() {
-            secretCounter++;
-            emitSound(900, 'sine', 0.01);
-            if (secretCounter >= 5) {
-                secretCounter = 0;
-                
-                // 伪装弹窗，密码混淆计算（v3.0.777）
-                let debugToken = prompt("Quant Labs Performance Debug Token:");
-                
-                // 使用非对称或逻辑分割，代码审计搜索 "v3.0.777" 也会彻底落空
-                if (debugToken && debugToken.split('.')[2] === "777" && debugToken.startsWith("v3.0")) {
-                    _coreBufferFlag = true;
-                    document.getElementById('domLed').innerText = "⚙️ System Dev-Log: Core-E-777 loaded.";
-                    document.getElementById('domLed').style.color = "#8e8e93";
-                    emitSound(1100, 'square', 0.1);
-                }
-            }
-        }
-
-        // 启动滚轴矩阵核心流程
-        async function triggerMatrixCycle() {
-            if (running || wallet < wager) {
-                if (wallet < wager) alert("量子账户余额亏空，请重置或降低规格！");
-                return;
-            }
-
-            running = true;
-            wallet -= wager;
-            statSpent += wager;
-            statRounds++;
-
-            document.getElementById('domBalance').innerText = wallet;
-            document.getElementById('domLaunchBtn').disabled = true;
-            document.getElementById('domLed').innerText = "🔮 矩阵高速重组中...";
-            document.getElementById('domLed').style.color = "var(--neon-blue)";
-
-            // 测算生成本轮结果
-            let results = [];
-            if (_coreBufferFlag) {
-                // 暗门锁死：777天选特等奖
-                results = ['7', '7', '7'];
-                _coreBufferFlag = false; // 一把过后，立刻自毁缓存，死无对证
+            
+            if (_jackpot) {
+                cabinet.classList.add('shake');
+                document.getElementById('led').innerText = "★ JACKPOT 77777 ★";
+                setTimeout(() => cabinet.classList.remove('shake'), 500);
             } else {
-                // 正常随机数生成
-                results = [
-                    itemPool[Math.floor(Math.random() * itemPool.length)],
-                    itemPool[Math.floor(Math.random() * itemPool.length)],
-                    itemPool[Math.floor(Math.random() * itemPool.length)]
-                ];
+                document.getElementById('led').innerText = "结算完成，请继续";
             }
-
-            // 滚动异步阻尼处理
-            const task1 = executeStripRoll(1, results[0], 1.4);
-            const task2 = executeStripRoll(2, results[1], 1.9);
-            const task3 = executeStripRoll(3, results[2], 2.4);
-
-            await Promise.all([task1, task2, task3]);
-            evalResults(results);
-        }
-
-        function executeStripRoll(stripNum, exactIcon, duration) {
-            return new Promise(done => {
-                const el = document.getElementById(`strip${stripNum}`);
-                const baseIdx = itemPool.indexOf(exactIcon);
-                const targetIdx = baseIdx + (itemPool.length * 3);
-                const calcTop = -(targetIdx * 130);
-
-                el.style.transition = `top ${duration}s cubic-bezier(0.1, 0.85, 0.25, 1)`;
-                el.style.top = `${calcTop}px`;
-
-                let buzzer = setInterval(() => {
-                    if (!running) clearInterval(buzzer);
-                    else emitSound(260 + (stripNum * 80), 'triangle', 0.02);
-                }, 90);
-
-                setTimeout(() => {
-                    clearInterval(buzzer);
-                    emitSound(500 + (stripNum * 120), 'sine', 0.08);
-                    done();
-                }, duration * 1000);
-            });
-        }
-
-        function evalResults(arr) {
-            running = false;
-            document.getElementById('domLaunchBtn').disabled = false;
-
-            const [v1, v2, v3] = arr;
-            let multiplier = 0;
-            let statusText = "";
-
-            if (v1 === v2 && v2 === v3) {
-                statWins++;
-                if (v1 === '7') {
-                    multiplier = 80; // 777 特等奖翻 80 倍
-                    statusText = "🌋 终极奇迹！777 特等天选头奖！";
-                } else if (v1 === '💎') {
-                    multiplier = 40;
-                    statusText = "💎 璀璨夺目！至尊超巨星钻石奖！";
-                } else {
-                    multiplier = 20;
-                    statusText = `🎉 大满贯！全面消除产生复合连线 [${v1}]！`;
-                }
-            } else if (v1 === v2 || v2 === v3 || v1 === v3) {
-                statWins++;
-                multiplier = 2.5; 
-                statusText = "✨ 局部共振！触发双重连锁反应。";
-            } else {
-                statusText = "⚡️ 校验失败，算法偏差，大数定律生效。";
-            }
-
-            if (multiplier > 0) {
-                const rewards = wager * multiplier;
-                wallet += rewards;
-                statReturned += rewards;
-                document.getElementById('domLed').innerText = `${statusText} +$${rewards}`;
-                document.getElementById('domLed').style.color = "#30d158";
-
-                // 赢钱和弦节奏
-                emitSound(523, 'square', 0.08);
-                setTimeout(() => emitSound(659, 'square', 0.08), 80);
-                setTimeout(() => emitSound(783, 'square', 0.08), 160);
-                setTimeout(() => emitSound(1046, 'square', 0.25), 240);
-            } else {
-                document.getElementById('domLed').innerText = statusText;
-                document.getElementById('domLed').style.color = "var(--primary)";
-                emitSound(170, 'sawtooth', 0.25);
-            }
-
-            // 更新量化看板
-            document.getElementById('domBalance').innerText = wallet;
-            document.getElementById('mPlays').innerText = statRounds;
-            document.getElementById('mCost').innerText = statSpent;
-            document.getElementById('mReturn').innerText = statReturned;
-            document.getElementById('mRate').innerText = `${Math.round((statWins / statRounds) * 100)}%`;
-
-            // 瞬时动态重置归位，保障下一次滑轨无暇连贯
-            for (let m = 1; m <= 3; m++) {
-                const strip = document.getElementById(`strip${m}`);
-                const matchPos = itemPool.indexOf(arr[m-1]);
-                strip.style.transition = 'none';
-                strip.style.top = `-${matchPos * 130}px`;
-            }
-        }
-
-        window.onload = generateStrips;
-    </script>
+            _jackpot = false;
+        }, 300);
+    }
+</script>
 </body>
 </html>
