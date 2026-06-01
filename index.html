@@ -1,63 +1,224 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SLOT 3.4</title>
-    <style>
-        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
-        .container { width: 100%; max-width: 400px; padding: 20px; box-sizing: border-box; }
-        
-        /* 强制转盘布局，防止错位 */
-        .reels { display: flex; justify-content: space-between; gap: 5px; background: #222; padding: 10px; border-radius: 10px; height: 100px; }
-        .reel { flex: 1; background: #fff; color: #000; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 3rem; }
-        
-        /* 状态屏 */
-        #led { background: #111; color: #0f0; padding: 15px; text-align: center; margin: 20px 0; border-radius: 5px; font-weight: bold; }
-        
-        /* 按钮布局 */
-        .btn-spin { width: 100%; padding: 20px; background: #f00; border: none; color: #fff; font-size: 1.5rem; font-weight: bold; border-radius: 10px; }
-        .debug-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .debug-btn { padding: 10px; background: #333; text-align: center; border-radius: 5px; font-size: 0.8rem; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SLOT V5</title>
+<style>
+body{
+    margin:0;
+    background:#050505;
+    color:#fff;
+    font-family:Arial,sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+.panel{
+    width:95%;
+    max-width:420px;
+}
+.title{
+    text-align:center;
+    font-size:32px;
+    color:gold;
+    margin-bottom:10px;
+}
+.jackpot{
+    text-align:center;
+    background:#111;
+    border:2px solid gold;
+    border-radius:10px;
+    padding:12px;
+    margin-bottom:10px;
+}
+.balance{
+    text-align:center;
+    padding:10px;
+    margin-bottom:10px;
+    background:#111;
+    border-radius:10px;
+}
+.reels{
+    display:flex;
+    gap:8px;
+    background:#222;
+    padding:12px;
+    border-radius:10px;
+}
+.reel{
+    flex:1;
+    height:120px;
+    background:#fff;
+    color:#000;
+    font-size:54px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:8px;
+}
+.led{
+    margin-top:10px;
+    background:#111;
+    color:#00ff00;
+    padding:15px;
+    text-align:center;
+    border-radius:8px;
+    min-height:30px;
+}
+.controls{
+    display:flex;
+    gap:6px;
+    margin-top:10px;
+}
+.controls button{
+    flex:1;
+    padding:12px;
+}
+.spin{
+    width:100%;
+    margin-top:10px;
+    padding:18px;
+    font-size:22px;
+    font-weight:bold;
+    background:#d50000;
+    color:#fff;
+    border:none;
+    border-radius:10px;
+}
+.win{
+    animation:flash .4s infinite;
+}
+@keyframes flash{
+    50%{
+        transform:scale(1.05);
+    }
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="reels">
-            <div class="reel" id="s1">🍒</div>
-            <div class="reel" id="s2">💎</div>
-            <div class="reel" id="s3">🍇</div>
-        </div>
-        <div id="led">🎯 待机中</div>
-        <button class="btn-spin" onclick="spin()">SPIN</button>
-        <div class="debug-grid">
-            <div class="debug-btn" onclick="seq(1)">周期 [1]</div>
-            <div class="debug-btn" onclick="seq(2)">投入 [2]</div>
-            <div class="debug-btn" onclick="seq(3)">返还 [3]</div>
-        </div>
-    </div>
-
-    <script>
-        const symbols = ['7', '💎', '🍒', '🍋', '🔔', '🍇', '🍉'];
-        let _seq = [], _jackpot = false;
-
-        function seq(n) {
-            _seq.push(n);
-            if (_seq.length > 3) _seq.shift();
-            if (_seq.join(',') === '1,2,3') {
-                _jackpot = true;
-                document.getElementById('led').innerText = "⚡️ 必中已激活";
-                document.getElementById('led').style.color = "#ff0";
-            }
-        }
-
-        function spin() {
-            const res = _jackpot ? ['7', '7', '7'] : [0,1,2].map(() => symbols[Math.floor(Math.random()*symbols.length)]);
-            ['s1', 's2', 's3'].forEach((id, i) => document.getElementById(id).innerText = res[i]);
-            document.getElementById('led').innerText = _jackpot ? "🌋 777 大奖！" : "结算完毕";
-            if(!_jackpot) document.getElementById('led').style.color = "#0f0";
-            _jackpot = false;
-        }
-    </script>
+<div class="panel">
+<div class="title">🎰 SLOT V5</div>
+<div class="jackpot">
+🌋 JACKPOT<br>
+<span id="jackpot">5000</span>
+</div>
+<div class="balance">
+余额：<span id="balance">1000</span>
+</div>
+<div class="reels">
+<div class="reel" id="r1">🍒</div>
+<div class="reel" id="r2">🍋</div>
+<div class="reel" id="r3">🍇</div>
+</div>
+<div class="led" id="led">
+点击 SPIN 开始
+</div>
+<div class="controls">
+<button onclick="setBet(10)">10</button>
+<button onclick="setBet(50)">50</button>
+<button onclick="setBet(100)">100</button>
+</div>
+<button class="spin" id="spinBtn" onclick="spin()">
+SPIN
+</button>
+<div style="text-align:center;margin-top:10px">
+当前下注：<span id="bet">10</span>
+</div>
+</div>
+<script>
+const symbols=[
+"7","💎","🍒","🍋","🍇","🍉","🔔"
+];
+let balance=1000;
+let jackpot=5000;
+let bet=10;
+let running=false;
+function setBet(v){
+    bet=v;
+    document.getElementById("bet").innerText=v;
+}
+function randomSymbol(){
+    return symbols[
+        Math.floor(Math.random()*symbols.length)
+    ];
+}
+function updateUI(){
+    balanceEl.innerText=balance;
+    jackpotEl.innerText=jackpot;
+}
+const balanceEl=document.getElementById("balance");
+const jackpotEl=document.getElementById("jackpot");
+const led=document.getElementById("led");
+async function roll(id,duration){
+    return new Promise(resolve=>{
+        const reel=document.getElementById(id);
+        const timer=setInterval(()=>{
+            reel.innerText=randomSymbol();
+        },70);
+        setTimeout(()=>{
+            clearInterval(timer);
+            const result=randomSymbol();
+            reel.innerText=result;
+            resolve(result);
+        },duration);
+    });
+}
+async function spin(){
+    if(running) return;
+    if(balance<bet){
+        led.innerText="余额不足";
+        return;
+    }
+    running=true;
+    balance-=bet;
+    jackpot += Math.floor(bet*0.05);
+    updateUI();
+    led.innerText="旋转中...";
+    const a=await roll("r1",1000);
+    const b=await roll("r2",1500);
+    const c=await roll("r3",2000);
+    settle(a,b,c);
+    running=false;
+}
+function settle(a,b,c){
+    document
+    .querySelector(".reels")
+    .classList.remove("win");
+    if(a==="7" && b==="7" && c==="7"){
+        balance+=jackpot;
+        led.innerText=
+        "🌋 JACKPOT +" + jackpot;
+        jackpot=5000;
+        document
+        .querySelector(".reels")
+        .classList.add("win");
+        updateUI();
+        return;
+    }
+    if(a===b && b===c){
+        const win=bet*10;
+        balance+=win;
+        led.innerText=
+        "🎉 三连中奖 +" + win;
+        document
+        .querySelector(".reels")
+        .classList.add("win");
+        updateUI();
+        return;
+    }
+    if(a===b || b===c || a===c){
+        const win=bet*2;
+        balance+=win;
+        led.innerText=
+        "✨ 小奖 +" + win;
+        updateUI();
+        return;
+    }
+    led.innerText="😢 未中奖";
+}
+updateUI();
+</script>
 </body>
 </html>
