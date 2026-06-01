@@ -1,99 +1,122 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Slot v4 🎰</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Slot v6 🎰 Multi Machine</title>
 
 <style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: radial-gradient(circle at top, #1b2735, #090a0f);
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+body{
+    margin:0;
+    font-family:Arial;
+    background: radial-gradient(circle at top,#1b2735,#090a0f);
+    color:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
 }
 
-/* 主容器 */
-.slot-container {
-    width: 360px;
-    padding: 20px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 0 20px rgba(0,255,255,0.2);
-    text-align: center;
+.box{
+    width:380px;
+    padding:20px;
+    background:rgba(255,255,255,0.06);
+    border-radius:20px;
+    backdrop-filter:blur(10px);
+    text-align:center;
+    box-shadow:0 0 25px rgba(0,255,255,0.15);
 }
 
-/* 标题 */
-h1 {
-    margin: 10px 0 20px;
-    font-size: 22px;
-    color: #00ffe1;
+h1{color:#00ffe1;margin:0 0 10px;}
+
+.info{
+    display:flex;
+    justify-content:space-between;
+    font-size:14px;
+    margin-bottom:10px;
+    opacity:.9;
 }
 
-/* 老虎机 */
-.reels {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
+.machines button{
+    margin:3px;
+    padding:6px 10px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:12px;
 }
 
-.reel {
-    width: 90px;
-    height: 90px;
-    background: #111;
-    border-radius: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 40px;
-    box-shadow: inset 0 0 10px rgba(0,255,255,0.3);
-    transition: transform 0.2s;
+.machines button.active{
+    background:#00ffe1;
+    color:#000;
 }
 
-/* 按钮 */
-button {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 12px;
-    background: linear-gradient(90deg, #00ffe1, #0077ff);
-    color: #000;
-    font-weight: bold;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.2s;
+.reels{
+    display:flex;
+    justify-content:space-between;
+    margin:20px 0;
 }
 
-button:hover {
-    transform: scale(1.05);
+.reel{
+    width:95px;
+    height:95px;
+    background:#111;
+    border-radius:12px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:42px;
+    box-shadow:inset 0 0 10px rgba(0,255,255,0.25);
 }
 
-/* 中奖闪烁 */
-.win {
-    animation: glow 0.3s infinite alternate;
+button.spin{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    font-weight:bold;
+    font-size:16px;
+    cursor:pointer;
+    background:linear-gradient(90deg,#00ffe1,#0077ff);
 }
 
-@keyframes glow {
-    from { box-shadow: 0 0 10px #00ffe1; }
-    to { box-shadow: 0 0 25px #00ffe1; }
+.win{
+    animation:glow .3s infinite alternate;
 }
 
-#result {
-    margin-top: 15px;
-    font-size: 16px;
+@keyframes glow{
+    from{box-shadow:0 0 10px #00ffe1;}
+    to{box-shadow:0 0 25px #00ffe1;}
 }
+
+.shake{animation:shake .2s 3;}
+
+@keyframes shake{
+    0%{transform:translateX(0);}
+    25%{transform:translateX(-3px);}
+    50%{transform:translateX(3px);}
+    100%{transform:translateX(0);}
+}
+
+#msg{margin-top:10px;font-size:14px;}
 </style>
 </head>
 
 <body>
 
-<div class="slot-container">
-    <h1>🎰 Slot v4</h1>
+<div class="box">
+    <h1>🎰 SLOT v6</h1>
+
+    <div class="info">
+        <div>💰 <span id="balance">100</span></div>
+        <div>🎲 Bet: <span id="bet">10</span></div>
+    </div>
+
+    <div class="machines">
+        <button onclick="setMachine('classic')" class="active">Classic</button>
+        <button onclick="setMachine('jackpot')">Jackpot</button>
+        <button onclick="setMachine('ultra')">Ultra</button>
+    </div>
 
     <div class="reels">
         <div class="reel" id="r1">🍒</div>
@@ -101,95 +124,178 @@ button:hover {
         <div class="reel" id="r3">🍊</div>
     </div>
 
-    <button onclick="spin()">SPIN</button>
+    <button class="spin" onclick="spin()">SPIN</button>
 
-    <div id="result">点击开始游戏</div>
+    <div id="msg">选择机位开始</div>
 </div>
 
 <script>
-// ===== 图标池 =====
-const symbols = ["🍒","🍋","🍊","🍉","⭐","🔔"];
 
-// ===== 音效 =====
-const ctx = new (window.AudioContext || window.webkitAudioContext)();
-
-function beep(freq, time){
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.frequency.value = freq;
+// =====================
+// 音效
+// =====================
+const ctx = new (window.AudioContext||window.webkitAudioContext)();
+function beep(f,t){
+    const o=ctx.createOscillator();
+    const g=ctx.createGain();
+    o.frequency.value=f;
     o.connect(g);
     g.connect(ctx.destination);
     o.start();
-    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + time);
-    o.stop(ctx.currentTime + time);
+    g.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+t);
+    o.stop(ctx.currentTime+t);
 }
 
-// ===== 老虎机逻辑 =====
-let spinning = false;
-
-function randSymbol(){
-    return symbols[Math.floor(Math.random() * symbols.length)];
-}
-
-function spin(){
-    if(spinning) return;
-    spinning = true;
-
-    const r1 = document.getElementById("r1");
-    const r2 = document.getElementById("r2");
-    const r3 = document.getElementById("r3");
-    const result = document.getElementById("result");
-
-    result.innerText = "🎲 转动中...";
-
-    let count = 0;
-    const interval = setInterval(() => {
-        r1.innerText = randSymbol();
-        r2.innerText = randSymbol();
-        r3.innerText = randSymbol();
-        beep(200 + Math.random()*300, 0.05);
-        count++;
-        if(count > 15){
-            clearInterval(interval);
-            finishSpin();
-        }
-    }, 80);
-
-    function finishSpin(){
-        const a = randSymbol();
-        const b = randSymbol();
-        const c = randSymbol();
-
-        r1.innerText = a;
-        r2.innerText = b;
-        r3.innerText = c;
-
-        let win = (a === b && b === c);
-
-        if(win){
-            result.innerText = "🎉 JACKPOT!";
-            beep(800, 0.2);
-            setTimeout(()=>beep(1000,0.3),150);
-            setTimeout(()=>beep(1200,0.4),300);
-
-            r1.classList.add("win");
-            r2.classList.add("win");
-            r3.classList.add("win");
-
-            setTimeout(()=>{
-                r1.classList.remove("win");
-                r2.classList.remove("win");
-                r3.classList.remove("win");
-            },1500);
-
-        } else {
-            result.innerText = "再试一次 💨";
-            beep(120, 0.2);
-        }
-
-        spinning = false;
+// =====================
+// 多机位配置
+// =====================
+const machines = {
+    classic:{
+        bet:10,
+        payout:3,
+        table:[
+            {s:"🍒",w:35},
+            {s:"🍋",w:30},
+            {s:"🍊",w:25},
+            {s:"🍉",w:8},
+            {s:"⭐",w:2}
+        ]
+    },
+    jackpot:{
+        bet:20,
+        payout:6,
+        table:[
+            {s:"🍒",w:30},
+            {s:"🍋",w:25},
+            {s:"⭐",w:10},
+            {s:"💎",w:5}
+        ]
+    },
+    ultra:{
+        bet:50,
+        payout:15,
+        table:[
+            {s:"⭐",w:50},
+            {s:"💎",w:35},
+            {s:"🔥",w:15}
+        ]
     }
+};
+
+let current="classic";
+let balance=100;
+let spinning=false;
+
+function setMachine(name){
+    current=name;
+    document.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
+    event.target.classList.add("active");
+
+    document.getElementById("bet").innerText=machines[name].bet;
+    document.getElementById("msg").innerText="已切换："+name;
 }
+
+// =====================
+// 权重随机
+// =====================
+function weighted(table){
+    let total=table.reduce((a,b)=>a+b.w,0);
+    let r=Math.random()*total;
+    for(let i=0;i<table.length;i++){
+        r-=table[i].w;
+        if(r<=0)return table[i].s;
+    }
+    return table[0].s;
+}
+
+// =====================
+// 滚轮动画
+// =====================
+function roll(reel,final,delay){
+    return new Promise(res=>{
+        let count=0;
+        let speed=40;
+
+        const t=setInterval(()=>{
+            reel.innerText=["🍒","🍋","🍊","🍉","⭐","💎","🔥"][Math.floor(Math.random()*7)];
+            count++;
+
+            if(count>20){
+                clearInterval(t);
+
+                let slow=setInterval(()=>{
+                    reel.innerText=["🍒","🍋","🍊","🍉","⭐","💎","🔥"][Math.floor(Math.random()*7)];
+                    speed+=20;
+
+                    if(speed>200){
+                        clearInterval(slow);
+                        reel.innerText=final;
+                        res();
+                    }
+                },speed);
+            }
+        },speed);
+    });
+}
+
+// =====================
+// 主逻辑
+// =====================
+async function spin(){
+    if(spinning)return;
+    if(balance<machines[current].bet){
+        document.getElementById("msg").innerText="余额不足";
+        return;
+    }
+
+    spinning=true;
+    balance-=machines[current].bet;
+    document.getElementById("balance").innerText=balance;
+
+    document.getElementById("msg").innerText="🎲 spinning...";
+    beep(200,0.05);
+
+    const m=machines[current];
+
+    const a=weighted(m.table);
+    const b=weighted(m.table);
+    const c=weighted(m.table);
+
+    const r1=document.getElementById("r1");
+    const r2=document.getElementById("r2");
+    const r3=document.getElementById("r3");
+
+    await Promise.all([
+        roll(r1,a),
+        roll(r2,b),
+        roll(r3,c)
+    ]);
+
+    let win=(a===b&&b===c);
+
+    if(win){
+        let reward=m.bet*m.payout;
+        balance+=reward;
+        document.getElementById("balance").innerText=balance;
+
+        document.getElementById("msg").innerText="🎉 WIN +"+reward;
+
+        beep(800,0.2);
+        setTimeout(()=>beep(1000,0.2),150);
+
+        [r1,r2,r3].forEach(r=>{
+            r.classList.add("win","shake");
+            setTimeout(()=>r.classList.remove("win","shake"),1200);
+        });
+
+    }else{
+        document.getElementById("msg").innerText="再试一次 💨";
+        beep(120,0.2);
+    }
+
+    spinning=false;
+}
+
 </script>
 
 </body>
