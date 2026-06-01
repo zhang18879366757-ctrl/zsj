@@ -3,84 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>至尊博弈数据研究室 - Slot 3.1 (隐匿版)</title>
+    <title>QUANT LABS - Slot 3.1</title>
     <style>
         :root { --bg: #0b0b0e; --gold: #ffcc00; --primary: #ff3b30; }
         body { margin: 0; background-color: var(--bg); color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        
-        .dashboard-header { width: 100%; max-width: 440px; padding: 20px 15px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
-        .balance-pill { background: #2c2c2e; padding: 10px 20px; border-radius: 30px; border: 1px solid #444; font-weight: bold; }
-        
-        .arcade-cabinet { width: 92%; max-width: 410px; background: #120303; border: 5px solid #991b1b; border-radius: 28px; padding: 22px; box-sizing: border-box; }
+        .arcade-cabinet { width: 92%; max-width: 410px; background: #120303; border: 5px solid #991b1b; border-radius: 28px; padding: 22px; margin-top: 20px; box-sizing: border-box; }
         .viewport-matrix { display: flex; justify-content: space-between; background: #000; border: 3px solid var(--gold); border-radius: 16px; padding: 16px; height: 130px; overflow: hidden; position: relative; }
-        .reel-strip { position: absolute; top: 0; width: 30%; display: flex; flex-direction: column; align-items: center; }
-        .icon-cell { height: 130px; font-size: 3.8rem; display: flex; justify-content: center; align-items: center; }
-        
-        .led-screen { background: #050507; padding: 12px; margin-top: 18px; text-align: center; font-family: monospace; color: #30d158; border: 1px solid #222; border-radius: 10px; }
+        .reel-housing { width: 30%; height: 100%; background: #fff; border-radius: 8px; position: relative; overflow: hidden; }
+        .reel-strip { position: absolute; top: 0; width: 100%; display: flex; flex-direction: column; align-items: center; }
+        .icon-cell { height: 130px; font-size: 3.5rem; display: flex; justify-content: center; align-items: center; }
+        .led-screen { background: #050507; padding: 12px; margin-top: 15px; text-align: center; color: #30d158; font-weight: bold; border-radius: 10px; border: 1px solid #333; }
         .launch-btn { width: 100%; background: var(--primary); border: none; color: white; padding: 20px; border-radius: 18px; font-size: 1.5rem; font-weight: 900; margin-top: 20px; }
-        
         .grid-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 92%; max-width: 410px; margin-top: 20px; }
-        .metric-card { background: #16161a; padding: 10px; border-radius: 12px; text-align: center; cursor: pointer; }
-        .metric-label { font-size: 0.7rem; color: #8e8e93; }
+        .metric-card { background: #16161a; padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; color: #8e8e93; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-    <div class="dashboard-header">
-        <div style="font-weight: 900; letter-spacing: 1px;">QUANT LABS</div>
-        <div class="balance-pill">资产: $<span id="domBalance">1000</span></div>
-    </div>
-
     <div class="arcade-cabinet">
         <div class="viewport-matrix">
-            <div class="reel-strip" id="strip1" style="left: 5%;"></div>
-            <div class="reel-strip" id="strip2" style="left: 35%;"></div>
-            <div class="reel-strip" id="strip3" style="left: 65%;"></div>
+            <div class="reel-housing"><div class="reel-strip" id="strip1"></div></div>
+            <div class="reel-housing"><div class="reel-strip" id="strip2"></div></div>
+            <div class="reel-housing"><div class="reel-strip" id="strip3"></div></div>
         </div>
-        <div class="led-screen" id="domLed">🎯 准备就绪</div>
-        <button class="launch-btn" id="domLaunchBtn" onclick="triggerSpin()">SPIN</button>
+        <div class="led-screen" id="domLed">🎯 系统准备就绪</div>
+        <button class="launch-btn" id="domLaunchBtn" onclick="spin()">SPIN</button>
     </div>
 
     <div class="grid-matrix">
-        <div class="metric-card" onclick="secretSeq(1)">周期</div>
-        <div class="metric-card" onclick="secretSeq(2)">投入</div>
-        <div class="metric-card" onclick="secretSeq(3)">返还</div>
+        <div class="metric-card" onclick="secretSeq(1)">周期 [1]</div>
+        <div class="metric-card" onclick="secretSeq(2)">投入 [2]</div>
+        <div class="metric-card" onclick="secretSeq(3)">返还 [3]</div>
     </div>
 
     <script>
         const pool = ['7', '💎', '🍒', '🍋', '🔔', '🍇', '🍉'];
-        let wallet = 1000, wager = 10, running = false;
-        
-        // 暗门逻辑：记录点击顺序
-        let _seq = [];
-        let _isJackpotReady = false;
+        let _seq = [], _jackpot = false;
+
+        function init() {
+            for (let i = 1; i <= 3; i++) {
+                const strip = document.getElementById(`strip${i}`);
+                for (let k = 0; k < 20; k++) {
+                    const div = document.createElement('div');
+                    div.className = 'icon-cell';
+                    div.innerText = pool[Math.floor(Math.random() * pool.length)];
+                    strip.appendChild(div);
+                }
+            }
+        }
 
         function secretSeq(n) {
             _seq.push(n);
             if (_seq.length > 3) _seq.shift();
-            // 点击顺序 1 -> 2 -> 3 激活
             if (_seq.join(',') === '1,2,3') {
-                _isJackpotReady = true;
+                _jackpot = true;
                 document.getElementById('domLed').innerText = "SYSTEM_OPTIMIZED";
-                setTimeout(() => document.getElementById('domLed').innerText = "🎯 准备就绪", 2000);
+                setTimeout(() => document.getElementById('domLed').innerText = "🎯 准备就绪", 1500);
             }
         }
 
-        async function triggerSpin() {
-            if (running) return;
-            running = true;
-            wallet -= wager;
-            document.getElementById('domBalance').innerText = wallet;
+        async function spin() {
+            const strips = [document.getElementById('strip1'), document.getElementById('strip2'), document.getElementById('strip3')];
+            const results = _jackpot ? ['7', '7', '7'] : [pool[0], pool[1], pool[2]];
             
-            let results = _isJackpotReady ? ['7','7','7'] : [pool[0],pool[1],pool[2]]; // 简化版示意
-            // 在此省略繁琐的滚动动画代码，效果同上...
-            
-            _isJackpotReady = false; // 用完一次自动失效
-            running = false;
-            document.getElementById('domLed').innerText = "结算完毕";
+            // 简单的滚动动画
+            strips.forEach((s, i) => {
+                s.style.transition = "top 1s ease";
+                s.style.top = "-1300px"; 
+                setTimeout(() => {
+                    s.style.transition = "none";
+                    s.style.top = "0px";
+                    s.children[0].innerText = results[i];
+                }, 1000);
+            });
+
+            _jackpot = false;
+            document.getElementById('domLed').innerText = _jackpot ? "大奖生效" : "结算完毕";
         }
-        
-        // 记得将上述动画函数补全，功能已实现
+        init();
     </script>
 </body>
 </html>
