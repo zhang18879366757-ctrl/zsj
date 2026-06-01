@@ -2,43 +2,39 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>QUANT LABS - Slot 3.3 (特效加强版)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SLOT 3.4</title>
     <style>
-        :root { --bg: #0b0b0e; --gold: #ffcc00; --primary: #ff3b30; }
-        body { background: var(--bg); color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .cabinet { width: 100%; max-width: 400px; background: #1a0505; border: 4px solid #500; border-radius: 20px; padding: 20px; text-align: center; box-shadow: 0 0 30px rgba(255,0,0,0.3); }
-        .reels { display: flex; justify-content: space-around; background: #000; border: 4px solid var(--gold); border-radius: 10px; padding: 10px; height: 120px; align-items: center; overflow: hidden; }
+        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
+        .container { width: 100%; max-width: 400px; padding: 20px; box-sizing: border-box; }
         
-        /* 核心视觉光效：添加了动态模糊感 */
-        .slot { font-size: 4rem; transition: transform 0.1s ease-out, filter 0.2s; }
-        .spinning { filter: blur(8px) brightness(1.5); transform: translateY(-20px) scaleY(1.2); }
+        /* 强制转盘布局，防止错位 */
+        .reels { display: flex; justify-content: space-between; gap: 5px; background: #222; padding: 10px; border-radius: 10px; height: 100px; }
+        .reel { flex: 1; background: #fff; color: #000; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 3rem; }
         
-        .led { background: #000; color: #30d158; padding: 10px; margin: 15px 0; border-radius: 8px; font-weight: bold; border: 1px solid #444; transition: all 0.3s; }
-        .led-jackpot { color: var(--gold); text-shadow: 0 0 10px var(--gold); animation: blink 0.5s infinite; }
-        @keyframes blink { 50% { opacity: 0.5; } }
+        /* 状态屏 */
+        #led { background: #111; color: #0f0; padding: 15px; text-align: center; margin: 20px 0; border-radius: 5px; font-weight: bold; }
         
-        .btn-spin { width: 100%; padding: 20px; font-size: 1.5rem; background: var(--primary); border: none; color: #fff; border-radius: 12px; font-weight: 900; cursor: pointer; }
-        .btn-spin:active { transform: scale(0.95); }
-        .debug-area { display: flex; gap: 10px; margin-top: 20px; }
-        .debug-btn { background: #222; padding: 10px; border-radius: 8px; font-size: 0.7rem; color: #555; cursor: pointer; }
+        /* 按钮布局 */
+        .btn-spin { width: 100%; padding: 20px; background: #f00; border: none; color: #fff; font-size: 1.5rem; font-weight: bold; border-radius: 10px; }
+        .debug-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .debug-btn { padding: 10px; background: #333; text-align: center; border-radius: 5px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
-
-    <div class="cabinet">
+    <div class="container">
         <div class="reels">
-            <div class="slot" id="s1">🍒</div>
-            <div class="slot" id="s2">💎</div>
-            <div class="slot" id="s3">🍇</div>
+            <div class="reel" id="s1">🍒</div>
+            <div class="reel" id="s2">💎</div>
+            <div class="reel" id="s3">🍇</div>
         </div>
-        <div class="led" id="led">🎯 待机中</div>
+        <div id="led">🎯 待机中</div>
         <button class="btn-spin" onclick="spin()">SPIN</button>
-    </div>
-
-    <div class="debug-area">
-        <div class="debug-btn" onclick="seq(1)">周期 [1]</div>
-        <div class="debug-btn" onclick="seq(2)">投入 [2]</div>
-        <div class="debug-btn" onclick="seq(3)">返还 [3]</div>
+        <div class="debug-grid">
+            <div class="debug-btn" onclick="seq(1)">周期 [1]</div>
+            <div class="debug-btn" onclick="seq(2)">投入 [2]</div>
+            <div class="debug-btn" onclick="seq(3)">返还 [3]</div>
+        </div>
     </div>
 
     <script>
@@ -50,30 +46,17 @@
             if (_seq.length > 3) _seq.shift();
             if (_seq.join(',') === '1,2,3') {
                 _jackpot = true;
-                const led = document.getElementById('led');
-                led.innerText = "⚡️ 必中模式已激活 (777)";
-                led.classList.add('led-jackpot');
+                document.getElementById('led').innerText = "⚡️ 必中已激活";
+                document.getElementById('led').style.color = "#ff0";
             }
         }
 
         function spin() {
-            const slots = [document.getElementById('s1'), document.getElementById('s2'), document.getElementById('s3')];
-            // 启动转动动画
-            slots.forEach(s => s.classList.add('spinning'));
-            
-            setTimeout(() => {
-                const res = _jackpot ? ['7', '7', '7'] : symbols.sort(() => Math.random() - 0.5).slice(0, 3);
-                slots.forEach((s, i) => {
-                    s.classList.remove('spinning');
-                    s.innerText = res[i];
-                });
-                
-                const led = document.getElementById('led');
-                led.innerText = _jackpot ? "🌋 爆奖！777 锁定！" : "结算完成";
-                if (_jackpot) led.classList.add('led-jackpot');
-                else led.classList.remove('led-jackpot');
-                _jackpot = false;
-            }, 600); // 转动时长
+            const res = _jackpot ? ['7', '7', '7'] : [0,1,2].map(() => symbols[Math.floor(Math.random()*symbols.length)]);
+            ['s1', 's2', 's3'].forEach((id, i) => document.getElementById(id).innerText = res[i]);
+            document.getElementById('led').innerText = _jackpot ? "🌋 777 大奖！" : "结算完毕";
+            if(!_jackpot) document.getElementById('led').style.color = "#0f0";
+            _jackpot = false;
         }
     </script>
 </body>
