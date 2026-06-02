@@ -3,40 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QUANT LABS - 9.0 Elite Matrix</title>
+    <title>QUANT LABS - 10.0 Cluster Matrix</title>
     <style>
         :root { 
-            --gold: #ffd700; 
-            --neon-blue: #00f3ff; 
-            --neon-purple: #b500ff;
-            --neon-green: #39ff14;
+            --gold: #ffd700; --neon-blue: #00f3ff; 
+            --neon-purple: #b500ff; --neon-green: #39ff14;
         }
-        
         body { 
             margin: 0; background: radial-gradient(circle at 50% 0%, #1a0f2e 0%, #05020a 100%); 
             color: #fff; font-family: -apple-system, sans-serif; 
             display: flex; flex-direction: column; align-items: center; 
             min-height: 100vh; padding: 15px; box-sizing: border-box; overflow: hidden; 
+            user-select: none;
         }
         
-        .dashboard { 
-            width: 100%; max-width: 420px; display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 15px; font-weight: 900; font-size: 1.1rem;
-        }
-        .score-pill { 
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px);
-            padding: 8px 18px; border-radius: 30px; color: var(--gold); 
-            border: 1px solid rgba(255, 215, 0, 0.4); box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
-        }
+        .dashboard { width: 100%; max-width: 420px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: 900; font-size: 1.1rem; }
+        .score-pill { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px); padding: 8px 18px; border-radius: 30px; color: var(--gold); border: 1px solid rgba(255, 215, 0, 0.4); box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
         
-        /* 加入机台震动动画 */
         .cabinet { 
-            width: 100%; max-width: 420px; 
-            background: rgba(20, 10, 30, 0.8); backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; 
-            padding: 15px; box-sizing: border-box; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9), inset 0 0 2px rgba(255,255,255,0.2);
-            position: relative;
+            width: 100%; max-width: 420px; background: rgba(20, 10, 30, 0.8); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 15px; box-sizing: border-box; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9), inset 0 0 2px rgba(255,255,255,0.2); position: relative;
         }
         .shake { animation: cabinetShake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes cabinetShake {
@@ -48,56 +35,35 @@
         
         .grid { 
             display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr); 
-            gap: 5px; background: rgba(0, 0, 0, 0.6); 
-            border-radius: 16px; padding: 6px; position: relative; 
+            gap: 5px; background: rgba(0, 0, 0, 0.6); border-radius: 16px; padding: 6px; position: relative; 
             border: 2px solid rgba(181, 0, 255, 0.4);
         }
         
         .cell { 
-            aspect-ratio: 1 / 1; 
-            background: linear-gradient(135deg, #2c1b4d, #120a21); 
+            aspect-ratio: 1 / 1; background: linear-gradient(135deg, #2c1b4d, #120a21); 
             border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; 
-            display: flex; justify-content: center; align-items: center; 
-            font-size: clamp(1.5rem, 6vw, 2.2rem); 
+            display: flex; justify-content: center; align-items: center; font-size: clamp(1.5rem, 6vw, 2.2rem); 
             transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
             box-shadow: inset 1px 1px 2px rgba(255,255,255,0.1);
         }
         
         .pop { transform: scale(0) rotate(90deg); opacity: 0; }
         .fall { animation: bounceDrop 0.4s cubic-bezier(0.28, 0.84, 0.42, 1) forwards; }
-        
         @keyframes bounceDrop { 
             0% { transform: translateY(-80px) scaleY(1.2); opacity: 0; }
             70% { transform: translateY(5px) scaleY(0.9); opacity: 1; }
             100% { transform: translateY(0) scaleY(1); opacity: 1; }
         }
 
-        /* 浮动加分文字特效 */
         .floating-text {
             position: absolute; color: var(--gold); font-weight: 900; font-size: 1.4rem;
             pointer-events: none; z-index: 100; text-shadow: 0 2px 10px rgba(0,0,0,0.8);
             animation: floatUp 0.8s ease-out forwards;
         }
-        @keyframes floatUp {
-            0% { transform: translateY(0) scale(0.8); opacity: 1; }
-            50% { transform: translateY(-30px) scale(1.2); opacity: 1; }
-            100% { transform: translateY(-50px) scale(1); opacity: 0; }
-        }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(0.8); opacity: 1; } 50% { transform: translateY(-30px) scale(1.2); opacity: 1; } 100% { transform: translateY(-50px) scale(1); opacity: 0; } }
 
-        .led { 
-            background: #000; color: var(--neon-blue); 
-            padding: 12px; margin: 15px 0; border-radius: 10px; 
-            font-weight: 900; text-align: center; font-family: monospace; font-size: 1.1rem;
-            border: 1px solid rgba(0, 243, 255, 0.3); text-shadow: 0 0 8px var(--neon-blue);
-        }
-        
-        .spin-btn { 
-            width: 100%; padding: 18px; 
-            background: linear-gradient(90deg, #ff0055, #b500ff); 
-            border: none; color: #fff; border-radius: 14px; 
-            font-size: 1.4rem; font-weight: 900; cursor: pointer; 
-            box-shadow: 0 5px 15px rgba(181, 0, 255, 0.3); transition: 0.1s;
-        }
+        .led { background: #000; color: var(--neon-blue); padding: 12px; margin: 15px 0; border-radius: 10px; font-weight: 900; text-align: center; font-family: monospace; font-size: 1.1rem; border: 1px solid rgba(0, 243, 255, 0.3); text-shadow: 0 0 8px var(--neon-blue); }
+        .spin-btn { width: 100%; padding: 18px; background: linear-gradient(90deg, #ff0055, #b500ff); border: none; color: #fff; border-radius: 14px; font-size: 1.4rem; font-weight: 900; cursor: pointer; box-shadow: 0 5px 15px rgba(181, 0, 255, 0.3); transition: 0.1s; }
         .spin-btn:active { transform: translateY(4px); box-shadow: 0 2px 5px rgba(181, 0, 255, 0.3); }
         .spin-btn:disabled { background: #333; color: #666; transform: none; box-shadow: none; }
         
@@ -108,7 +74,7 @@
 <body>
 
     <div class="dashboard">
-        <div style="color:var(--neon-blue);">NEO-SLOT 9.0</div>
+        <div style="color:var(--neon-blue);">CLUSTER 10.0</div>
         <div class="score-pill">CREDITS: $<span id="domScore">1000</span></div>
     </div>
 
@@ -126,22 +92,18 @@
 
     <script>
         const symbols = ['💎', '🍎', '⭐', '🍀', '🔥', '🔮']; 
-        const COLS = 6; 
-        const ROWS = 6;
-        let board = [];
-        let domCells = [];
-        let currentScore = 1000;
-        let targetScore = 1000;
+        const COLS = 6; const ROWS = 6;
+        let board = []; let domCells = [];
+        let currentScore = 1000; let targetScore = 1000;
         let isProcessing = false;
 
         let _seq = [], _jackpot = false;
         function seq(n) {
-            _seq.push(n);
-            if (_seq.length > 3) _seq.shift();
+            _seq.push(n); if (_seq.length > 3) _seq.shift();
             if (_seq.join(',') === '1,2,3') {
                 _jackpot = true;
                 const led = document.getElementById('led');
-                led.innerText = "⚠️ FATAL OVERRIDE: 777 ⚠️";
+                led.innerText = "⚠️ OMEGA CLUSTER DETECTED ⚠️";
                 led.style.color = "var(--neon-purple)";
                 document.getElementById('cabinet').classList.add('shake');
                 setTimeout(() => document.getElementById('cabinet').classList.remove('shake'), 500);
@@ -151,13 +113,11 @@
         const delay = ms => new Promise(r => setTimeout(r, ms));
 
         function initGrid() {
-            const gridEl = document.getElementById('grid');
-            gridEl.innerHTML = '';
+            const gridEl = document.getElementById('grid'); gridEl.innerHTML = '';
             for (let r = 0; r < ROWS; r++) {
                 board[r] = []; domCells[r] = [];
                 for (let c = 0; c < COLS; c++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell';
+                    const cell = document.createElement('div'); cell.className = 'cell';
                     let sym = symbols[Math.floor(Math.random() * symbols.length)];
                     board[r][c] = sym; cell.innerText = sym;
                     domCells[r][c] = cell; gridEl.appendChild(cell);
@@ -165,13 +125,10 @@
             }
         }
 
-        // 优化：数字滚动动画引擎
         function rollScoreTo(newScore) {
             const scoreEl = document.getElementById('domScore');
-            const duration = 500;
-            const startScore = currentScore;
-            const diff = newScore - startScore;
-            let startTime = null;
+            const duration = 500; const startScore = currentScore;
+            const diff = newScore - startScore; let startTime = null;
 
             function animation(currentTime) {
                 if (startTime === null) startTime = currentTime;
@@ -184,119 +141,119 @@
             requestAnimationFrame(animation);
         }
 
-        // 优化：浮动加分文字
         function showFloatingText(r, c, text, color) {
-            const cell = domCells[r][c];
-            const rect = cell.getBoundingClientRect();
+            const cell = domCells[r][c]; const rect = cell.getBoundingClientRect();
             const gridRect = document.getElementById('grid').getBoundingClientRect();
-            
             const floatEl = document.createElement('div');
-            floatEl.className = 'floating-text';
-            floatEl.innerText = text;
+            floatEl.className = 'floating-text'; floatEl.innerText = text;
             floatEl.style.color = color || 'var(--gold)';
             floatEl.style.left = `${rect.left - gridRect.left + 10}px`;
             floatEl.style.top = `${rect.top - gridRect.top}px`;
-            
             document.getElementById('grid').appendChild(floatEl);
             setTimeout(() => floatEl.remove(), 800);
         }
 
         async function startGame() {
             if (isProcessing) return;
-            isProcessing = true;
-            document.getElementById('spinBtn').disabled = true;
+            isProcessing = true; document.getElementById('spinBtn').disabled = true;
             
-            targetScore -= 20; 
-            rollScoreTo(targetScore);
+            targetScore -= 20; rollScoreTo(targetScore);
             document.getElementById('led').innerText = "🌀 RESTRUCTURING MATRIX...";
 
-            for (let r = 0; r < ROWS; r++) {
-                for (let c = 0; c < COLS; c++) {
-                    domCells[r][c].classList.add('pop');
-                }
-            }
+            for (let r = 0; r < ROWS; r++) { for (let c = 0; c < COLS; c++) domCells[r][c].classList.add('pop'); }
             await delay(250);
 
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS; c++) {
                     let sym = _jackpot ? '7' : symbols[Math.floor(Math.random() * symbols.length)];
-                    board[r][c] = sym;
-                    domCells[r][c].innerText = sym;
+                    board[r][c] = sym; domCells[r][c].innerText = sym;
                     domCells[r][c].classList.remove('pop');
                 }
             }
-            _jackpot = false; 
-            await delay(300);
-
+            _jackpot = false; await delay(300);
             await processMatches(1);
         }
 
+        // ==========================================
+        // 核心升级：连通块 DFS (深度优先搜索) 算法
+        // ==========================================
         async function processMatches(comboCount) {
             let matchedCoords = new Set();
+            let visited = Array.from({length: ROWS}, () => Array(COLS).fill(false));
 
             for (let r = 0; r < ROWS; r++) {
-                for (let c = 0; c < COLS - 2; c++) {
-                    let sym = board[r][c];
-                    if (sym && sym === board[r][c+1] && sym === board[r][c+2]) {
-                        matchedCoords.add(`${r},${c}`); matchedCoords.add(`${r},${c+1}`); matchedCoords.add(`${r},${c+2}`);
-                    }
-                }
-            }
-            for (let c = 0; c < COLS; c++) {
-                for (let r = 0; r < ROWS - 2; r++) {
-                    let sym = board[r][c];
-                    if (sym && sym === board[r+1][c] && sym === board[r+2][c]) {
-                        matchedCoords.add(`${r},${c}`); matchedCoords.add(`${r+1},${c}`); matchedCoords.add(`${r+2},${c}`);
+                for (let c = 0; c < COLS; c++) {
+                    if (!visited[r][c] && board[r][c] !== null) {
+                        let sym = board[r][c];
+                        let group = [];
+                        let stack = [[r, c]];
+                        visited[r][c] = true;
+
+                        // 开始寻找周围所有的连通块
+                        while (stack.length > 0) {
+                            let [currR, currC] = stack.pop();
+                            group.push(`${currR},${currC}`);
+
+                            // 上下左右四个方向
+                            const dirs = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+                            for (let [dr, dc] of dirs) {
+                                let nr = currR + dr; let nc = currC + dc;
+                                if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) {
+                                    if (!visited[nr][nc] && board[nr][nc] === sym) {
+                                        visited[nr][nc] = true;
+                                        stack.push([nr, nc]);
+                                    }
+                                }
+                            }
+                        }
+
+                        // 如果连在一起的数量大于等于 3 个，就判定为消除
+                        if (group.length >= 3) {
+                            group.forEach(coord => matchedCoords.add(coord));
+                        }
                     }
                 }
             }
 
             if (matchedCoords.size === 0) {
-                document.getElementById('spinBtn').disabled = false;
-                isProcessing = false;
+                document.getElementById('spinBtn').disabled = false; isProcessing = false;
                 if(comboCount === 1) document.getElementById('led').innerText = "✅ STANDBY";
                 return;
             }
 
-            // 优化：机台震动反馈 (Combo越大震动越强)
-            if(comboCount > 1 || matchedCoords.size > 10) {
+            // 震动反馈
+            if(comboCount > 1 || matchedCoords.size >= 6) {
                 const cab = document.getElementById('cabinet');
-                cab.classList.remove('shake');
-                void cab.offsetWidth; // 触发重绘重置动画
-                cab.classList.add('shake');
+                cab.classList.remove('shake'); void cab.offsetWidth; cab.classList.add('shake');
             }
 
             let led = document.getElementById('led');
             led.innerText = `🔥 COMBO x${comboCount} : +${matchedCoords.size} BLOCKS!`;
             led.style.color = comboCount > 2 ? "var(--neon-green)" : "var(--gold)";
             
-            // 计算当前连击得分
+            // 连通消除奖励：连通的数量越多，得分呈指数增长
             let addedScore = matchedCoords.size * comboCount * 15;
-            targetScore += addedScore;
-            rollScoreTo(targetScore);
+            targetScore += addedScore; rollScoreTo(targetScore);
 
-            // 执行消除爆裂 & 弹出浮动分数
             let index = 0;
             matchedCoords.forEach(coord => {
                 let [r, c] = coord.split(',').map(Number);
-                domCells[r][c].classList.add('pop');
-                board[r][c] = null;
-                // 选取几个中心点弹出文字，避免文字重叠过多
-                if(index % 3 === 0) {
+                domCells[r][c].classList.add('pop'); board[r][c] = null;
+                // 优化悬浮字：只在部分区域弹出，防止画面太乱
+                if(index % 4 === 0) {
                     showFloatingText(r, c, `+${comboCount * 15}`, comboCount > 2 ? 'var(--neon-green)' : 'var(--gold)');
                 }
                 index++;
             });
             await delay(350); 
 
+            // 引力下落系统
             for (let c = 0; c < COLS; c++) {
                 let emptySpaces = 0;
                 for (let r = ROWS - 1; r >= 0; r--) {
-                    if (board[r][c] === null) {
-                        emptySpaces++;
-                    } else if (emptySpaces > 0) {
-                        board[r + emptySpaces][c] = board[r][c];
-                        board[r][c] = null;
+                    if (board[r][c] === null) { emptySpaces++; } 
+                    else if (emptySpaces > 0) {
+                        board[r + emptySpaces][c] = board[r][c]; board[r][c] = null;
                         domCells[r + emptySpaces][c].innerText = board[r + emptySpaces][c];
                         domCells[r + emptySpaces][c].classList.remove('pop');
                         domCells[r][c].classList.add('pop'); 
@@ -305,24 +262,18 @@
             }
             await delay(200);
 
+            // 顶部填充新块
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS; c++) {
                     if (board[r][c] === null) {
                         let newSym = symbols[Math.floor(Math.random() * symbols.length)];
-                        board[r][c] = newSym;
-                        domCells[r][c].innerText = newSym;
-                        domCells[r][c].classList.remove('pop');
-                        domCells[r][c].classList.add('fall');
+                        board[r][c] = newSym; domCells[r][c].innerText = newSym;
+                        domCells[r][c].classList.remove('pop'); domCells[r][c].classList.add('fall');
                     }
                 }
             }
             await delay(400); 
-
-            for (let r = 0; r < ROWS; r++) {
-                for (let c = 0; c < COLS; c++) {
-                    domCells[r][c].classList.remove('fall');
-                }
-            }
+            for (let r = 0; r < ROWS; r++) { for (let c = 0; c < COLS; c++) domCells[r][c].classList.remove('fall'); }
 
             await processMatches(comboCount + 1);
         }
