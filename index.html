@@ -3,282 +3,275 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QUANT LABS - 10.0 Cluster Matrix</title>
+    <title>至尊博弈数据研究室 - Slot 3.5 优化版</title>
     <style>
-        :root { 
-            --gold: #ffd700; --neon-blue: #00f3ff; 
-            --neon-purple: #b500ff; --neon-green: #39ff14;
+        :root {
+            --primary: #ff3b30; --gold: #ffcc00; --neon-blue: #00ddff; 
+            --neon-purple: #bf5af2; --bg: #0b0b0e; --surface: #16161a;
         }
-        body { 
-            margin: 0; background: radial-gradient(circle at 50% 0%, #1a0f2e 0%, #05020a 100%); 
-            color: #fff; font-family: -apple-system, sans-serif; 
-            display: flex; flex-direction: column; align-items: center; 
-            min-height: 100vh; padding: 15px; box-sizing: border-box; overflow: hidden; 
-            user-select: none;
+
+        body {
+            margin: 0; padding: 0; background-color: var(--bg); color: #f5f5f7;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; padding-bottom: 30px; user-select: none;
         }
-        
-        .dashboard { width: 100%; max-width: 420px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: 900; font-size: 1.1rem; }
-        .score-pill { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px); padding: 8px 18px; border-radius: 30px; color: var(--gold); border: 1px solid rgba(255, 215, 0, 0.4); box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
-        
-        .cabinet { 
-            width: 100%; max-width: 420px; background: rgba(20, 10, 30, 0.8); backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 15px; box-sizing: border-box; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9), inset 0 0 2px rgba(255,255,255,0.2); position: relative;
+
+        /* 顶部状态栏 */
+        .dashboard-header { width: 100%; max-width: 440px; padding: 20px 15px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
+        .brand-title { font-size: 1.3rem; font-weight: 900; letter-spacing: 1px; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        .balance-pill { background: linear-gradient(145deg, #1c1c1e, #000); padding: 10px 20px; border-radius: 30px; border: 1px solid rgba(255, 204, 0, 0.4); font-weight: 900; font-size: 1.2rem; box-shadow: 0 0 15px rgba(255, 204, 0, 0.1); }
+        .balance-pill span { color: var(--gold); text-shadow: 0 0 10px rgba(255, 204, 0, 0.5); }
+
+        /* 主机柜与震动动画 */
+        .arcade-cabinet {
+            width: 92%; max-width: 410px; background: linear-gradient(180deg, #2c0e0e 0%, #0a0101 100%);
+            border: 4px solid #991b1b; border-radius: 24px; padding: 22px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.9), 0 0 30px rgba(255, 59, 48, 0.15), inset 0 0 20px rgba(0,0,0,0.8);
+            box-sizing: border-box; border-bottom: 12px solid #600; transition: transform 0.1s;
         }
-        .shake { animation: cabinetShake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        .shake { animation: cabinetShake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes cabinetShake {
-            10%, 90% { transform: translate3d(-2px, 0, 0); }
-            20%, 80% { transform: translate3d(3px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
-            40%, 60% { transform: translate3d(5px, 0, 0); }
-        }
-        
-        .grid { 
-            display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr); 
-            gap: 5px; background: rgba(0, 0, 0, 0.6); border-radius: 16px; padding: 6px; position: relative; 
-            border: 2px solid rgba(181, 0, 255, 0.4);
-        }
-        
-        .cell { 
-            aspect-ratio: 1 / 1; background: linear-gradient(135deg, #2c1b4d, #120a21); 
-            border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; 
-            display: flex; justify-content: center; align-items: center; font-size: clamp(1.5rem, 6vw, 2.2rem); 
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
-            box-shadow: inset 1px 1px 2px rgba(255,255,255,0.1);
-        }
-        
-        .pop { transform: scale(0) rotate(90deg); opacity: 0; }
-        .fall { animation: bounceDrop 0.4s cubic-bezier(0.28, 0.84, 0.42, 1) forwards; }
-        @keyframes bounceDrop { 
-            0% { transform: translateY(-80px) scaleY(1.2); opacity: 0; }
-            70% { transform: translateY(5px) scaleY(0.9); opacity: 1; }
-            100% { transform: translateY(0) scaleY(1); opacity: 1; }
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
         }
 
-        .floating-text {
-            position: absolute; color: var(--gold); font-weight: 900; font-size: 1.4rem;
-            pointer-events: none; z-index: 100; text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-            animation: floatUp 0.8s ease-out forwards;
+        .marquee-banner {
+            background: #000; border-radius: 12px; padding: 10px; text-align: center;
+            font-size: 1.4rem; font-weight: 900; color: var(--gold); border: 2px solid var(--neon-purple);
+            text-shadow: 0 0 12px var(--gold); margin-bottom: 20px; box-shadow: inset 0 0 15px rgba(191, 90, 242, 0.6);
+            transition: all 0.3s ease;
         }
-        @keyframes floatUp { 0% { transform: translateY(0) scale(0.8); opacity: 1; } 50% { transform: translateY(-30px) scale(1.2); opacity: 1; } 100% { transform: translateY(-50px) scale(1); opacity: 0; } }
 
-        .led { background: #000; color: var(--neon-blue); padding: 12px; margin: 15px 0; border-radius: 10px; font-weight: 900; text-align: center; font-family: monospace; font-size: 1.1rem; border: 1px solid rgba(0, 243, 255, 0.3); text-shadow: 0 0 8px var(--neon-blue); }
-        .spin-btn { width: 100%; padding: 18px; background: linear-gradient(90deg, #ff0055, #b500ff); border: none; color: #fff; border-radius: 14px; font-size: 1.4rem; font-weight: 900; cursor: pointer; box-shadow: 0 5px 15px rgba(181, 0, 255, 0.3); transition: 0.1s; }
-        .spin-btn:active { transform: translateY(4px); box-shadow: 0 2px 5px rgba(181, 0, 255, 0.3); }
-        .spin-btn:disabled { background: #333; color: #666; transform: none; box-shadow: none; }
+        /* 三联物理视窗 */
+        .viewport-matrix {
+            display: flex; justify-content: space-between; background: linear-gradient(180deg, #111, #000);
+            border-radius: 16px; padding: 16px; border: 3px solid var(--gold);
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.2), inset 0 0 25px #000; height: 130px; position: relative;
+        }
+        .viewport-matrix::after { content: ""; position: absolute; left: 0; top: 50%; width: 100%; height: 2px; background: rgba(255, 69, 58, 0.5); box-shadow: 0 0 10px #ff453a; pointer-events: none; }
+        .reel-housing { width: 30%; height: 100%; background: #fff; border-radius: 10px; position: relative; overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.8); }
         
-        .debug-area { display: flex; justify-content: space-between; gap: 8px; width: 100%; max-width: 420px; margin-top: 20px; }
-        .debug-btn { flex: 1; padding: 10px; text-align: center; border-radius: 8px; font-size: 0.75rem; color: rgba(255,255,255,0.2); border: 1px dashed rgba(255,255,255,0.1); cursor: pointer; }
+        .reel-strip { position: absolute; top: 0; left: 0; width: 100%; display: flex; flex-direction: column; align-items: center; will-change: top, filter; }
+        .spinning { filter: blur(3px); } /* 动态模糊特效 */
+        
+        .icon-cell { height: 130px; font-size: 3.8rem; display: flex; justify-content: center; align-items: center; box-sizing: border-box; text-shadow: 1px 2px 3px rgba(0,0,0,0.3); }
+
+        .led-screen { background: #050507; border: 1px solid #222; border-radius: 10px; padding: 12px; margin-top: 18px; text-align: center; font-family: monospace; font-size: 1.1rem; font-weight: bold; color: #30d158; text-shadow: 0 0 6px rgba(48, 209, 88, 0.6); transition: 0.3s; }
+
+        /* 控制面板 */
+        .control-deck { margin-top: 22px; display: flex; flex-direction: column; gap: 16px; }
+        .wager-row { display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.4); padding: 8px 12px; border-radius: 14px; }
+        .wager-chips { display: flex; gap: 8px; }
+        .chip-btn { background: #24242b; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px 16px; border-radius: 12px; font-size: 1rem; font-weight: 900; cursor: pointer; transition: 0.2s; }
+        .chip-btn.active { background: linear-gradient(135deg, var(--neon-blue), #007aff); border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 221, 255, 0.5); }
+        
+        .launch-master-btn { background: linear-gradient(180deg, #ff453a, #cc0000); border: none; color: white; padding: 20px; border-radius: 18px; font-size: 1.5rem; font-weight: 900; box-shadow: 0 6px 0 #7a0000, 0 10px 20px rgba(0,0,0,0.6); cursor: pointer; transition: 0.1s; letter-spacing: 2px; }
+        .launch-master-btn:active { transform: translateY(6px); box-shadow: 0 0 0 #7a0000, 0 2px 5px rgba(0,0,0,0.6); }
+        .launch-master-btn:disabled { background: #333; box-shadow: 0 6px 0 #111; color: #666; }
+
+        /* 量化分析看板 */
+        .analytics-dashboard { width: 92%; max-width: 410px; background: var(--surface); border-radius: 20px; padding: 18px; margin-top: 20px; box-sizing: border-box; border: 1px solid rgba(255,255,255,0.05); }
+        .analytics-title { font-size: 0.9rem; color: #8e8e93; margin-bottom: 12px; font-weight: bold; letter-spacing: 0.5px; }
+        .grid-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .metric-card { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.02); }
+        .metric-label { font-size: 0.8rem; color: #8e8e93; margin-bottom: 4px; }
+        .metric-value { font-size: 1.2rem; font-weight: 800; font-family: monospace; }
     </style>
 </head>
 <body>
 
-    <div class="dashboard">
-        <div style="color:var(--neon-blue);">CLUSTER 10.0</div>
-        <div class="score-pill">CREDITS: $<span id="domScore">1000</span></div>
+    <div class="dashboard-header">
+        <div class="brand-title">QUANT LABS 3.5</div>
+        <div class="balance-pill">资产: $<span id="domBalance">1000</span></div>
     </div>
 
-    <div class="cabinet" id="cabinet">
-        <div class="grid" id="grid"></div>
-        <div class="led" id="led">🟢 SYSTEM ONLINE</div>
-        <button class="spin-btn" id="spinBtn" onclick="startGame()">INITIATE SPIN</button>
+    <div class="arcade-cabinet" id="cabinet">
+        <div class="marquee-banner" id="banner">⚡️ MEGA WIN STATIONS ⚡️</div>
+        
+        <div class="viewport-matrix">
+            <div class="reel-housing"><div class="reel-strip" id="strip1"></div></div>
+            <div class="reel-housing"><div class="reel-strip" id="strip2"></div></div>
+            <div class="reel-housing"><div class="reel-strip" id="strip3"></div></div>
+        </div>
+
+        <div class="led-screen" id="domLed">🎯 准备就绪，请注入筹码</div>
+
+        <div class="control-deck">
+            <div class="wager-row">
+                <span style="color:#8e8e93; font-weight: bold; font-size: 0.9rem;">MUTATION 下注</span>
+                <div class="wager-chips">
+                    <button class="chip-btn active" onclick="changeWager(10)">10</button>
+                    <button class="chip-btn" onclick="changeWager(50)">50</button>
+                    <button class="chip-btn" onclick="changeWager(100)">100</button>
+                </div>
+            </div>
+            <button class="launch-master-btn" id="domLaunchBtn" onclick="triggerMatrixCycle()">拉动摇杆 SPIN</button>
+        </div>
     </div>
 
-    <div class="debug-area">
-        <div class="debug-btn" onclick="seq(1)">[ SYS ]</div>
-        <div class="debug-btn" onclick="seq(2)">[ LOG ]</div>
-        <div class="debug-btn" onclick="seq(3)">[ OVR ]</div>
+    <div class="analytics-dashboard">
+        <div class="analytics-title">📊 实时复合概率流监控</div>
+        <div class="grid-matrix">
+            <div class="metric-card">
+                <div class="metric-label">累计转动周期</div>
+                <div class="metric-value" id="mPlays">0</div>
+            </div>
+            <div class="metric-card" onclick="handleSecretClick()" style="cursor:pointer;">
+                <div class="metric-label">★ 综合计算胜率 ★</div>
+                <div class="metric-value" style="color:var(--gold);" id="mRate">0%</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">统计总投入</div>
+                <div class="metric-value" style="color:#ff453a;" id="mCost">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">统计总返还</div>
+                <div class="metric-value" style="color:#30d158;" id="mReturn">0</div>
+            </div>
+        </div>
     </div>
 
     <script>
-        const symbols = ['💎', '🍎', '⭐', '🍀', '🔥', '🔮']; 
-        const COLS = 6; const ROWS = 6;
-        let board = []; let domCells = [];
-        let currentScore = 1000; let targetScore = 1000;
-        let isProcessing = false;
+        const itemPool = ['7', '💎', '🍒', '🍋', '🔔', '🍇', '🍉'];
+        let wallet = 1000;
+        let wager = 10;
+        let running = false;
+        
+        let statSpent = 0, statReturned = 0, statRounds = 0, statWins = 0;
+        let secretCounter = 0, _coreBufferFlag = false;
 
-        let _seq = [], _jackpot = false;
-        function seq(n) {
-            _seq.push(n); if (_seq.length > 3) _seq.shift();
-            if (_seq.join(',') === '1,2,3') {
-                _jackpot = true;
-                const led = document.getElementById('led');
-                led.innerText = "⚠️ OMEGA CLUSTER DETECTED ⚠️";
+        // 优化版原生合成器：声音更厚实
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function emitSound(freq, type, duration, vol=0.1) {
+            try {
+                if(audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        // 数字滚动动画引擎
+        function rollNumber(elId, start, end, prefix="") {
+            const el = document.getElementById(elId);
+            const duration = 400; let startTime = null;
+            function anim(t) {
+                if (!startTime) startTime = t;
+                const progress = Math.min((t - startTime) / duration, 1);
+                el.innerText = prefix + Math.floor(progress * (end - start) + start);
+                if (progress < 1) requestAnimationFrame(anim);
+                else el.innerText = prefix + end;
+            }
+            requestAnimationFrame(anim);
+        }
+
+        function generateStrips() {
+            for (let idx = 1; idx <= 3; idx++) {
+                const strip = document.getElementById(`strip${idx}`);
+                strip.innerHTML = '';
+                for (let k = 0; k < 40; k++) {
+                    const block = document.createElement('div');
+                    block.className = 'icon-cell';
+                    block.innerText = itemPool[k % itemPool.length];
+                    strip.appendChild(block);
+                }
+            }
+        }
+
+        function changeWager(val) {
+            if (running) return;
+            wager = val;
+            document.querySelectorAll('.chip-btn').forEach(b => b.classList.toggle('active', parseInt(b.innerText) === val));
+            emitSound(600, 'sine', 0.05, 0.05);
+        }
+
+        // 优化：静默潜行暗门，告别弹窗
+        function handleSecretClick() {
+            if(running) return;
+            secretCounter++;
+            emitSound(800 + (secretCounter*100), 'sine', 0.05, 0.05);
+            if (secretCounter >= 5) {
+                secretCounter = 0;
+                _coreBufferFlag = true;
+                const led = document.getElementById('domLed');
+                led.innerText = "⚠️ SYSTEM OVERRIDE: CORE-777 ACTIVE";
                 led.style.color = "var(--neon-purple)";
-                document.getElementById('cabinet').classList.add('shake');
-                setTimeout(() => document.getElementById('cabinet').classList.remove('shake'), 500);
+                led.style.textShadow = "0 0 10px var(--neon-purple)";
+                emitSound(200, 'sawtooth', 0.5, 0.2);
             }
         }
 
-        const delay = ms => new Promise(r => setTimeout(r, ms));
-
-        function initGrid() {
-            const gridEl = document.getElementById('grid'); gridEl.innerHTML = '';
-            for (let r = 0; r < ROWS; r++) {
-                board[r] = []; domCells[r] = [];
-                for (let c = 0; c < COLS; c++) {
-                    const cell = document.createElement('div'); cell.className = 'cell';
-                    let sym = symbols[Math.floor(Math.random() * symbols.length)];
-                    board[r][c] = sym; cell.innerText = sym;
-                    domCells[r][c] = cell; gridEl.appendChild(cell);
-                }
-            }
-        }
-
-        function rollScoreTo(newScore) {
-            const scoreEl = document.getElementById('domScore');
-            const duration = 500; const startScore = currentScore;
-            const diff = newScore - startScore; let startTime = null;
-
-            function animation(currentTime) {
-                if (startTime === null) startTime = currentTime;
-                const progress = Math.min((currentTime - startTime) / duration, 1);
-                currentScore = Math.floor(progress * diff + startScore);
-                scoreEl.innerText = currentScore;
-                if (progress < 1) requestAnimationFrame(animation);
-                else currentScore = newScore;
-            }
-            requestAnimationFrame(animation);
-        }
-
-        function showFloatingText(r, c, text, color) {
-            const cell = domCells[r][c]; const rect = cell.getBoundingClientRect();
-            const gridRect = document.getElementById('grid').getBoundingClientRect();
-            const floatEl = document.createElement('div');
-            floatEl.className = 'floating-text'; floatEl.innerText = text;
-            floatEl.style.color = color || 'var(--gold)';
-            floatEl.style.left = `${rect.left - gridRect.left + 10}px`;
-            floatEl.style.top = `${rect.top - gridRect.top}px`;
-            document.getElementById('grid').appendChild(floatEl);
-            setTimeout(() => floatEl.remove(), 800);
-        }
-
-        async function startGame() {
-            if (isProcessing) return;
-            isProcessing = true; document.getElementById('spinBtn').disabled = true;
-            
-            targetScore -= 20; rollScoreTo(targetScore);
-            document.getElementById('led').innerText = "🌀 RESTRUCTURING MATRIX...";
-
-            for (let r = 0; r < ROWS; r++) { for (let c = 0; c < COLS; c++) domCells[r][c].classList.add('pop'); }
-            await delay(250);
-
-            for (let r = 0; r < ROWS; r++) {
-                for (let c = 0; c < COLS; c++) {
-                    let sym = _jackpot ? '7' : symbols[Math.floor(Math.random() * symbols.length)];
-                    board[r][c] = sym; domCells[r][c].innerText = sym;
-                    domCells[r][c].classList.remove('pop');
-                }
-            }
-            _jackpot = false; await delay(300);
-            await processMatches(1);
-        }
-
-        // ==========================================
-        // 核心升级：连通块 DFS (深度优先搜索) 算法
-        // ==========================================
-        async function processMatches(comboCount) {
-            let matchedCoords = new Set();
-            let visited = Array.from({length: ROWS}, () => Array(COLS).fill(false));
-
-            for (let r = 0; r < ROWS; r++) {
-                for (let c = 0; c < COLS; c++) {
-                    if (!visited[r][c] && board[r][c] !== null) {
-                        let sym = board[r][c];
-                        let group = [];
-                        let stack = [[r, c]];
-                        visited[r][c] = true;
-
-                        // 开始寻找周围所有的连通块
-                        while (stack.length > 0) {
-                            let [currR, currC] = stack.pop();
-                            group.push(`${currR},${currC}`);
-
-                            // 上下左右四个方向
-                            const dirs = [[-1, 0], [1, 0], [0, -1], [0, 1]];
-                            for (let [dr, dc] of dirs) {
-                                let nr = currR + dr; let nc = currC + dc;
-                                if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) {
-                                    if (!visited[nr][nc] && board[nr][nc] === sym) {
-                                        visited[nr][nc] = true;
-                                        stack.push([nr, nc]);
-                                    }
-                                }
-                            }
-                        }
-
-                        // 如果连在一起的数量大于等于 3 个，就判定为消除
-                        if (group.length >= 3) {
-                            group.forEach(coord => matchedCoords.add(coord));
-                        }
-                    }
-                }
-            }
-
-            if (matchedCoords.size === 0) {
-                document.getElementById('spinBtn').disabled = false; isProcessing = false;
-                if(comboCount === 1) document.getElementById('led').innerText = "✅ STANDBY";
+        async function triggerMatrixCycle() {
+            if (running || wallet < wager) {
+                if (wallet < wager) alert("余额不足，请刷新页面重置！");
                 return;
             }
 
-            // 震动反馈
-            if(comboCount > 1 || matchedCoords.size >= 6) {
-                const cab = document.getElementById('cabinet');
-                cab.classList.remove('shake'); void cab.offsetWidth; cab.classList.add('shake');
-            }
-
-            let led = document.getElementById('led');
-            led.innerText = `🔥 COMBO x${comboCount} : +${matchedCoords.size} BLOCKS!`;
-            led.style.color = comboCount > 2 ? "var(--neon-green)" : "var(--gold)";
+            running = true;
+            document.getElementById('domLaunchBtn').disabled = true;
             
-            // 连通消除奖励：连通的数量越多，得分呈指数增长
-            let addedScore = matchedCoords.size * comboCount * 15;
-            targetScore += addedScore; rollScoreTo(targetScore);
+            // 数据扣除与UI更新
+            rollNumber('domBalance', wallet, wallet - wager);
+            wallet -= wager; statSpent += wager; statRounds++;
+            
+            document.getElementById('mPlays').innerText = statRounds;
+            rollNumber('mCost', statSpent - wager, statSpent);
+            
+            document.getElementById('domLed').innerText = "🔮 矩阵高速重组中...";
+            document.getElementById('domLed').style.color = "var(--neon-blue)";
+            document.getElementById('banner').style.borderColor = "var(--neon-blue)";
 
-            let index = 0;
-            matchedCoords.forEach(coord => {
-                let [r, c] = coord.split(',').map(Number);
-                domCells[r][c].classList.add('pop'); board[r][c] = null;
-                // 优化悬浮字：只在部分区域弹出，防止画面太乱
-                if(index % 4 === 0) {
-                    showFloatingText(r, c, `+${comboCount * 15}`, comboCount > 2 ? 'var(--neon-green)' : 'var(--gold)');
-                }
-                index++;
-            });
-            await delay(350); 
+            let results = _coreBufferFlag ? ['7', '7', '7'] : [0,1,2].map(() => itemPool[Math.floor(Math.random() * itemPool.length)]);
+            _coreBufferFlag = false; 
 
-            // 引力下落系统
-            for (let c = 0; c < COLS; c++) {
-                let emptySpaces = 0;
-                for (let r = ROWS - 1; r >= 0; r--) {
-                    if (board[r][c] === null) { emptySpaces++; } 
-                    else if (emptySpaces > 0) {
-                        board[r + emptySpaces][c] = board[r][c]; board[r][c] = null;
-                        domCells[r + emptySpaces][c].innerText = board[r + emptySpaces][c];
-                        domCells[r + emptySpaces][c].classList.remove('pop');
-                        domCells[r][c].classList.add('pop'); 
-                    }
-                }
-            }
-            await delay(200);
+            // 添加物理滚动模糊
+            [1,2,3].forEach(i => document.getElementById(`strip${i}`).classList.add('spinning'));
 
-            // 顶部填充新块
-            for (let r = 0; r < ROWS; r++) {
-                for (let c = 0; c < COLS; c++) {
-                    if (board[r][c] === null) {
-                        let newSym = symbols[Math.floor(Math.random() * symbols.length)];
-                        board[r][c] = newSym; domCells[r][c].innerText = newSym;
-                        domCells[r][c].classList.remove('pop'); domCells[r][c].classList.add('fall');
-                    }
-                }
-            }
-            await delay(400); 
-            for (let r = 0; r < ROWS; r++) { for (let c = 0; c < COLS; c++) domCells[r][c].classList.remove('fall'); }
+            const t1 = executeStripRoll(1, results[0], 1.5);
+            const t2 = executeStripRoll(2, results[1], 2.0);
+            const t3 = executeStripRoll(3, results[2], 2.5);
 
-            await processMatches(comboCount + 1);
+            await Promise.all([t1, t2, t3]);
+            evalResults(results);
         }
 
-        initGrid();
-    </script>
-</body>
-</html>
+        function executeStripRoll(num, icon, dur) {
+            return new Promise(done => {
+                const el = document.getElementById(`strip${num}`);
+                const targetIdx = itemPool.indexOf(icon) + (itemPool.length * 4); // 增加转动圈数
+                
+                el.style.transition = `top ${dur}s cubic-bezier(0.15, 0.85, 0.2, 1)`;
+                el.style.top = `-${targetIdx * 130}px`;
+
+                let tic = setInterval(() => {
+                    if (!running) clearInterval(tic);
+                    else emitSound(300 + (num * 50), 'triangle', 0.03, 0.05); // 模拟机械齿轮声
+                }, 100);
+
+                setTimeout(() => {
+                    clearInterval(tic);
+                    el.classList.remove('spinning'); // 停止时移除模糊
+                    emitSound(600, 'square', 0.1, 0.1); // 落位咔哒声
+                    done();
+                }, dur * 1000);
+            });
+        }
+
+        function evalResults(arr) {
+            running = false;
+            document.getElementById('domLaunchBtn').disabled = false;
+            const [v1, v2, v3] = arr;
+            let mult = 0; let text = "";
+
+            if (v1 === v2 && v2 === v3) {
+                statWins++;
+                if (v1 === '7') { mult = 80; text = "🌋 终极奇迹！777 特等天选头奖！"; triggerJackpotVFX(); } 
+                else if (v1 === '💎') { mult = 40; text = "💎 璀璨夺目！至尊超巨星钻石奖！"; triggerJackpotVFX(); } 
+                else { mult = 20; text = `🎉 大满贯！
