@@ -3,275 +3,329 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>至尊博弈数据研究室 - Slot 3.5 优化版</title>
+    <title>QUANT LABS - 4.0 Alpha Terminal</title>
     <style>
         :root {
-            --primary: #ff3b30; --gold: #ffcc00; --neon-blue: #00ddff; 
-            --neon-purple: #bf5af2; --bg: #0b0b0e; --surface: #16161a;
+            --term-bg: #030303;
+            --term-green: #00ff41;
+            --term-red: #ff3333;
+            --term-blue: #00f0ff;
+            --term-gold: #ffd700;
+            --panel-bg: #0a0a0c;
+            --grid-line: rgba(0, 255, 65, 0.15);
         }
 
         body {
-            margin: 0; padding: 0; background-color: var(--bg); color: #f5f5f7;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+            margin: 0; padding: 0; background-color: var(--term-bg); color: var(--term-green);
+            font-family: "Courier New", Courier, monospace; /* 纯正代码字体 */
             display: flex; flex-direction: column; align-items: center;
             min-height: 100vh; padding-bottom: 30px; user-select: none;
+            background-image: 
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 20px 20px;
         }
 
-        /* 顶部状态栏 */
-        .dashboard-header { width: 100%; max-width: 440px; padding: 20px 15px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
-        .brand-title { font-size: 1.3rem; font-weight: 900; letter-spacing: 1px; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
-        .balance-pill { background: linear-gradient(145deg, #1c1c1e, #000); padding: 10px 20px; border-radius: 30px; border: 1px solid rgba(255, 204, 0, 0.4); font-weight: 900; font-size: 1.2rem; box-shadow: 0 0 15px rgba(255, 204, 0, 0.1); }
-        .balance-pill span { color: var(--gold); text-shadow: 0 0 10px rgba(255, 204, 0, 0.5); }
+        .header { width: 100%; max-width: 440px; padding: 20px 15px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; border-bottom: 1px solid var(--term-green); margin-bottom: 20px;}
+        .brand { font-size: 1.2rem; font-weight: bold; text-shadow: 0 0 5px var(--term-green); }
+        .portfolio { border: 1px solid var(--term-green); padding: 5px 15px; font-weight: bold; background: rgba(0,255,65,0.05); }
 
-        /* 主机柜与震动动画 */
-        .arcade-cabinet {
-            width: 92%; max-width: 410px; background: linear-gradient(180deg, #2c0e0e 0%, #0a0101 100%);
-            border: 4px solid #991b1b; border-radius: 24px; padding: 22px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.9), 0 0 30px rgba(255, 59, 48, 0.15), inset 0 0 20px rgba(0,0,0,0.8);
-            box-sizing: border-box; border-bottom: 12px solid #600; transition: transform 0.1s;
-        }
-        .shake { animation: cabinetShake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes cabinetShake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
+        .terminal-core {
+            width: 92%; max-width: 410px; background: var(--panel-bg);
+            border: 2px solid #333; border-radius: 4px; padding: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8), inset 0 0 10px rgba(0,255,65,0.05);
+            box-sizing: border-box; position: relative;
         }
 
-        .marquee-banner {
-            background: #000; border-radius: 12px; padding: 10px; text-align: center;
-            font-size: 1.4rem; font-weight: 900; color: var(--gold); border: 2px solid var(--neon-purple);
-            text-shadow: 0 0 12px var(--gold); margin-bottom: 20px; box-shadow: inset 0 0 15px rgba(191, 90, 242, 0.6);
-            transition: all 0.3s ease;
-        }
+        .status-bar { text-align: center; font-size: 1.1rem; font-weight: bold; margin-bottom: 15px; border-bottom: 1px dashed #333; padding-bottom: 10px; color: var(--term-blue); }
 
-        /* 三联物理视窗 */
-        .viewport-matrix {
-            display: flex; justify-content: space-between; background: linear-gradient(180deg, #111, #000);
-            border-radius: 16px; padding: 16px; border: 3px solid var(--gold);
-            box-shadow: 0 0 20px rgba(255, 204, 0, 0.2), inset 0 0 25px #000; height: 130px; position: relative;
+        /* 数据视窗 */
+        .matrix-viewport {
+            display: flex; justify-content: space-between; background: #000;
+            border: 1px solid var(--term-green); padding: 10px; height: 120px; position: relative;
+            box-shadow: inset 0 0 15px rgba(0, 255, 65, 0.1);
         }
-        .viewport-matrix::after { content: ""; position: absolute; left: 0; top: 50%; width: 100%; height: 2px; background: rgba(255, 69, 58, 0.5); box-shadow: 0 0 10px #ff453a; pointer-events: none; }
-        .reel-housing { width: 30%; height: 100%; background: #fff; border-radius: 10px; position: relative; overflow: hidden; box-shadow: inset 0 5px 15px rgba(0,0,0,0.8); }
+        .matrix-viewport::after { content: ""; position: absolute; left: 0; top: 50%; width: 100%; height: 1px; background: rgba(0, 255, 65, 0.4); pointer-events: none; }
         
-        .reel-strip { position: absolute; top: 0; left: 0; width: 100%; display: flex; flex-direction: column; align-items: center; will-change: top, filter; }
-        .spinning { filter: blur(3px); } /* 动态模糊特效 */
+        .reel-col { width: 30%; height: 100%; position: relative; overflow: hidden; border-left: 1px dashed #222; border-right: 1px dashed #222; }
+        .strip { position: absolute; top: 0; left: 0; width: 100%; display: flex; flex-direction: column; align-items: center; will-change: top; }
+        .symbol { height: 120px; font-size: 3.5rem; display: flex; justify-content: center; align-items: center; }
+
+        .log-screen { background: #000; border: 1px solid #333; padding: 10px; margin-top: 15px; font-size: 0.9rem; min-height: 40px; display: flex; align-items: center; justify-content: center; text-align: center; }
+
+        /* 控制区 */
+        .controls { margin-top: 20px; }
+        .leverage-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .btn-group { display: flex; gap: 5px; }
+        .btn { background: #000; border: 1px solid #444; color: #888; padding: 8px 15px; font-family: "Courier New"; cursor: pointer; transition: 0.2s; font-weight: bold; }
+        .btn.active { border-color: var(--term-green); color: var(--term-green); background: rgba(0,255,65,0.1); box-shadow: 0 0 8px rgba(0,255,65,0.3); }
         
-        .icon-cell { height: 130px; font-size: 3.8rem; display: flex; justify-content: center; align-items: center; box-sizing: border-box; text-shadow: 1px 2px 3px rgba(0,0,0,0.3); }
+        .exec-btn { width: 100%; background: #000; border: 2px solid var(--term-blue); color: var(--term-blue); padding: 15px; font-size: 1.2rem; font-weight: bold; font-family: "Courier New"; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+        .exec-btn:hover:not(:disabled) { background: rgba(0, 240, 255, 0.1); box-shadow: 0 0 15px rgba(0, 240, 255, 0.3); }
+        .exec-btn:disabled { border-color: #333; color: #555; cursor: not-allowed; }
 
-        .led-screen { background: #050507; border: 1px solid #222; border-radius: 10px; padding: 12px; margin-top: 18px; text-align: center; font-family: monospace; font-size: 1.1rem; font-weight: bold; color: #30d158; text-shadow: 0 0 6px rgba(48, 209, 88, 0.6); transition: 0.3s; }
-
-        /* 控制面板 */
-        .control-deck { margin-top: 22px; display: flex; flex-direction: column; gap: 16px; }
-        .wager-row { display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.4); padding: 8px 12px; border-radius: 14px; }
-        .wager-chips { display: flex; gap: 8px; }
-        .chip-btn { background: #24242b; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px 16px; border-radius: 12px; font-size: 1rem; font-weight: 900; cursor: pointer; transition: 0.2s; }
-        .chip-btn.active { background: linear-gradient(135deg, var(--neon-blue), #007aff); border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 221, 255, 0.5); }
+        /* 量化监控面板 */
+        .monitor-panel { width: 92%; max-width: 410px; border: 1px solid #333; margin-top: 20px; padding: 15px; box-sizing: border-box; background: var(--panel-bg); }
+        .monitor-title { font-size: 0.85rem; color: #666; margin-bottom: 10px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .data-cell { display: flex; flex-direction: column; }
+        .data-lbl { font-size: 0.75rem; color: #888; }
+        .data-val { font-size: 1.2rem; font-weight: bold; }
         
-        .launch-master-btn { background: linear-gradient(180deg, #ff453a, #cc0000); border: none; color: white; padding: 20px; border-radius: 18px; font-size: 1.5rem; font-weight: 900; box-shadow: 0 6px 0 #7a0000, 0 10px 20px rgba(0,0,0,0.6); cursor: pointer; transition: 0.1s; letter-spacing: 2px; }
-        .launch-master-btn:active { transform: translateY(6px); box-shadow: 0 0 0 #7a0000, 0 2px 5px rgba(0,0,0,0.6); }
-        .launch-master-btn:disabled { background: #333; box-shadow: 0 6px 0 #111; color: #666; }
-
-        /* 量化分析看板 */
-        .analytics-dashboard { width: 92%; max-width: 410px; background: var(--surface); border-radius: 20px; padding: 18px; margin-top: 20px; box-sizing: border-box; border: 1px solid rgba(255,255,255,0.05); }
-        .analytics-title { font-size: 0.9rem; color: #8e8e93; margin-bottom: 12px; font-weight: bold; letter-spacing: 0.5px; }
-        .grid-matrix { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .metric-card { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.02); }
-        .metric-label { font-size: 0.8rem; color: #8e8e93; margin-bottom: 4px; }
-        .metric-value { font-size: 1.2rem; font-weight: 800; font-family: monospace; }
+        /* 隐藏功能触发区 */
+        #trigger-zone { cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="dashboard-header">
-        <div class="brand-title">QUANT LABS 3.5</div>
-        <div class="balance-pill">资产: $<span id="domBalance">1000</span></div>
+    <div class="header">
+        <div class="brand">QUANT_LABS // v4.0</div>
+        <div class="portfolio">PORTFOLIO: $<span id="ui-balance">1000</span></div>
     </div>
 
-    <div class="arcade-cabinet" id="cabinet">
-        <div class="marquee-banner" id="banner">⚡️ MEGA WIN STATIONS ⚡️</div>
+    <div class="terminal-core">
+        <div class="status-bar" id="ui-status">SYNERGY MONITOR ACTIVE</div>
         
-        <div class="viewport-matrix">
-            <div class="reel-housing"><div class="reel-strip" id="strip1"></div></div>
-            <div class="reel-housing"><div class="reel-strip" id="strip2"></div></div>
-            <div class="reel-housing"><div class="reel-strip" id="strip3"></div></div>
+        <div class="matrix-viewport">
+            <div class="reel-col"><div class="strip" id="reel-0"></div></div>
+            <div class="reel-col"><div class="strip" id="reel-1"></div></div>
+            <div class="reel-col"><div class="strip" id="reel-2"></div></div>
         </div>
 
-        <div class="led-screen" id="domLed">🎯 准备就绪，请注入筹码</div>
+        <div class="log-screen" id="ui-log">> System initialized. Awaiting execution.</div>
 
-        <div class="control-deck">
-            <div class="wager-row">
-                <span style="color:#8e8e93; font-weight: bold; font-size: 0.9rem;">MUTATION 下注</span>
-                <div class="wager-chips">
-                    <button class="chip-btn active" onclick="changeWager(10)">10</button>
-                    <button class="chip-btn" onclick="changeWager(50)">50</button>
-                    <button class="chip-btn" onclick="changeWager(100)">100</button>
+        <div class="controls">
+            <div class="leverage-row">
+                <span style="color:#888; font-size: 0.9rem;">LEVERAGE (SIZE)</span>
+                <div class="btn-group">
+                    <button class="btn active" data-val="10">x10</button>
+                    <button class="btn" data-val="50">x50</button>
+                    <button class="btn" data-val="100">x100</button>
                 </div>
             </div>
-            <button class="launch-master-btn" id="domLaunchBtn" onclick="triggerMatrixCycle()">拉动摇杆 SPIN</button>
+            <button class="exec-btn" id="ui-spin">EXECUTE_TRADE()</button>
         </div>
     </div>
 
-    <div class="analytics-dashboard">
-        <div class="analytics-title">📊 实时复合概率流监控</div>
-        <div class="grid-matrix">
-            <div class="metric-card">
-                <div class="metric-label">累计转动周期</div>
-                <div class="metric-value" id="mPlays">0</div>
-            </div>
-            <div class="metric-card" onclick="handleSecretClick()" style="cursor:pointer;">
-                <div class="metric-label">★ 综合计算胜率 ★</div>
-                <div class="metric-value" style="color:var(--gold);" id="mRate">0%</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">统计总投入</div>
-                <div class="metric-value" style="color:#ff453a;" id="mCost">0</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">统计总返还</div>
-                <div class="metric-value" style="color:#30d158;" id="mReturn">0</div>
-            </div>
+    <div class="monitor-panel">
+        <div class="monitor-title">ALGO PERFORMANCE METRICS</div>
+        <div class="data-grid">
+            <div class="data-cell"><span class="data-lbl">ITERATIONS</span><span class="data-val" id="ui-rounds" style="color:var(--term-blue);">0</span></div>
+            <div class="data-cell" id="trigger-zone"><span class="data-lbl">WIN_RATE (ALPHA)</span><span class="data-val" id="ui-rate" style="color:var(--term-gold);">0.00%</span></div>
+            <div class="data-cell"><span class="data-lbl">CAPITAL_DEPLOYED</span><span class="data-val" id="ui-spent" style="color:var(--term-red);">0</span></div>
+            <div class="data-cell"><span class="data-lbl">TOTAL_RETURN</span><span class="data-val" id="ui-return" style="color:var(--term-green);">0</span></div>
         </div>
     </div>
 
     <script>
-        const itemPool = ['7', '💎', '🍒', '🍋', '🔔', '🍇', '🍉'];
-        let wallet = 1000;
-        let wager = 10;
-        let running = false;
-        
-        let statSpent = 0, statReturned = 0, statRounds = 0, statWins = 0;
-        let secretCounter = 0, _coreBufferFlag = false;
-
-        // 优化版原生合成器：声音更厚实
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function emitSound(freq, type, duration, vol=0.1) {
-            try {
-                if(audioCtx.state === 'suspended') audioCtx.resume();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + duration);
-            } catch(e) {}
-        }
-
-        // 数字滚动动画引擎
-        function rollNumber(elId, start, end, prefix="") {
-            const el = document.getElementById(elId);
-            const duration = 400; let startTime = null;
-            function anim(t) {
-                if (!startTime) startTime = t;
-                const progress = Math.min((t - startTime) / duration, 1);
-                el.innerText = prefix + Math.floor(progress * (end - start) + start);
-                if (progress < 1) requestAnimationFrame(anim);
-                else el.innerText = prefix + end;
-            }
-            requestAnimationFrame(anim);
-        }
-
-        function generateStrips() {
-            for (let idx = 1; idx <= 3; idx++) {
-                const strip = document.getElementById(`strip${idx}`);
-                strip.innerHTML = '';
-                for (let k = 0; k < 40; k++) {
-                    const block = document.createElement('div');
-                    block.className = 'icon-cell';
-                    block.innerText = itemPool[k % itemPool.length];
-                    strip.appendChild(block);
-                }
-            }
-        }
-
-        function changeWager(val) {
-            if (running) return;
-            wager = val;
-            document.querySelectorAll('.chip-btn').forEach(b => b.classList.toggle('active', parseInt(b.innerText) === val));
-            emitSound(600, 'sine', 0.05, 0.05);
-        }
-
-        // 优化：静默潜行暗门，告别弹窗
-        function handleSecretClick() {
-            if(running) return;
-            secretCounter++;
-            emitSound(800 + (secretCounter*100), 'sine', 0.05, 0.05);
-            if (secretCounter >= 5) {
-                secretCounter = 0;
-                _coreBufferFlag = true;
-                const led = document.getElementById('domLed');
-                led.innerText = "⚠️ SYSTEM OVERRIDE: CORE-777 ACTIVE";
-                led.style.color = "var(--neon-purple)";
-                led.style.textShadow = "0 0 10px var(--neon-purple)";
-                emitSound(200, 'sawtooth', 0.5, 0.2);
-            }
-        }
-
-        async function triggerMatrixCycle() {
-            if (running || wallet < wager) {
-                if (wallet < wager) alert("余额不足，请刷新页面重置！");
-                return;
-            }
-
-            running = true;
-            document.getElementById('domLaunchBtn').disabled = true;
-            
-            // 数据扣除与UI更新
-            rollNumber('domBalance', wallet, wallet - wager);
-            wallet -= wager; statSpent += wager; statRounds++;
-            
-            document.getElementById('mPlays').innerText = statRounds;
-            rollNumber('mCost', statSpent - wager, statSpent);
-            
-            document.getElementById('domLed').innerText = "🔮 矩阵高速重组中...";
-            document.getElementById('domLed').style.color = "var(--neon-blue)";
-            document.getElementById('banner').style.borderColor = "var(--neon-blue)";
-
-            let results = _coreBufferFlag ? ['7', '7', '7'] : [0,1,2].map(() => itemPool[Math.floor(Math.random() * itemPool.length)]);
-            _coreBufferFlag = false; 
-
-            // 添加物理滚动模糊
-            [1,2,3].forEach(i => document.getElementById(`strip${i}`).classList.add('spinning'));
-
-            const t1 = executeStripRoll(1, results[0], 1.5);
-            const t2 = executeStripRoll(2, results[1], 2.0);
-            const t3 = executeStripRoll(3, results[2], 2.5);
-
-            await Promise.all([t1, t2, t3]);
-            evalResults(results);
-        }
-
-        function executeStripRoll(num, icon, dur) {
-            return new Promise(done => {
-                const el = document.getElementById(`strip${num}`);
-                const targetIdx = itemPool.indexOf(icon) + (itemPool.length * 4); // 增加转动圈数
+        // OOP架构重构
+        class QuantSlotMachine {
+            constructor() {
+                // 主题符号：核、光伏、储能、趋势、模型、钻石、7
+                this.symbols = ['⚛️', '☀️', '🔋', '📈', '📊', '💎', '7'];
+                this.symbolHeight = 120;
                 
-                el.style.transition = `top ${dur}s cubic-bezier(0.15, 0.85, 0.2, 1)`;
-                el.style.top = `-${targetIdx * 130}px`;
+                this.state = {
+                    balance: 1000,
+                    leverage: 10,
+                    isRunning: false,
+                    stats: { spent: 0, returned: 0, rounds: 0, wins: 0 },
+                    resonanceOverride: false,
+                    stealthClicks: 0
+                };
 
-                let tic = setInterval(() => {
-                    if (!running) clearInterval(tic);
-                    else emitSound(300 + (num * 50), 'triangle', 0.03, 0.05); // 模拟机械齿轮声
-                }, 100);
+                this.dom = {
+                    balance: document.getElementById('ui-balance'),
+                    status: document.getElementById('ui-status'),
+                    log: document.getElementById('ui-log'),
+                    spinBtn: document.getElementById('ui-spin'),
+                    reels: [document.getElementById('reel-0'), document.getElementById('reel-1'), document.getElementById('reel-2')],
+                    stats: {
+                        rounds: document.getElementById('ui-rounds'),
+                        rate: document.getElementById('ui-rate'),
+                        spent: document.getElementById('ui-spent'),
+                        return: document.getElementById('ui-return')
+                    }
+                };
 
+                this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                this.initReels();
+                this.bindEvents();
+            }
+
+            beep(freq, type = 'square', duration = 0.05, vol = 0.05) {
+                try {
+                    if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
+                    const osc = this.audioCtx.createOscillator();
+                    const gain = this.audioCtx.createGain();
+                    osc.type = type; osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
+                    gain.gain.setValueAtTime(vol, this.audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + duration);
+                    osc.connect(gain); gain.connect(this.audioCtx.destination);
+                    osc.start(); osc.stop(this.audioCtx.currentTime + duration);
+                } catch(e) {}
+            }
+
+            initReels() {
+                this.dom.reels.forEach(reel => {
+                    reel.innerHTML = '';
+                    for (let i = 0; i < 40; i++) {
+                        const div = document.createElement('div');
+                        div.className = 'symbol';
+                        div.innerText = this.symbols[i % this.symbols.length];
+                        reel.appendChild(div);
+                    }
+                });
+            }
+
+            bindEvents() {
+                document.querySelectorAll('.btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        if (this.state.isRunning) return;
+                        document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.state.leverage = parseInt(e.target.dataset.val);
+                        this.beep(800, 'sine');
+                    });
+                });
+
+                this.dom.spinBtn.addEventListener('click', () => this.executeSpin());
+
+                // 跨市场信号共振暗门
+                document.getElementById('trigger-zone').addEventListener('click', () => {
+                    if(this.state.isRunning) return;
+                    this.state.stealthClicks++;
+                    this.beep(1200 + (this.state.stealthClicks * 100), 'sine', 0.05);
+                    if (this.state.stealthClicks >= 5) {
+                        this.state.stealthClicks = 0;
+                        this.state.resonanceOverride = true;
+                        this.updateLog("> WARNING: CROSS-MARKET SIGNAL RESONANCE DETECTED.", "var(--term-gold)");
+                        this.beep(400, 'sawtooth', 0.3, 0.1);
+                    }
+                });
+            }
+
+            updateLog(msg, color = "var(--term-green)") {
+                this.dom.log.innerText = msg;
+                this.dom.log.style.color = color;
+            }
+
+            updateStats() {
+                this.dom.balance.innerText = this.state.balance;
+                this.dom.stats.rounds.innerText = this.state.stats.rounds;
+                this.dom.stats.spent.innerText = this.state.stats.spent;
+                this.dom.stats.return.innerText = this.state.stats.returned;
+                const rate = this.state.stats.rounds === 0 ? 0 : (this.state.stats.wins / this.state.stats.rounds) * 100;
+                this.dom.stats.rate.innerText = rate.toFixed(2) + '%';
+            }
+
+            rollReel(index, targetSymbol, duration) {
+                return new Promise(resolve => {
+                    const el = this.dom.reels[index];
+                    const targetIdx = this.symbols.indexOf(targetSymbol) + (this.symbols.length * 4);
+                    
+                    el.style.transition = `top ${duration}s cubic-bezier(0.1, 0.8, 0.2, 1)`;
+                    el.style.top = `-${targetIdx * this.symbolHeight}px`;
+
+                    let tick = setInterval(() => this.beep(200 + (index * 50), 'triangle', 0.02, 0.02), 80);
+
+                    setTimeout(() => {
+                        clearInterval(tick);
+                        this.beep(600, 'square', 0.05, 0.05);
+                        resolve();
+                    }, duration * 1000);
+                });
+            }
+
+            async executeSpin() {
+                if (this.state.balance < this.state.leverage) {
+                    this.updateLog("> ERROR: INSUFFICIENT CAPITAL.", "var(--term-red)");
+                    return;
+                }
+
+                this.state.isRunning = true;
+                this.dom.spinBtn.disabled = true;
+                this.state.balance -= this.state.leverage;
+                this.state.stats.spent += this.state.leverage;
+                this.state.stats.rounds++;
+                
+                this.updateStats();
+                this.updateLog("> Executing model...", "var(--term-blue)");
+                this.dom.status.innerText = "CALCULATING PROBABILITIES...";
+
+                let results;
+                if (this.state.resonanceOverride) {
+                    results = ['7', '7', '7'];
+                    this.state.resonanceOverride = false;
+                } else {
+                    results = [0,1,2].map(() => this.symbols[Math.floor(Math.random() * this.symbols.length)]);
+                }
+
+                await Promise.all([
+                    this.rollReel(0, results[0], 1.2),
+                    this.rollReel(1, results[1], 1.6),
+                    this.rollReel(2, results[2], 2.0)
+                ]);
+
+                this.evaluateResults(results);
+            }
+
+            evaluateResults(arr) {
+                const [v1, v2, v3] = arr;
+                let multiplier = 0;
+                let msg = "";
+                let color = "var(--term-green)";
+
+                if (v1 === v2 && v2 === v3) {
+                    this.state.stats.wins++;
+                    if (v1 === '7') { 
+                        multiplier = 80; msg = "> 🌋 跨市场信号共振！捕获 777 绝对 Alpha！"; color = "var(--term-gold)"; 
+                    } else if (v1 === '💎') { 
+                        multiplier = 40; msg = "> 💎 突破阻力位！核心资产价值发现！"; 
+                    } else { 
+                        multiplier = 20; msg = `> 🎉 模型收敛！[${v1}] 产业链景气度爆发！`; 
+                    }
+                } else if (v1 === v2 || v2 === v3 || v1 === v3) {
+                    this.state.stats.wins++; multiplier = 2.5; msg = "> ✨ 局部资金异动，产生结构性行情。"; color = "var(--term-blue)";
+                } else {
+                    msg = "> ⚡️ 均值回归，无明显超额收益。"; color = "var(--term-red)";
+                }
+
+                if (multiplier > 0) {
+                    const profit = this.state.leverage * multiplier;
+                    this.state.balance += profit;
+                    this.state.stats.returned += profit;
+                    this.updateLog(`${msg} PnL: +$${profit}`, color);
+                    this.dom.status.innerText = `PROFIT LOGGED: +$${profit}`;
+                    
+                    setTimeout(() => this.beep(800, 'square', 0.1), 0);
+                    setTimeout(() => this.beep(1000, 'square', 0.1), 100);
+                    setTimeout(() => this.beep(1200, 'square', 0.3), 200);
+                } else {
+                    this.updateLog(msg, color);
+                    this.dom.status.innerText = "SYNERGY MONITOR ACTIVE";
+                    this.beep(150, 'sawtooth', 0.2, 0.1);
+                }
+
+                this.updateStats();
+
+                // 静默重置物理引擎位移
                 setTimeout(() => {
-                    clearInterval(tic);
-                    el.classList.remove('spinning'); // 停止时移除模糊
-                    emitSound(600, 'square', 0.1, 0.1); // 落位咔哒声
-                    done();
-                }, dur * 1000);
-            });
+                    [0,1,2].forEach(i => {
+                        const el = this.dom.reels[i];
+                        el.style.transition = 'none';
+                        el.style.top = `-${this.symbols.indexOf(arr[i]) * this.symbolHeight}px`;
+                    });
+                    this.state.isRunning = false;
+                    this.dom.spinBtn.disabled = false;
+                }, 500);
+            }
         }
 
-        function evalResults(arr) {
-            running = false;
-            document.getElementById('domLaunchBtn').disabled = false;
-            const [v1, v2, v3] = arr;
-            let mult = 0; let text = "";
-
-            if (v1 === v2 && v2 === v3) {
-                statWins++;
-                if (v1 === '7') { mult = 80; text = "🌋 终极奇迹！777 特等天选头奖！"; triggerJackpotVFX(); } 
-                else if (v1 === '💎') { mult = 40; text = "💎 璀璨夺目！至尊超巨星钻石奖！"; triggerJackpotVFX(); } 
-                else { mult = 20; text = `🎉 大满贯！
+        // 启动终端
+        window.onload = () => {
+            window.QuantTerminal = new QuantSlotMachine();
+        };
+    </script>
+</body>
+</html>
