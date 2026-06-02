@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QUANT LABS - 6x6 Cyber Matrix</title>
+    <title>QUANT LABS - 9.0 Elite Matrix</title>
     <style>
         :root { 
             --gold: #ffd700; 
@@ -13,105 +13,107 @@
         }
         
         body { 
-            margin: 0; 
-            /* 深空动态渐变背景 */
-            background: radial-gradient(circle at 50% 0%, #2a1b40 0%, #090514 80%); 
-            color: #fff; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; background: radial-gradient(circle at 50% 0%, #1a0f2e 0%, #05020a 100%); 
+            color: #fff; font-family: -apple-system, sans-serif; 
             display: flex; flex-direction: column; align-items: center; 
             min-height: 100vh; padding: 15px; box-sizing: border-box; overflow: hidden; 
         }
         
-        /* 顶部仪表盘：毛玻璃质感 */
         .dashboard { 
             width: 100%; max-width: 420px; display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 15px; font-weight: 900; font-size: 1.1rem; letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            margin-bottom: 15px; font-weight: 900; font-size: 1.1rem;
         }
         .score-pill { 
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px);
             padding: 8px 18px; border-radius: 30px; color: var(--gold); 
-            border: 1px solid rgba(255, 215, 0, 0.3); box-shadow: 0 0 15px rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.4); box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
         }
         
-        /* 主机柜：高级拟物浮雕 */
+        /* 加入机台震动动画 */
         .cabinet { 
             width: 100%; max-width: 420px; 
-            background: rgba(20, 10, 30, 0.6); backdrop-filter: blur(15px);
+            background: rgba(20, 10, 30, 0.8); backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; 
             padding: 15px; box-sizing: border-box; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 2px rgba(255,255,255,0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9), inset 0 0 2px rgba(255,255,255,0.2);
+            position: relative;
+        }
+        .shake { animation: cabinetShake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes cabinetShake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(3px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
+            40%, 60% { transform: translate3d(5px, 0, 0); }
         }
         
-        /* 6x6 自适应网格 */
         .grid { 
-            display: grid; 
-            grid-template-columns: repeat(6, 1fr); 
-            grid-template-rows: repeat(6, 1fr); 
-            gap: 4px; background: rgba(0, 0, 0, 0.5); 
+            display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr); 
+            gap: 5px; background: rgba(0, 0, 0, 0.6); 
             border-radius: 16px; padding: 6px; position: relative; 
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
-            border: 2px solid rgba(181, 0, 255, 0.3);
+            border: 2px solid rgba(181, 0, 255, 0.4);
         }
         
-        /* 独立单元格：宝石质感 */
         .cell { 
-            aspect-ratio: 1 / 1; /* 强制正方形 */
-            background: linear-gradient(135deg, #2c1b4d, #1a0f2e); 
-            border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; 
+            aspect-ratio: 1 / 1; 
+            background: linear-gradient(135deg, #2c1b4d, #120a21); 
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; 
             display: flex; justify-content: center; align-items: center; 
-            font-size: clamp(1.5rem, 6vw, 2.2rem); /* 随屏幕自动缩放表情大小 */
+            font-size: clamp(1.5rem, 6vw, 2.2rem); 
             transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
-            box-shadow: 2px 2px 6px rgba(0,0,0,0.6), inset 1px 1px 2px rgba(255,255,255,0.1);
-            text-shadow: 0 0 10px rgba(255,255,255,0.4);
+            box-shadow: inset 1px 1px 2px rgba(255,255,255,0.1);
         }
         
-        /* 💥 Q弹物理动画引擎 */
-        .pop { transform: scale(0) rotate(45deg); opacity: 0; }
+        .pop { transform: scale(0) rotate(90deg); opacity: 0; }
         .fall { animation: bounceDrop 0.4s cubic-bezier(0.28, 0.84, 0.42, 1) forwards; }
         
         @keyframes bounceDrop { 
-            0% { transform: translateY(-100px) scaleY(1.1); opacity: 0; }
+            0% { transform: translateY(-80px) scaleY(1.2); opacity: 0; }
             70% { transform: translateY(5px) scaleY(0.9); opacity: 1; }
             100% { transform: translateY(0) scaleY(1); opacity: 1; }
         }
 
-        /* 赛博状态屏 */
+        /* 浮动加分文字特效 */
+        .floating-text {
+            position: absolute; color: var(--gold); font-weight: 900; font-size: 1.4rem;
+            pointer-events: none; z-index: 100; text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            animation: floatUp 0.8s ease-out forwards;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.8); opacity: 1; }
+            50% { transform: translateY(-30px) scale(1.2); opacity: 1; }
+            100% { transform: translateY(-50px) scale(1); opacity: 0; }
+        }
+
         .led { 
-            background: #030108; color: var(--neon-blue); 
+            background: #000; color: var(--neon-blue); 
             padding: 12px; margin: 15px 0; border-radius: 10px; 
             font-weight: 900; text-align: center; font-family: monospace; font-size: 1.1rem;
             border: 1px solid rgba(0, 243, 255, 0.3); text-shadow: 0 0 8px var(--neon-blue);
-            transition: all 0.3s ease;
         }
         
-        /* 动感操作按钮 */
         .spin-btn { 
             width: 100%; padding: 18px; 
             background: linear-gradient(90deg, #ff0055, #b500ff); 
             border: none; color: #fff; border-radius: 14px; 
             font-size: 1.4rem; font-weight: 900; cursor: pointer; 
-            box-shadow: 0 8px 20px rgba(181, 0, 255, 0.4), inset 0 2px 2px rgba(255,255,255,0.3);
-            transition: all 0.1s; letter-spacing: 2px;
+            box-shadow: 0 5px 15px rgba(181, 0, 255, 0.3); transition: 0.1s;
         }
-        .spin-btn:active { transform: translateY(4px); box-shadow: 0 2px 10px rgba(181, 0, 255, 0.4); }
-        .spin-btn:disabled { background: #333; box-shadow: none; color: #666; transform: none; }
+        .spin-btn:active { transform: translateY(4px); box-shadow: 0 2px 5px rgba(181, 0, 255, 0.3); }
+        .spin-btn:disabled { background: #333; color: #666; transform: none; box-shadow: none; }
         
-        /* 隐藏的开发级暗门区 */
         .debug-area { display: flex; justify-content: space-between; gap: 8px; width: 100%; max-width: 420px; margin-top: 20px; }
-        .debug-btn { flex: 1; background: transparent; padding: 10px; text-align: center; border-radius: 8px; font-size: 0.75rem; color: rgba(255,255,255,0.2); border: 1px dashed rgba(255,255,255,0.1); cursor: pointer; }
+        .debug-btn { flex: 1; padding: 10px; text-align: center; border-radius: 8px; font-size: 0.75rem; color: rgba(255,255,255,0.2); border: 1px dashed rgba(255,255,255,0.1); cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div class="dashboard">
-        <div style="color:var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue);">NEO-SLOT 6.0</div>
+        <div style="color:var(--neon-blue);">NEO-SLOT 9.0</div>
         <div class="score-pill">CREDITS: $<span id="domScore">1000</span></div>
     </div>
 
-    <div class="cabinet">
-        <div class="grid" id="grid">
-            </div>
+    <div class="cabinet" id="cabinet">
+        <div class="grid" id="grid"></div>
         <div class="led" id="led">🟢 SYSTEM ONLINE</div>
         <button class="spin-btn" id="spinBtn" onclick="startGame()">INITIATE SPIN</button>
     </div>
@@ -123,16 +125,15 @@
     </div>
 
     <script>
-        // 高清符号库，移除 7 作为隐藏专属
         const symbols = ['💎', '🍎', '⭐', '🍀', '🔥', '🔮']; 
-        const COLS = 6; // 核心引擎升级为 6x6
+        const COLS = 6; 
         const ROWS = 6;
         let board = [];
         let domCells = [];
-        let score = 1000;
+        let currentScore = 1000;
+        let targetScore = 1000;
         let isProcessing = false;
 
-        // 【暗门协议】
         let _seq = [], _jackpot = false;
         function seq(n) {
             _seq.push(n);
@@ -140,10 +141,10 @@
             if (_seq.join(',') === '1,2,3') {
                 _jackpot = true;
                 const led = document.getElementById('led');
-                led.innerText = "⚠️ OMEGA OVERRIDE: 777_PROTOCOL ⚠️";
+                led.innerText = "⚠️ FATAL OVERRIDE: 777 ⚠️";
                 led.style.color = "var(--neon-purple)";
-                led.style.borderColor = "var(--neon-purple)";
-                led.style.textShadow = "0 0 15px var(--neon-purple)";
+                document.getElementById('cabinet').classList.add('shake');
+                setTimeout(() => document.getElementById('cabinet').classList.remove('shake'), 500);
             }
         }
 
@@ -152,36 +153,63 @@
         function initGrid() {
             const gridEl = document.getElementById('grid');
             gridEl.innerHTML = '';
-            board = [];
-            domCells = [];
             for (let r = 0; r < ROWS; r++) {
-                board[r] = [];
-                domCells[r] = [];
+                board[r] = []; domCells[r] = [];
                 for (let c = 0; c < COLS; c++) {
                     const cell = document.createElement('div');
                     cell.className = 'cell';
                     let sym = symbols[Math.floor(Math.random() * symbols.length)];
-                    board[r][c] = sym;
-                    cell.innerText = sym;
-                    domCells[r][c] = cell;
-                    gridEl.appendChild(cell);
+                    board[r][c] = sym; cell.innerText = sym;
+                    domCells[r][c] = cell; gridEl.appendChild(cell);
                 }
             }
+        }
+
+        // 优化：数字滚动动画引擎
+        function rollScoreTo(newScore) {
+            const scoreEl = document.getElementById('domScore');
+            const duration = 500;
+            const startScore = currentScore;
+            const diff = newScore - startScore;
+            let startTime = null;
+
+            function animation(currentTime) {
+                if (startTime === null) startTime = currentTime;
+                const progress = Math.min((currentTime - startTime) / duration, 1);
+                currentScore = Math.floor(progress * diff + startScore);
+                scoreEl.innerText = currentScore;
+                if (progress < 1) requestAnimationFrame(animation);
+                else currentScore = newScore;
+            }
+            requestAnimationFrame(animation);
+        }
+
+        // 优化：浮动加分文字
+        function showFloatingText(r, c, text, color) {
+            const cell = domCells[r][c];
+            const rect = cell.getBoundingClientRect();
+            const gridRect = document.getElementById('grid').getBoundingClientRect();
+            
+            const floatEl = document.createElement('div');
+            floatEl.className = 'floating-text';
+            floatEl.innerText = text;
+            floatEl.style.color = color || 'var(--gold)';
+            floatEl.style.left = `${rect.left - gridRect.left + 10}px`;
+            floatEl.style.top = `${rect.top - gridRect.top}px`;
+            
+            document.getElementById('grid').appendChild(floatEl);
+            setTimeout(() => floatEl.remove(), 800);
         }
 
         async function startGame() {
             if (isProcessing) return;
             isProcessing = true;
             document.getElementById('spinBtn').disabled = true;
-            score -= 20; 
-            updateScore();
             
-            let led = document.getElementById('led');
-            led.innerText = "🌀 RESTRUCTURING MATRIX...";
-            led.style.color = "var(--neon-blue)";
-            led.style.borderColor = "rgba(0, 243, 255, 0.3)";
+            targetScore -= 20; 
+            rollScoreTo(targetScore);
+            document.getElementById('led').innerText = "🌀 RESTRUCTURING MATRIX...";
 
-            // 1. 全盘爆破动画
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS; c++) {
                     domCells[r][c].classList.add('pop');
@@ -189,7 +217,6 @@
             }
             await delay(250);
 
-            // 2. 数据层覆写 (如果触发暗门，填满36个7)
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS; c++) {
                     let sym = _jackpot ? '7' : symbols[Math.floor(Math.random() * symbols.length)];
@@ -201,85 +228,83 @@
             _jackpot = false; 
             await delay(300);
 
-            // 3. 呼叫算法引擎
             await processMatches(1);
         }
 
-        // 核心递归算法 (适配 6x6)
         async function processMatches(comboCount) {
             let matchedCoords = new Set();
 
-            // 横向连线检测
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS - 2; c++) {
                     let sym = board[r][c];
                     if (sym && sym === board[r][c+1] && sym === board[r][c+2]) {
-                        matchedCoords.add(`${r},${c}`);
-                        matchedCoords.add(`${r},${c+1}`);
-                        matchedCoords.add(`${r},${c+2}`);
+                        matchedCoords.add(`${r},${c}`); matchedCoords.add(`${r},${c+1}`); matchedCoords.add(`${r},${c+2}`);
                     }
                 }
             }
-            // 纵向连线检测
             for (let c = 0; c < COLS; c++) {
                 for (let r = 0; r < ROWS - 2; r++) {
                     let sym = board[r][c];
                     if (sym && sym === board[r+1][c] && sym === board[r+2][c]) {
-                        matchedCoords.add(`${r},${c}`);
-                        matchedCoords.add(`${r+1},${c}`);
-                        matchedCoords.add(`${r+2},${c}`);
+                        matchedCoords.add(`${r},${c}`); matchedCoords.add(`${r+1},${c}`); matchedCoords.add(`${r+2},${c}`);
                     }
                 }
             }
 
-            // 递归出口
             if (matchedCoords.size === 0) {
                 document.getElementById('spinBtn').disabled = false;
                 isProcessing = false;
-                if(comboCount === 1) {
-                    document.getElementById('led').innerText = "✅ SCAN COMPLETE: NO MATCHES";
-                }
+                if(comboCount === 1) document.getElementById('led').innerText = "✅ STANDBY";
                 return;
             }
 
-            // 💥 连击视觉反馈
+            // 优化：机台震动反馈 (Combo越大震动越强)
+            if(comboCount > 1 || matchedCoords.size > 10) {
+                const cab = document.getElementById('cabinet');
+                cab.classList.remove('shake');
+                void cab.offsetWidth; // 触发重绘重置动画
+                cab.classList.add('shake');
+            }
+
             let led = document.getElementById('led');
             led.innerText = `🔥 COMBO x${comboCount} : +${matchedCoords.size} BLOCKS!`;
             led.style.color = comboCount > 2 ? "var(--neon-green)" : "var(--gold)";
-            led.style.textShadow = `0 0 10px ${comboCount > 2 ? 'var(--neon-green)' : 'var(--gold)'}`;
             
-            // 积分算法 (消除越多，连击越高，奖励越恐怖)
-            score += matchedCoords.size * comboCount * 15;
-            updateScore();
+            // 计算当前连击得分
+            let addedScore = matchedCoords.size * comboCount * 15;
+            targetScore += addedScore;
+            rollScoreTo(targetScore);
 
-            // 执行消除炸裂
+            // 执行消除爆裂 & 弹出浮动分数
+            let index = 0;
             matchedCoords.forEach(coord => {
                 let [r, c] = coord.split(',').map(Number);
                 domCells[r][c].classList.add('pop');
                 board[r][c] = null;
+                // 选取几个中心点弹出文字，避免文字重叠过多
+                if(index % 3 === 0) {
+                    showFloatingText(r, c, `+${comboCount * 15}`, comboCount > 2 ? 'var(--neon-green)' : 'var(--gold)');
+                }
+                index++;
             });
-            await delay(350); // 等待爆裂特效
+            await delay(350); 
 
-            // ⬇️ 物理引力下落系统
             for (let c = 0; c < COLS; c++) {
                 let emptySpaces = 0;
                 for (let r = ROWS - 1; r >= 0; r--) {
                     if (board[r][c] === null) {
                         emptySpaces++;
                     } else if (emptySpaces > 0) {
-                        // 方块下移
                         board[r + emptySpaces][c] = board[r][c];
                         board[r][c] = null;
-                        
                         domCells[r + emptySpaces][c].innerText = board[r + emptySpaces][c];
                         domCells[r + emptySpaces][c].classList.remove('pop');
-                        domCells[r][c].classList.add('pop'); // 原位置变为空白
+                        domCells[r][c].classList.add('pop'); 
                     }
                 }
             }
             await delay(200);
 
-            // 🆕 顶部黑洞填补新能量块
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS; c++) {
                     if (board[r][c] === null) {
@@ -291,21 +316,15 @@
                     }
                 }
             }
-            await delay(400); // 坠落动画时间
+            await delay(400); 
 
-            // 重置状态
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS; c++) {
                     domCells[r][c].classList.remove('fall');
                 }
             }
 
-            // 🔄 链式反应检测 (递归)
             await processMatches(comboCount + 1);
-        }
-
-        function updateScore() {
-            document.getElementById('domScore').innerText = score;
         }
 
         initGrid();
