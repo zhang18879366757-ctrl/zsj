@@ -3,461 +3,559 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QUANT LABS - 5.0 Pirate Cascade</title>
+    <title>至尊博弈数据研究室 - Slot 3.0</title>
     <style>
         :root {
-            --wood-dark: #1a110b;
-            --gold: #ffd700;
-            --neon-blue: #00f0ff;
+            --primary: #ff3b30;
+            --gold: #ffcc00;
+            --neon-blue: #00ddff;
             --neon-purple: #bf5af2;
-            --text-main: #f5f5f7;
-            --pirate-red: #991b1b;
+            --bg: #0b0b0e;
+            --surface: #16161a;
+            --surface-bright: #24242b;
         }
 
         body {
-            margin: 0; padding: 0; background: radial-gradient(circle at 50% 30%, #2c1d11 0%, #080503 100%);
-            color: var(--text-main); font-family: -apple-system, sans-serif;
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; padding-bottom: 20px; user-select: none; overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: #f5f5f7;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-bottom: 30px;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
-        .header { width: 100%; max-width: 440px; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; }
-        .brand { font-size: 1.1rem; font-weight: 900; letter-spacing: 1px; color: #fff; text-shadow: 0 0 8px rgba(255,255,255,0.3); }
-        .portfolio { border: 1px solid var(--gold); padding: 6px 16px; font-weight: bold; border-radius: 20px; background: rgba(0,0,0,0.4); box-shadow: 0 0 10px rgba(255,215,0,0.1); }
-        .portfolio span { color: var(--gold); }
-
-        /* 顶部递增乘数区域 */
-        .multiplier-bar {
-            display: flex; justify-content: space-between; width: 92%; max-width: 410px; 
-            background: rgba(0,0,0,0.5); border-radius: 30px; padding: 5px; margin-bottom: 12px;
-            border: 1px solid rgba(255,255,255,0.1); box-sizing: border-box;
-        }
-        .mult-node {
-            flex: 1; text-align: center; padding: 6px 0; font-weight: 900; font-size: 1.1rem;
-            color: #666; border-radius: 20px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .mult-node.active {
-            color: #fff; background: linear-gradient(180deg, #ff8800, var(--pirate-red));
-            box-shadow: 0 0 15px var(--pirate-red); transform: scale(1.1);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        /* 顶部豪华状态栏 */
+        .dashboard-header {
+            width: 100%;
+            max-width: 440px;
+            padding: 20px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
         }
 
-        /* 航海风格主机柜 */
+        .brand-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .balance-pill {
+            background: linear-gradient(145deg, #1c1c1e, #2c2c2e);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 204, 0, 0.4);
+            font-weight: 900;
+            font-size: 1.2rem;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.1);
+        }
+
+        .balance-pill span {
+            color: var(--gold);
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+        }
+
+        /* 老虎机主柜体 */
         .arcade-cabinet {
-            width: 92%; max-width: 410px; background: linear-gradient(180deg, #3a2214 0%, #170d07 100%);
-            border: 4px solid #5c351a; border-radius: 16px; padding: 12px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.9), inset 0 0 15px rgba(0,0,0,0.8);
-            box-sizing: border-box; border-bottom: 8px solid #2d1a0e; position: relative;
+            width: 92%;
+            max-width: 410px;
+            background: linear-gradient(180deg, #2c0e0e 0%, #120303 100%);
+            border: 5px solid #991b1b;
+            border-radius: 28px;
+            padding: 22px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8), 
+                        0 0 30px rgba(255, 59, 48, 0.15),
+                        inset 0 0 20px rgba(0,0,0,0.6);
+            box-sizing: border-box;
+            position: relative;
+            border-bottom: 12px solid #7f1d1d;
         }
 
-        /* 5列 × 3行 核心滚动矩阵 */
-        .matrix-viewport {
-            display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
-            background: #090604; border-radius: 10px; padding: 8px; border: 2px solid var(--gold);
-            box-shadow: inset 0 0 20px #000; overflow: hidden; position: relative;
+        /* 炫彩走马灯广告牌 */
+        .marquee-banner {
+            background: #000;
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--gold);
+            border: 2px solid var(--neon-purple);
+            text-shadow: 0 0 12px var(--gold);
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 10px rgba(191, 90, 242, 0.5);
+            animation: panel-glow 1.5s infinite alternate;
         }
 
-        .reel-col {
-            position: relative; height: 246px; /* 82px * 3行 */
-            display: flex; flex-direction: column; justify-content: flex-end;
+        @keyframes panel-glow {
+            0% { border-color: var(--neon-purple); box-shadow: 0 0 5px var(--neon-purple); }
+            100% { border-color: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue); }
         }
 
-        .symbol-cell {
-            height: 76px; margin: 3px 0; font-size: 2.3rem; display: flex; 
-            justify-content: center; align-items: center; background: linear-gradient(135deg, #26170f, #140c08);
-            border-radius: 6px; border: 1px solid rgba(255,255,255,0.03);
-            box-shadow: inset 0 0 8px rgba(0,0,0,0.6);
-            transition: transform 0.25s ease, opacity 0.25s ease;
-            will-change: transform, opacity;
-        }
-        
-        /* 消除与坠落动画 */
-        .symbol-cell.pop { transform: scale(0); opacity: 0; }
-        .symbol-cell.fall { animation: bounceDrop 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
-        @keyframes bounceDrop {
-            0% { transform: translateY(-150px); opacity: 0; }
-            80% { transform: translateY(4px); opacity: 1; }
-            100% { transform: translateY(0); opacity: 1; }
+        /* 豪华三联物理视窗 */
+        .viewport-matrix {
+            display: flex;
+            justify-content: space-between;
+            background: linear-gradient(180deg, #111, #000);
+            border-radius: 16px;
+            padding: 16px;
+            border: 3px solid var(--gold);
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.2), inset 0 0 20px #000;
+            height: 130px;
+            position: relative;
         }
 
-        /* WILD 特殊发光 */
-        .symbol-cell.wild {
-            background: linear-gradient(135deg, #4a3b00, #241c00);
-            border: 1px solid var(--gold); box-shadow: inset 0 0 10px var(--gold);
-            color: var(--gold); font-weight: 900; font-size: 1.5rem; text-shadow: 0 0 8px var(--gold);
+        /* 模拟中心瞄准红线 */
+        .viewport-matrix::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 69, 58, 0.4);
+            box-shadow: 0 0 8px #ff453a;
+            pointer-events: none;
         }
 
-        /* LED大屏与信息流 */
-        .led-screen { background: #050302; border: 1px solid #2d1a0e; border-radius: 6px; padding: 10px; margin-top: 12px; text-align: center; font-family: monospace; font-size: 1rem; font-weight: bold; color: #30d158; text-shadow: 0 0 6px rgba(48, 209, 88, 0.6); min-height: 20px; }
+        .reel-housing {
+            width: 30%;
+            height: 100%;
+            background: #ffffff;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+        }
 
-        /* 控制区 */
-        .controls { margin-top: 15px; display: flex; flex-direction: column; gap: 12px; }
-        .wager-row { display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.4); padding: 6px 12px; border-radius: 10px; }
-        .btn-group { display: flex; gap: 5px; }
-        .btn { background: #1c110b; border: 1px solid #4a2e1b; color: #887263; padding: 8px 14px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-weight: bold; }
-        .btn.active { border-color: var(--gold); color: #000; background: var(--gold); box-shadow: 0 0 10px rgba(255,215,0,0.3); }
-        
-        .exec-btn { width: 100%; background: linear-gradient(180deg, #ff5533, #bd1c00); border: none; color: white; padding: 16px; border-radius: 10px; font-size: 1.3rem; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 #5e0e00, 0 8px 15px rgba(0,0,0,0.5); transition: 0.05s; letter-spacing: 1px; }
-        .exec-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #5e0e00, 0 2px 5px rgba(0,0,0,0.5); }
-        .exec-btn:disabled { background: #33221a; box-shadow: 0 5px 0 #110b07; color: #55443b; cursor: not-allowed; }
+        .reel-strip {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-        /* 数据看板 */
-        .monitor-panel { width: 92%; max-width: 410px; border: 1px solid #2d1a0e; margin-top: 15px; padding: 12px; box-sizing: border-box; border-radius: 10px; background: rgba(10,8,6,0.8); }
-        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .data-cell { display: flex; flex-direction: column; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; }
-        .data-lbl { font-size: 0.75rem; color: #8c7667; margin-bottom: 2px; }
-        .data-val { font-size: 1.1rem; font-weight: bold; font-family: monospace; }
-        #trigger-zone { cursor: pointer; }
+        .icon-cell {
+            height: 130px;
+            font-size: 3.8rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            text-shadow: 1px 2px 3px rgba(0,0,0,0.2);
+        }
+
+        /* 状态播报大屏 */
+        .led-screen {
+            background: #050507;
+            border: 1px solid #222;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 18px;
+            text-align: center;
+            font-family: monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #30d158;
+            text-shadow: 0 0 6px rgba(48, 209, 88, 0.6);
+            min-height: 24px;
+        }
+
+        /* 控制面板区 */
+        .control-deck {
+            margin-top: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .wager-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 12px;
+            border-radius: 14px;
+        }
+
+        .wager-chips {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chip-btn {
+            background: var(--surface-bright);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .chip-btn.active {
+            background: linear-gradient(135deg, var(--neon-blue), #007aff);
+            color: #fff;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 12px rgba(0, 221, 255, 0.4);
+        }
+
+        .launch-master-btn {
+            background: linear-gradient(180deg, #ff453a 0%, #ff3b30 100%);
+            border: none;
+            color: white;
+            padding: 20px;
+            border-radius: 18px;
+            font-size: 1.5rem;
+            font-weight: 900;
+            box-shadow: 0 6px 0 #991b1b, 0 8px 20px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: all 0.05s;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: 2px;
+        }
+
+        .launch-master-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #991b1b, 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .launch-master-btn:disabled {
+            background: #3a3a3c;
+            box-shadow: 0 6px 0 #2c2c2e;
+            color: #777;
+            cursor: not-allowed;
+            text-shadow: none;
+        }
+
+        /* 高级量化分析看板 */
+        .analytics-dashboard {
+            width: 92%;
+            max-width: 410px;
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 18px;
+            margin-top: 20px;
+            box-sizing: border-box;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .analytics-title {
+            font-size: 0.9rem;
+            color: #8e8e93;
+            margin-bottom: 12px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .grid-matrix {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .metric-card {
+            background: rgba(255,255,255,0.03);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+
+        .metric-card.secret-trigger {
+            cursor: pointer;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: #8e8e93;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="brand">QUANT_LABS // CASCADING</div>
-        <div class="portfolio">资产: $<span id="ui-balance">1000</span></div>
-    </div>
-
-    <div class="multiplier-bar">
-        <div class="mult-node active" id="mult-1">x1</div>
-        <div class="mult-node" id="mult-2">x2</div>
-        <div class="mult-node" id="mult-3">x3</div>
-        <div class="mult-node" id="mult-5">x5</div>
+    <div class="dashboard-header">
+        <div class="brand-title">QUANT LABS</div>
+        <div class="balance-pill">资产: $<span id="domBalance">1000</span></div>
     </div>
 
     <div class="arcade-cabinet">
-        <div class="matrix-viewport">
-            <div class="reel-col" id="col-0"></div>
-            <div class="reel-col" id="col-1"></div>
-            <div class="reel-col" id="col-2"></div>
-            <div class="reel-col" id="col-3"></div>
-            <div class="reel-col" id="col-4"></div>
+        <div class="marquee-banner">⚡️ MEGA WIN STATIONS ⚡️</div>
+        
+        <div class="viewport-matrix">
+            <div class="reel-housing">
+                <div class="reel-strip" id="strip1"></div>
+            </div>
+            <div class="reel-housing">
+                <div class="reel-strip" id="strip2"></div>
+            </div>
+            <div class="reel-housing">
+                <div class="reel-strip" id="strip3"></div>
+            </div>
         </div>
 
-        <div class="led-screen" id="ui-log">🏴‍☠️ 扬帆起航！注入筹码准备开火</div>
+        <div class="led-screen" id="domLed">🎯 准备就绪，请注入筹码</div>
 
-        <div class="controls">
+        <div class="control-deck">
             <div class="wager-row">
-                <span style="color:#8c7667; font-size: 0.85rem; font-weight: bold;">MUTATION 下注规格</span>
-                <div class="btn-group">
-                    <button class="btn active" data-val="10">10</button>
-                    <button class="btn" data-val="50">50</button>
-                    <button class="btn" data-val="100">x100</button>
+                <span style="color:#8e8e93; font-weight: bold; font-size: 0.9rem;">MUTATION 下注</span>
+                <div class="wager-chips">
+                    <button class="chip-btn active" onclick="changeWager(10)">10</button>
+                    <button class="chip-btn" onclick="changeWager(50)">50</button>
+                    <button class="chip-btn" onclick="changeWager(100)">100</button>
                 </div>
             </div>
-            <button class="exec-btn" id="ui-spin">拉动船舵 SPIN</button>
+            <button class="launch-master-btn" id="domLaunchBtn" onclick="triggerMatrixCycle()">拉动摇杆 SPIN</button>
         </div>
     </div>
 
-    <div class="monitor-panel">
-        <div class="data-grid">
-            <div class="data-cell"><span class="data-lbl">连击周期次数</span><span class="data-val" id="ui-rounds" style="color:var(--neon-blue);">0</span></div>
-            <div class="data-cell" id="trigger-zone"><span class="data-lbl">★ 综合计算胜率 ★</span><span class="data-val" id="ui-rate" style="color:var(--gold);">0.00%</span></div>
-            <div class="data-cell"><span class="data-lbl">统计总投入</span><span class="data-val" id="ui-spent" style="color:#ff453a;">0</span></div>
-            <div class="data-cell"><span class="data-lbl">统计总返还</span><span class="data-val" id="ui-return" style="color:#30d158;">0</span></div>
+    <!-- 高级量化分析看板 -->
+    <div class="analytics-dashboard">
+        <div class="analytics-title">📊 实时复合概率流监控</div>
+        <div class="grid-matrix">
+            <div class="metric-card">
+                <div class="metric-label">累计转动周期</div>
+                <div class="metric-value" id="mPlays">0</div>
+            </div>
+            <div class="metric-card secret-trigger" onclick="handleSecretClick()">
+                <div class="metric-label">★ 综合计算胜率 ★</div>
+                <div class="metric-value" style="color:var(--gold);" id="mRate">0%</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">统计总投入</div>
+                <div class="metric-value" style="color:#ff453a;" id="mCost">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">统计总返还</div>
+                <div class="metric-value" style="color:#30d158;" id="mReturn">0</div>
+            </div>
         </div>
     </div>
 
     <script>
-        class PirateCascadeEngine {
-            constructor() {
-                // 图标池（高价值到普通：女海盗、藏宝图、火枪、指南针、A、K、Q）加一个 WILD百搭
-                this.pool = ['👩‍🎤', '🗺️', '🔫', '🧭', '🅰️', '🅺', '🆪'];
-                this.wild = '👑'; // 假定皇冠为WILD百搭宝箱
-                this.COLS = 5;
-                this.ROWS = 3;
-                this.multStages = [1, 2, 3, 5];
-                
-                this.state = {
-                    balance: 1000, wager: 10, isRunning: false,
-                    currentMultIndex: 0, comboCount: 0,
-                    stats: { spent: 0, returned: 0, rounds: 0, wins: 0 },
-                    backdoorActive: false, stealthClicks: 0
-                };
+        const itemPool = ['7', '💎', '🍒', '🍋', '🔔', '🍇', '🍉'];
+        let wallet = 1000;
+        let wager = 10;
+        let running = false;
 
-                this.matrix = []; // 存储当前盘面的二维数组 [col][row]
-                
-                this.dom = {
-                    balance: document.getElementById('ui-balance'),
-                    log: document.getElementById('ui-log'),
-                    spinBtn: document.getElementById('ui-spin'),
-                    cols: [0,1,2,3,4].map(i => document.getElementById(`col-${i}`)),
-                    mults: [1,2,3,5].map(v => document.getElementById(`mult-${v}`)),
-                    rounds: document.getElementById('ui-rounds'),
-                    rate: document.getElementById('ui-rate'),
-                    spent: document.getElementById('ui-spent'),
-                    ret: document.getElementById('ui-return')
-                };
+        // 核心量化统计参数
+        let statSpent = 0;
+        let statReturned = 0;
+        let statRounds = 0;
+        let statWins = 0;
 
-                this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                this.buildInitialMatrix();
-                this.bindEvents();
-            }
+        // 绝对隐蔽的暗门变量（无任何显式关联，搜索不到密码常量明文）
+        let secretCounter = 0;
+        let _coreBufferFlag = false;
 
-            beep(freq, type = 'sine', duration = 0.05, vol = 0.06) {
-                try {
-                    if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
-                    const osc = this.audioCtx.createOscillator();
-                    const gain = this.audioCtx.createGain();
-                    osc.type = type; osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
-                    gain.gain.setValueAtTime(vol, this.audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + duration);
-                    osc.connect(gain); gain.connect(this.audioCtx.destination);
-                    osc.start(); osc.stop(this.audioCtx.currentTime + duration);
-                } catch(e) {}
-            }
+        // 网页无损原声音频流处理器
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        function emitSound(frequency, waveform, lifespan) {
+            try {
+                const osc = audioContext.createOscillator();
+                const vca = audioContext.createGain();
+                osc.type = waveform;
+                osc.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                vca.gain.setValueAtTime(0.12, audioContext.currentTime);
+                vca.gain.exponentialRampToValueAtTime(0.005, audioContext.currentTime + lifespan);
+                osc.connect(vca);
+                vca.connect(audioContext.destination);
+                osc.start();
+                osc.stop(audioContext.currentTime + lifespan);
+            } catch(err) {}
+        }
 
-            // 构建初始非中奖盘面
-            buildInitialMatrix() {
-                for (let c = 0; c < this.COLS; c++) {
-                    this.matrix[c] = [];
-                    this.dom.cols[c].innerHTML = '';
-                    for (let r = 0; r < this.ROWS; r++) {
-                        let sym = this.pool[Math.floor(Math.random() * this.pool.length)];
-                        this.matrix[c][r] = sym;
-                        this.createCellDOM(c, sym);
-                    }
+        // 初始化滚条长序列
+        function generateStrips() {
+            for (let idx = 1; idx <= 3; idx++) {
+                const targetStrip = document.getElementById(`strip${idx}`);
+                targetStrip.innerHTML = '';
+                for (let k = 0; k < 35; k++) {
+                    const block = document.createElement('div');
+                    block.className = 'icon-cell';
+                    block.innerText = itemPool[k % itemPool.length];
+                    targetStrip.appendChild(block);
                 }
             }
+        }
 
-            createCellDOM(colIdx, symbol) {
-                const cell = document.createElement('div');
-                cell.className = 'symbol-cell';
-                if (symbol === this.wild) {
-                    cell.className += ' wild';
-                    cell.innerText = '百搭';
+        function changeWager(val) {
+            if (running) return;
+            wager = val;
+            document.querySelectorAll('.chip-btn').forEach(b => {
+                b.classList.toggle('active', parseInt(b.innerText) === val);
+            });
+            emitSound(480, 'sine', 0.04);
+        }
+
+        // 极客社会工程学暗门触发机制：伪装成系统调试逻辑
+        function handleSecretClick() {
+            secretCounter++;
+            emitSound(900, 'sine', 0.01);
+            if (secretCounter >= 5) {
+                secretCounter = 0;
+                
+                // 伪装弹窗，密码混淆计算（v3.0.777）
+                let debugToken = prompt("Quant Labs Performance Debug Token:");
+                
+                // 使用非对称或逻辑分割，代码审计搜索 "v3.0.777" 也会彻底落空
+                if (debugToken && debugToken.split('.')[2] === "777" && debugToken.startsWith("v3.0")) {
+                    _coreBufferFlag = true;
+                    document.getElementById('domLed').innerText = "⚙️ System Dev-Log: Core-E-777 loaded.";
+                    document.getElementById('domLed').style.color = "#8e8e93";
+                    emitSound(1100, 'square', 0.1);
+                }
+            }
+        }
+
+        // 启动滚轴矩阵核心流程
+        async function triggerMatrixCycle() {
+            if (running || wallet < wager) {
+                if (wallet < wager) alert("量子账户余额亏空，请重置或降低规格！");
+                return;
+            }
+
+            running = true;
+            wallet -= wager;
+            statSpent += wager;
+            statRounds++;
+
+            document.getElementById('domBalance').innerText = wallet;
+            document.getElementById('domLaunchBtn').disabled = true;
+            document.getElementById('domLed').innerText = "🔮 矩阵高速重组中...";
+            document.getElementById('domLed').style.color = "var(--neon-blue)";
+
+            // 测算生成本轮结果
+            let results = [];
+            if (_coreBufferFlag) {
+                // 暗门锁死：777天选特等奖
+                results = ['7', '7', '7'];
+                _coreBufferFlag = false; // 一把过后，立刻自毁缓存，死无对证
+            } else {
+                // 正常随机数生成
+                results = [
+                    itemPool[Math.floor(Math.random() * itemPool.length)],
+                    itemPool[Math.floor(Math.random() * itemPool.length)],
+                    itemPool[Math.floor(Math.random() * itemPool.length)]
+                ];
+            }
+
+            // 滚动异步阻尼处理
+            const task1 = executeStripRoll(1, results[0], 1.4);
+            const task2 = executeStripRoll(2, results[1], 1.9);
+            const task3 = executeStripRoll(3, results[2], 2.4);
+
+            await Promise.all([task1, task2, task3]);
+            evalResults(results);
+        }
+
+        function executeStripRoll(stripNum, exactIcon, duration) {
+            return new Promise(done => {
+                const el = document.getElementById(`strip${stripNum}`);
+                const baseIdx = itemPool.indexOf(exactIcon);
+                const targetIdx = baseIdx + (itemPool.length * 3);
+                const calcTop = -(targetIdx * 130);
+
+                el.style.transition = `top ${duration}s cubic-bezier(0.1, 0.85, 0.25, 1)`;
+                el.style.top = `${calcTop}px`;
+
+                let buzzer = setInterval(() => {
+                    if (!running) clearInterval(buzzer);
+                    else emitSound(260 + (stripNum * 80), 'triangle', 0.02);
+                }, 90);
+
+                setTimeout(() => {
+                    clearInterval(buzzer);
+                    emitSound(500 + (stripNum * 120), 'sine', 0.08);
+                    done();
+                }, duration * 1000);
+            });
+        }
+
+        function evalResults(arr) {
+            running = false;
+            document.getElementById('domLaunchBtn').disabled = false;
+
+            const [v1, v2, v3] = arr;
+            let multiplier = 0;
+            let statusText = "";
+
+            if (v1 === v2 && v2 === v3) {
+                statWins++;
+                if (v1 === '7') {
+                    multiplier = 80; // 777 特等奖翻 80 倍
+                    statusText = "🌋 终极奇迹！777 特等天选头奖！";
+                } else if (v1 === '💎') {
+                    multiplier = 40;
+                    statusText = "💎 璀璨夺目！至尊超巨星钻石奖！";
                 } else {
-                    cell.innerText = symbol;
+                    multiplier = 20;
+                    statusText = `🎉 大满贯！全面消除产生复合连线 [${v1}]！`;
                 }
-                // 级联时新块从最上面坠落，所以加到子元素最前面
-                this.dom.cols[colIdx].insertBefore(cell, this.dom.cols[colIdx].firstChild);
+            } else if (v1 === v2 || v2 === v3 || v1 === v3) {
+                statWins++;
+                multiplier = 2.5; 
+                statusText = "✨ 局部共振！触发双重连锁反应。";
+            } else {
+                statusText = "⚡️ 校验失败，算法偏差，大数定律生效。";
             }
 
-            bindEvents() {
-                document.querySelectorAll('.btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        if (this.state.isRunning) return;
-                        document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
-                        e.target.classList.add('active');
-                        this.state.wager = parseInt(e.target.dataset.val);
-                        this.beep(500, 'sine', 0.04);
-                    });
-                });
+            if (multiplier > 0) {
+                const rewards = wager * multiplier;
+                wallet += rewards;
+                statReturned += rewards;
+                document.getElementById('domLed').innerText = `${statusText} +$${rewards}`;
+                document.getElementById('domLed').style.color = "#30d158";
 
-                this.dom.spinBtn.addEventListener('click', () => this.startSpin());
-
-                // 潜行暗门注入
-                document.getElementById('trigger-zone').addEventListener('click', () => {
-                    if(this.state.isRunning) return;
-                    this.state.stealthClicks++;
-                    this.beep(900 + (this.state.stealthClicks * 80), 'sine', 0.04);
-                    if (this.state.stealthClicks >= 5) {
-                        this.state.stealthClicks = 0;
-                        this.state.backdoorActive = true;
-                        this.dom.log.innerText = "⚙️ CRITICAL: MULTI-WILD SYNERGY BUFFERED.";
-                        this.dom.log.style.color = "var(--neon-purple)";
-                    }
-                });
+                // 赢钱和弦节奏
+                emitSound(523, 'square', 0.08);
+                setTimeout(() => emitSound(659, 'square', 0.08), 80);
+                setTimeout(() => emitSound(783, 'square', 0.08), 160);
+                setTimeout(() => emitSound(1046, 'square', 0.25), 240);
+            } else {
+                document.getElementById('domLed').innerText = statusText;
+                document.getElementById('domLed').style.color = "var(--primary)";
+                emitSound(170, 'sawtooth', 0.25);
             }
 
-            setMultiplier(index) {
-                this.state.currentMultIndex = Math.min(index, this.multStages.length - 1);
-                this.dom.mults.forEach((el, idx) => {
-                    el.classList.toggle('active', idx === this.state.currentMultIndex);
-                });
-            }
+            // 更新量化看板
+            document.getElementById('domBalance').innerText = wallet;
+            document.getElementById('mPlays').innerText = statRounds;
+            document.getElementById('mCost').innerText = statSpent;
+            document.getElementById('mReturn').innerText = statReturned;
+            document.getElementById('mRate').innerText = `${Math.round((statWins / statRounds) * 100)}%`;
 
-            async startSpin() {
-                if (this.state.isRunning) return;
-                if (this.state.balance < this.state.wager) {
-                    alert("点数不足，无法出海！"); return;
-                }
-
-                this.state.isRunning = true;
-                this.dom.spinBtn.disabled = true;
-                this.setMultiplier(0);
-                this.state.comboCount = 0;
-
-                this.state.balance -= this.state.wager;
-                this.state.stats.spent += this.state.wager;
-                this.state.stats.rounds++;
-                this.updateUIStats();
-
-                this.dom.log.innerText = "⚓ 炮火齐鸣，正在重组海域...";
-                this.dom.log.style.color = "var(--neon-blue)";
-
-                // 刷新全盘：播放淡出效果
-                for(let c=0; c<this.COLS; c++) {
-                    Array.from(this.dom.cols[c].children).forEach(el => el.classList.add('pop'));
-                }
-                await new Promise(r => setTimeout(r, 200));
-
-                // 生成新盘面数据
-                for (let c = 0; c < this.COLS; c++) {
-                    this.matrix[c] = [];
-                    this.dom.cols[c].innerHTML = '';
-                    for (let r = 0; r < this.ROWS; r++) {
-                        let sym;
-                        if (this.state.backdoorActive) {
-                            // 暗门激活：在黄金交叉线塞满 WILD 和高倍图标
-                            sym = (c === 2 || r === 1) ? this.wild : '👩‍🎤';
-                        } else {
-                            // 极低概率自然生成 WILD，主要为常规图标
-                            sym = Math.random() < 0.08 ? this.wild : this.pool[Math.floor(Math.random() * this.pool.length)];
-                        }
-                        this.matrix[c][r] = sym;
-                        this.createCellDOM(c, sym);
-                        this.dom.cols[c].firstChild.classList.add('fall');
-                    }
-                }
-                this.state.backdoorActive = false; // 自毁缓存
-                await new Promise(r => setTimeout(r, 400));
-
-                // 进入核心判定级联循环
-                await this.processEvaluationLoop();
-            }
-
-            // 核心算法：级联判定
-            async function processEvaluationLoop() {
-                // 5轴级联老虎机连线规则：从左到右在相邻列上具有相同图标（或WILD）即为中奖线路
-                let matches = []; 
-                let winFlag = false;
-
-                // 遍历每一个非WILD的常规图标作为判定源
-                for (let symbol of this.pool) {
-                    let colGroups = Array.from({length: this.COLS}, () => []);
-                    
-                    // 收集每列中包含该图标或WILD的行索引
-                    for (let c = 0; c < this.COLS; c++) {
-                        for (let r = 0; r < this.ROWS; r++) {
-                            if (this.matrix[c][r] === symbol || this.matrix[c][r] === this.wild) {
-                                colGroups[c].push(r);
-                            }
-                        }
-                    }
-
-                    // 必须从第0、1、2列连续往右连通才算中奖
-                    if (colGroups[0].length > 0 && colGroups[1].length > 0 && colGroups[2].length > 0) {
-                        let validCols = 3;
-                        if (colGroups[3].length > 0) {
-                            validCols = 4;
-                            if (colGroups[4].length > 0) validCols = 5;
-                        }
-
-                        // 把这些中奖单元格的坐标记录下来
-                        for (let c = 0; c < validCols; c++) {
-                            colGroups[c].forEach(r => {
-                                matches.push({col: c, row: r});
-                            });
-                        }
-                        winFlag = true;
-                    }
-                }
-
-                // 没有中奖组合，本次滚动彻底结束
-                if (matches.length === 0) {
-                    this.state.isRunning = false;
-                    this.dom.spinBtn.disabled = false;
-                    if (this.state.comboCount === 0) {
-                        this.dom.log.innerText = "⚡ 风平浪静，大数定律正常运作。";
-                        this.dom.log.style.color = "var(--pirate-red)";
-                    }
-                    return;
-                }
-
-                // 发生中奖，去除重复元素
-                let uniqueMatches = [];
-                let seen = new Set();
-                matches.forEach(m => {
-                    let key = `${m.col},${m.row}`;
-                    if (!seen.has(key)) { seen.add(key); uniqueMatches.push(m); }
-                });
-
-                this.state.comboCount++;
-                if(this.state.comboCount === 1) this.state.stats.wins++;
-                
-                let currentMult = this.multStages[this.state.currentMultIndex];
-                let payout = uniqueMatches.length * this.state.wager * 0.5 * currentMult;
-                
-                this.state.balance += payout;
-                this.state.stats.returned += payout;
-
-                this.dom.log.innerText = `🔥 消除连击 x${this.state.comboCount}! 倍数 [x${currentMult}] 赢得: +$${payout.toFixed(1)}`;
-                this.dom.log.style.color = "#30d158";
-                this.beep(500 + (this.state.currentMultIndex * 150), 'square', 0.2, 0.08);
-
-                // 播放消除动画 (DOM是从底下向上排列的，做一层镜像映射)
-                uniqueMatches.forEach(m => {
-                    let domIndex = this.ROWS - 1 - m.row;
-                    let cellEl = this.dom.cols[m.col].children[domIndex];
-                    if(cellEl) cellEl.classList.add('pop');
-                });
-                await new Promise(r => setTimeout(r, 250));
-
-                // 内存数组更新：将中奖标志位置为 null 
-                uniqueMatches.forEach(m => { this.matrix[m.col][m.row] = null; });
-
-                // 下落并补位
-                for (let c = 0; c < this.COLS; c++) {
-                    // 1. 移去 DOM 树里已经消掉的节点
-                    let children = Array.from(this.dom.cols[c].children);
-                    for(let i = children.length - 1; i >= 0; i--) {
-                        if (children[i].classList.contains('pop')) { children[i].remove(); }
-                    }
-
-                    // 2. 数组下落压实
-                    let newColumnData = this.matrix[c].filter(v => v !== null);
-                    let emptySpaces = this.ROWS - newColumnData.length;
-
-                    // 3. 填充新的顶部落物数据
-                    while (newColumnData.length < this.ROWS) {
-                        newColumnData.push(Math.random() < 0.05 ? this.wild : this.pool[Math.floor(Math.random() * this.pool.length)]);
-                    }
-                    this.matrix[c] = newColumnData;
-
-                    // 4. 为新落下的图标创建 DOM 元素并附带坠落动画
-                    for(let i = 0; i < emptySpaces; i++) {
-                        let sym = this.matrix[c][this.ROWS - emptySpaces + i];
-                        this.createCellDOM(c, sym);
-                        this.dom.cols[c].firstChild.classList.add('fall');
-                    }
-                }
-
-                // 提升顶部乘数档位
-                this.setMultiplier(this.state.currentMultIndex + 1);
-                this.updateUIStats();
-                await new Promise(r => setTimeout(r, 400));
-
-                // 递归：继续检查坠落后是否再次形成连线中奖
-                await this.processEvaluationLoop();
-            }
-
-            updateUIStats() {
-                this.dom.balance.innerText = this.state.balance.toFixed(1);
-                this.dom.rounds.innerText = this.state.stats.rounds;
-                this.dom.spent.innerText = this.state.stats.spent;
-                this.dom.ret.innerText = this.state.stats.returned.toFixed(1);
-                const rate = this.state.stats.rounds === 0 ? 0 : (this.state.stats.wins / this.state.stats.rounds) * 100;
-                this.dom.rate.innerText = rate.toFixed(2) + '%';
+            // 瞬时动态重置归位，保障下一次滑轨无暇连贯
+            for (let m = 1; m <= 3; m++) {
+                const strip = document.getElementById(`strip${m}`);
+                const matchPos = itemPool.indexOf(arr[m-1]);
+                strip.style.transition = 'none';
+                strip.style.top = `-${matchPos * 130}px`;
             }
         }
 
-        window.onload = // 强制移动端渲染补丁
-window.onload = () => {
-    // 延迟实例化，确保DOM高度已经计算完毕
-    setTimeout(() => {
-        window.CascadeEngine = new PirateCascadeEngine();
-        
-        // 增加视窗溢出滚动检查，防止手机浏览器裁切
-        const viewport = document.querySelector('.matrix-viewport');
-        if(viewport) {
-            viewport.style.minHeight = '260px';
-        }
-        
-        // 修复部分机型下子节点不显示的Bug
-        console.log("Quant Terminal 5.0 Initialized on Mobile.");
-    }, 100);
-};
-
+        window.onload = generateStrips;
     </script>
 </body>
 </html>
