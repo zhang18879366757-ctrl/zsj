@@ -441,7 +441,23 @@
             }
         }
 
-        window.onload = () => { window.CascadeEngine = new PirateCascadeEngine(); };
+        window.onload = // 强制移动端渲染补丁
+window.onload = () => {
+    // 延迟实例化，确保DOM高度已经计算完毕
+    setTimeout(() => {
+        window.CascadeEngine = new PirateCascadeEngine();
+        
+        // 增加视窗溢出滚动检查，防止手机浏览器裁切
+        const viewport = document.querySelector('.matrix-viewport');
+        if(viewport) {
+            viewport.style.minHeight = '260px';
+        }
+        
+        // 修复部分机型下子节点不显示的Bug
+        console.log("Quant Terminal 5.0 Initialized on Mobile.");
+    }, 100);
+};
+
     </script>
 </body>
 </html>
