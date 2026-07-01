@@ -354,8 +354,8 @@
     </div>
 
     <script>
-        const itemPool = ['7', '💎', '🍒', '🍋', '🔔 ', '🍇', '🍉', '🍍'];
-        let wallet = 1000;
+        const itemPool = ['7', '💎', '🍒', '🍋', '🔔', '🍇', '🍉', '🍍'];
+        let wallet = 10000;
         let wager = 10;
         let running = false;
 
@@ -442,7 +442,7 @@
             statRounds++;
 
             document.getElementById('domBalance').innerText = wallet;
-            document.getElementById('domLaunchBtn.').disabled = true;
+            document.getElementById('domLaunchBtn').disabled = true;
             document.getElementById('domLed').innerText = "🔮 矩阵高速重组中...";
             document.getElementById('domLed').style.color = "var(--neon-blue)";
 
