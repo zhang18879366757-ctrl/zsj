@@ -321,7 +321,7 @@
             <div class="wager-row">
                 <span style="color:#8e8e93; font-weight: bold; font-size: 0.9rem;">MUTATION 下注</span>
                 <div class="wager-chips">
-                    <button class="chip-btn active" onclick="changeWager(1000)">1000</button>
+                    <button class="chip-btn active" onclick="changeWager(10)">10</button>
                     <button class="chip-btn" onclick="changeWager(50)">50</button>
                     <button class="chip-btn" onclick="changeWager(100)">100</button>
                 </div>
@@ -442,7 +442,7 @@
             statRounds++;
 
             document.getElementById('domBalance').innerText = wallet;
-            document.getElementById('domLaunchBtn').disabled = true;
+            document.getElementById('domLaunchBtn.').disabled = true;
             document.getElementById('domLed').innerText = "🔮 矩阵高速重组中...";
             document.getElementById('domLed').style.color = "var(--neon-blue)";
 
@@ -504,13 +504,13 @@
             if (v1 === v2 && v2 === v3) {
                 statWins++;
                 if (v1 === '7') {
-                    multiplier = 8000; // 777 特等奖翻 80 倍
+                    multiplier = 777; // 777 特等奖翻 80 倍
                     statusText = "🌋 终极奇迹！777 特等天选头奖！";
                 } else if (v1 === '💎') {
-                    multiplier = 40;
+                    multiplier = 66;
                     statusText = "💎 璀璨夺目！至尊超巨星钻石奖！";
                 } else {
-                    multiplier = 20;
+                    multiplier = 33;
                     statusText = `🎉 大满贯！全面消除产生复合连线 [${v1}]！`;
                 }
             } else if (v1 === v2 || v2 === v3 || v1 === v3) {
@@ -518,7 +518,7 @@
                 multiplier = 2.5; 
                 statusText = "✨ 局部共振！触发双重连锁反应。";
             } else {
-                statusText = "⚡️ 校验失败，算法偏差，大数定律生效。";
+                statusText = "⚡️ 校验失败，算法偏差。";
             }
 
             if (multiplier > 0) {
